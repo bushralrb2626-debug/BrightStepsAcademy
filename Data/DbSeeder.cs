@@ -145,6 +145,10 @@ public static class DbSeeder
         {
             school.Name = "Scuola Materna";
             school.ShortName = "Scuola Materna";
+            school.Tagline = "Impara. Esplora. Cresci.";
+            school.SchoolType = "Primaria e media";
+            school.Description =
+                "La Scuola Materna è nata da un’idea semplice: l’infanzia deve essere colorata, sicura e piena di scoperte. Oggi accogliamo più di mille allievi in aule luminose, laboratori creativi e campi vivaci.";
             school.UpdatedAt = DateTimeOffset.UtcNow;
             await db.SaveChangesAsync();
             return school;
@@ -155,7 +159,7 @@ public static class DbSeeder
             SchoolCode = "BFA-001",
             Name = "Scuola Materna",
             ShortName = "Scuola Materna",
-            Tagline = "Learn. Explore. Grow.",
+            Tagline = "Impara. Esplora. Cresci.",
             RegistrationNumber = "REG-BFA-2011",
             Email = "hello@brightfuture.academy",
             Phone = "+1 (555) 214-8800",
@@ -165,9 +169,9 @@ public static class DbSeeder
             Country = "USA",
             PrincipalName = "Grace Okonkwo",
             EstablishedYear = 2011,
-            SchoolType = "Primary & Middle",
+            SchoolType = "Primaria e media",
             Description =
-                "Scuola Materna began with a simple idea: childhood should be colourful, safe, and full of discovery. Today we welcome more than a thousand learners across bright classrooms, creative studios, and lively fields.",
+                "La Scuola Materna è nata da un’idea semplice: l’infanzia deve essere colorata, sicura e piena di scoperte. Oggi accogliamo più di mille allievi in aule luminose, laboratori creativi e campi vivaci.",
             EmergencyContact = "+1 (555) 214-8899",
             LogoPath = Images.School,
             FaviconPath = Images.School,
@@ -411,11 +415,11 @@ public static class DbSeeder
             db.HeroContents.Add(new HeroContent
             {
                 SchoolId = schoolId,
-                Heading = "WHERE LITTLE MINDS GROW INTO BIG DREAMS",
+                Heading = "DOVE LE PICCOLE MENTI CRESCONO IN GRANDI SOGNI",
                 Description =
-                    "A colorful campus where curiosity blooms, creativity shines, and every child gets to learn, explore and dream — every single day.",
+                    "Un campus colorato dove fiorisce la curiosità, brilla la creatività e ogni bambino può imparare, esplorare e sognare — ogni singolo giorno.",
                 ImagePath = Images.KidsRead,
-                CtaText = "Explore Our School",
+                CtaText = "Esplora la nostra scuola",
                 CtaLink = "#about"
             });
         }
@@ -425,9 +429,9 @@ public static class DbSeeder
             db.AboutContents.Add(new AboutContent
             {
                 SchoolId = schoolId,
-                Heading = "A story of bright beginnings",
+                Heading = "Una storia di inizi luminosi",
                 Description =
-                    "Not just a campus — a colorful journey families love to join. Sunlit classrooms, curious questions, and teachers who know every child by name.",
+                    "Non solo un campus — un percorso colorato che le famiglie amano condividere. Aule illuminate, domande curiose e insegnanti che conoscono ogni bambino per nome.",
                 ImagePath = Images.Classroom
             });
         }
@@ -440,7 +444,7 @@ public static class DbSeeder
                 Address = school.Address,
                 Phone = school.Phone,
                 Email = school.Email,
-                OfficeHours = "Mon–Fri 8:00 AM – 4:00 PM"
+                OfficeHours = "Lun–Ven 8:00 – 16:00"
             });
         }
 
@@ -450,36 +454,36 @@ public static class DbSeeder
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Where learning begins",
+                    Title = "Dove inizia l’apprendimento",
                     Description =
-                        "Sunlit classrooms, curious questions, and teachers who know every child by name — that’s the BrightSteps way.",
+                        "Aule illuminate, domande curiose e insegnanti che conoscono ogni bambino per nome — questo è lo stile Scuola Materna.",
                     ImageOrIcon = Images.Classroom,
                     DisplayOrder = 1
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Our mission",
+                    Title = "La nostra missione",
                     Description =
-                        "To nurture curious, kind and confident learners through joyful teaching and meaningful experiences.",
+                        "Coltivare apprendisti curiosi, gentili e sicuri di sé attraverso un insegnamento gioioso ed esperienze significative.",
                     ImageOrIcon = Images.KidsRead,
                     DisplayOrder = 2
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Our vision",
+                    Title = "La nostra visione",
                     Description =
-                        "A world where every child feels seen, challenged and inspired to grow — one bright step at a time.",
+                        "Un mondo in cui ogni bambino si sente visto, stimolato e ispirato a crescere — un passo luminoso alla volta.",
                     ImageOrIcon = Images.Campus,
                     DisplayOrder = 3
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Why families choose us",
+                    Title = "Perché le famiglie ci scelgono",
                     Description =
-                        "Safe spaces, creative learning, strong academics, and a portal that keeps parents close to every milestone.",
+                        "Spazi sicuri, apprendimento creativo, solida didattica e un portale che tiene i genitori vicini a ogni traguardo.",
                     ImageOrIcon = Images.Play,
                     DisplayOrder = 4
                 });
@@ -491,48 +495,48 @@ public static class DbSeeder
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Modern Library",
-                    Description = "Books, reading spaces and learning resources.",
+                    Name = "Biblioteca moderna",
+                    Description = "Libri, spazi di lettura e risorse didattiche.",
                     ImagePath = Images.Library,
                     DisplayOrder = 1
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Science Laboratory",
-                    Description = "Hands-on experiments and discovery.",
+                    Name = "Laboratorio di scienze",
+                    Description = "Esperimenti pratici e scoperta.",
                     ImagePath = Images.Science,
                     DisplayOrder = 2
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Computer Lab",
-                    Description = "Technology and digital learning.",
+                    Name = "Laboratorio di informatica",
+                    Description = "Tecnologia e apprendimento digitale.",
                     ImagePath = Images.Computers,
                     DisplayOrder = 3
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Sports Ground",
-                    Description = "Outdoor sports and physical activities.",
+                    Name = "Campo sportivo",
+                    Description = "Sport all’aperto e attività motorie.",
                     ImagePath = Images.Sports,
                     DisplayOrder = 4
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Art & Creativity Room",
-                    Description = "Painting, crafts and creative expression.",
+                    Name = "Sala arte e creatività",
+                    Description = "Pittura, laboratori e espressione creativa.",
                     ImagePath = Images.Art,
                     DisplayOrder = 5
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Music Room",
-                    Description = "Music, instruments and performance.",
+                    Name = "Sala musica",
+                    Description = "Musica, strumenti e performance.",
                     ImagePath = Images.Music,
                     DisplayOrder = 6
                 });
@@ -542,18 +546,18 @@ public static class DbSeeder
         {
             var gallery = new (string Path, string Title, string Category)[]
             {
-                (Images.Classroom, "Classroom moments", "Campus"),
-                (Images.KidsRead, "Story time", "Learning"),
-                (Images.Library, "Library quiet hours", "Campus"),
-                (Images.Sports, "Sports day", "Events"),
-                (Images.Art, "Art studio", "Creative"),
-                (Images.Science, "Science fair", "Events"),
-                (Images.Campus, "Campus view", "Campus"),
-                (Images.Play, "Playground joy", "Campus"),
-                (Images.Annual, "Annual celebration", "Events"),
-                (Images.Music, "Music class", "Creative"),
-                (Images.FieldTrip, "Field trip", "Events"),
-                (Images.School, "Welcome gate", "Campus")
+                (Images.Classroom, "Momenti in aula", "Campus"),
+                (Images.KidsRead, "Ora della storia", "Apprendimento"),
+                (Images.Library, "Ore di silenzio in biblioteca", "Campus"),
+                (Images.Sports, "Giornata dello sport", "Eventi"),
+                (Images.Art, "Studio d’arte", "Creativo"),
+                (Images.Science, "Fiera della scienza", "Eventi"),
+                (Images.Campus, "Vista del campus", "Campus"),
+                (Images.Play, "Gioia nel cortile", "Campus"),
+                (Images.Annual, "Festa annuale", "Eventi"),
+                (Images.Music, "Lezione di musica", "Creativo"),
+                (Images.FieldTrip, "Gita scolastica", "Eventi"),
+                (Images.School, "Cancello di benvenuto", "Campus")
             };
 
             for (var i = 0; i < gallery.Length; i++)

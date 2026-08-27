@@ -92,6 +92,37 @@
 }
 .site-nav__cta { margin-left: 0.35rem; }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: 0.5rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--cream-2) 80%, white);
+  border: 1px solid var(--line);
+}
+.lang-switch__btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: Fredoka, Nunito, sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.55rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  line-height: 1;
+}
+.lang-switch__btn:hover {
+  color: var(--royal);
+}
+.lang-switch__btn.is-active {
+  background: var(--royal);
+  color: #fff;
+}
+
 @media (min-width: 993px) {
   .site-nav__menu.collapse {
     display: flex !important;
