@@ -1,0 +1,64 @@
+@model BrightStepsAcademy.Models.Manage.SchoolAdminFormVm
+@{
+    ViewData["Title"] = "School admin";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">@(Model.HasAdmin ? "Edit" : "Create") school admin</h1>
+        <p class="mg-page-sub">@Model.SchoolName</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Details/@Model.SchoolId">Back</a>
+</div>
+
+@if (!Model.HasAdmin)
+{
+    <form method="post" action="/Manage/SuperAdmin/Schools/@Model.SchoolId/Admin/Create" class="mg-card mg-form" novalidate>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+        <div class="mg-field"><label asp-for="FullName"></label><input asp-for="FullName" /><span asp-validation-for="FullName" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Email"></label><input asp-for="Email" type="email" /><span asp-validation-for="Email" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="LoginId"></label><input asp-for="LoginId" /><span asp-validation-for="LoginId" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Phone"></label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label asp-for="TemporaryPassword"></label><input asp-for="TemporaryPassword" type="password" autocomplete="new-password" /><span asp-validation-for="TemporaryPassword" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Status"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<RecordStatus>()"></select></div>
+        <button type="submit" class="mg-btn mg-btn-primary">Create admin</button>
+    </form>
+}
+else
+{
+    <form method="post" action="/Manage/SuperAdmin/Schools/@Model.SchoolId/Admin/Edit" class="mg-card mg-form" novalidate>
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
+        <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+        <div class="mg-field"><label asp-for="FullName"></label><input asp-for="FullName" /><span asp-validation-for="FullName" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Email"></label><input asp-for="Email" type="email" /><span asp-validation-for="Email" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="LoginId"></label><input asp-for="LoginId" /><span asp-validation-for="LoginId" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Phone"></label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label asp-for="Status"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<RecordStatus>()"></select></div>
+        <button type="submit" class="mg-btn mg-btn-primary">Save admin</button>
+    </form>
+
+    <div class="mg-card" style="margin-top:1rem;max-width:480px;">
+        <h2 class="mg-section-title">Reset temporary password</h2>
+        <form method="post" action="/Manage/SuperAdmin/Schools/@Model.SchoolId/Admin/ResetPassword" class="mg-form">
+            @Html.AntiForgeryToken()
+            <div class="mg-field">
+                <label for="TemporaryPassword">New temporary password</label>
+                <input id="TemporaryPassword" name="TemporaryPassword" type="password" required minlength="8" autocomplete="new-password" />
+            </div>
+            <button type="submit" class="mg-btn mg-btn-secondary">Reset password</button>
+        </form>
+    </div>
+
+    <div class="mg-card" style="margin-top:1rem;max-width:480px;">
+        <h2 class="mg-section-title">Account status</h2>
+        <p>Admin is currently <strong>@(Model.Status == RecordStatus.Active ? "Active" : "Inactive")</strong>.</p>
+        <form method="post" action="/Manage/SuperAdmin/Schools/@Model.SchoolId/Admin/Toggle" onsubmit="return confirm('Toggle admin active status?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="mg-btn @(Model.Status == RecordStatus.Active ? "mg-btn-danger" : "mg-btn-primary")">
+                @(Model.Status == RecordStatus.Active ? "Deactivate admin" : "Activate admin")
+            </button>
+        </form>
+    </div>
+}

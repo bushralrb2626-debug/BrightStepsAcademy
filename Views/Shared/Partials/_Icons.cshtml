@@ -1,0 +1,98 @@
+@{
+    var name = (ViewData["Icon"] as string ?? "star").ToLowerInvariant();
+    var size = ViewData["Size"] as string ?? "22";
+}
+<span class="ico ico-@name" aria-hidden="true">
+@switch (name)
+{
+    case "grid":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="3" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="13" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "users":
+    case "family":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 19c.8-3 2.8-4.5 5.5-4.5S13.7 16 14.5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="17" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M15 19c.4-2 1.6-3.2 3.5-3.2S21.6 17 22 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "school":
+    case "cap":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M3 10l9-5 9 5-9 5-9-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 12.5v4.2c0 .8 2.2 2.3 5 2.3s5-1.5 5-2.3v-4.2" stroke="currentColor" stroke-width="1.8"/><path d="M21 10v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "chat":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M5 18l-1.5 3L8 18h9a4 4 0 004-4V7a4 4 0 00-4-4H7a4 4 0 00-4 4v7a4 4 0 002 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        break;
+    case "chart":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "cog":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.2M12 18.8V21M4.2 6.5l1.6 1.4M18.2 16.1l1.6 1.4M3 12h2.2M18.8 12H21M4.2 17.5l1.6-1.4M18.2 7.9l1.6-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "backpack":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M8 8V7a4 4 0 018 0v1M7 8h10v11a2 2 0 01-2 2H9a2 2 0 01-2-2V8z" stroke="currentColor" stroke-width="1.8"/><path d="M9 13h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "apple":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M12 7c1-2.5 3-3.5 5-3.5-.5 2-1.5 3.2-3.2 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 8c-3.5 0-7 2.4-7 7 0 3.2 2.4 6 5.2 6 1.2 0 1.8-.5 1.8-.5s.6.5 1.8.5c2.8 0 5.2-2.8 5.2-6 0-4.6-3.5-7-7-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        break;
+    case "board":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 20h8M12 16v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "book":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M5 5.5A2.5 2.5 0 017.5 3H19v15H7.5A2.5 2.5 0 005 20.5V5.5z" stroke="currentColor" stroke-width="1.8"/><path d="M5 18.5h12" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "check":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.2l2.3 2.3 4.7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        break;
+    case "star":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M12 3.5l2.4 5 5.4.7-4 3.8.9 5.4L12 16.5 7.3 18.4l.9-5.4-4-3.8 5.4-.7L12 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        break;
+    case "clock":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4.5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "bell":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M6 16V11a6 6 0 1112 0v5l1.5 2H4.5L6 16z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 19a2 2 0 004 0" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "cal":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5V7M16 3.5V7M3.5 10h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "palette":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M12 4a8 8 0 100 16h1.5a2.5 2.5 0 002.5-2.5c0-1-.6-1.5-1-2-.5-.6-.7-1.2-.4-1.9.4-.8 1.3-1.1 2.1-1.3A8 8 0 0012 4z" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="1" fill="currentColor"/><circle cx="11.5" cy="7.5" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
+        break;
+    case "pencil":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.2-.8L19 8.4 15.6 5 4.8 15.8 4 20z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.8 6.8l3.4 3.4" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "trophy":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M8 4h8v4a4 4 0 01-8 0V4z" stroke="currentColor" stroke-width="1.8"/><path d="M8 6H5.5A2.5 2.5 0 008 10.2M16 6h2.5A2.5 2.5 0 0116 10.2M10 16h4M9 20h6M12 12v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "stamp":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M9 3h6l-1.5 7H10.5L9 3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="5" y="12" width="14" height="5" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M6 20h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "user":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 19c1.2-3.2 3.6-5 7-5s5.8 1.8 7 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "flask":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M9 3h6M10 3v5.5L5.5 18A2.5 2.5 0 007.7 21.5h8.6A2.5 2.5 0 0018.5 18L14 8.5V3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        break;
+    case "ball":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M4.8 9.5c2.4 1 5 1.5 7.2 1.5s4.8-.5 7.2-1.5M4.8 14.5c2.4-1 5-1.5 7.2-1.5s4.8.5 7.2 1.5M12 4c1.2 2.5 1.8 5 1.8 8s-.6 5.5-1.8 8c-1.2-2.5-1.8-5-1.8-8s.6-5.5 1.8-8z" stroke="currentColor" stroke-width="1.4"/></svg>
+        break;
+    case "blocks":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="8" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "laptop":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 18.5h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        break;
+    case "music":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M9 18V6l10-2v12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7" cy="18" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="16" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+    case "heart":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.6-7 10-7 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        break;
+    case "bus":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="13" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 11h16M8 17v2M16 17v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+        break;
+    case "shield":
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        break;
+    default:
+        <svg width="@size" height="@size" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/></svg>
+        break;
+}
+</span>

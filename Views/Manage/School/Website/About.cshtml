@@ -1,0 +1,19 @@
+@model AboutContent
+@{
+    ViewData["Title"] = "About";
+}
+<h1 class="mg-page-title">About content</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Website">← Website</a></p>
+<div class="mg-card">
+<form method="post" enctype="multipart/form-data" class="mg-form">
+    @Html.AntiForgeryToken()
+    <div class="mg-field"><label>Heading</label><input asp-for="Heading" required /></div>
+    <div class="mg-field"><label>Description</label><textarea asp-for="Description"></textarea></div>
+    <div class="mg-field">
+        <label>Image</label>
+        @if (!string.IsNullOrEmpty(Model.ImagePath)) { <img src="@Model.ImagePath" class="mg-thumb" alt="" /> }
+        <input type="file" name="imageFile" accept="image/*" />
+    </div>
+    <button type="submit" class="mg-btn mg-btn-primary">Save</button>
+</form>
+</div>

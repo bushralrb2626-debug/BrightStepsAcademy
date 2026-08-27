@@ -1,0 +1,38 @@
+@model BrightStepsAcademy.Models.Manage.NotificationListVm
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<h1 class="mg-page-title">Notifications</h1>
+<p class="mg-page-sub">Your platform alerts</p>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="mg-card">
+        <div class="mg-empty"><h3>All caught up</h3><p>No notifications yet.</p></div>
+    </div>
+}
+else
+{
+    <div class="mg-card">
+        <ul class="mg-activity-list">
+            @foreach (var n in Model.Items)
+            {
+                <li>
+                    <strong>@n.Title</strong>
+                    <span class="mg-muted">@n.CreatedAt.ToLocalTime().ToString("g")</span>
+                    <div>@n.Message</div>
+                </li>
+            }
+        </ul>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mg-pager">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="mg-btn mg-btn-sm @(p == Model.Page ? "mg-btn-primary" : "mg-btn-secondary")" href="?page=@p">@p</a>
+            }
+        </div>
+    }
+}

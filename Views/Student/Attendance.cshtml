@@ -1,0 +1,28 @@
+@{
+    Layout = "_DashboardLayout";
+    var me = ((ISchoolData)ViewBag.Store).Students.First();
+}
+<div class="playful">
+    <div class="section-head reveal mb-2">
+        <h2>My Attendance 🌈</h2>
+        <p>Showing up is a superpower — look at your streak!</p>
+    </div>
+
+    <div class="kpi-grid stagger">
+        <div class="kpi-card accent-mint"><div class="kpi-label">Present</div><strong class="counter" data-target="@me.Attendance" data-suffix="%">0</strong></div>
+        <div class="kpi-card accent-sky"><div class="kpi-label">Streak</div><strong class="counter" data-target="12">0</strong></div>
+        <div class="kpi-card accent-orange"><div class="kpi-label">Late</div><strong class="counter" data-target="2">0</strong></div>
+    </div>
+
+    <div class="chart-card reveal">
+        <h3>This week</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="doughnut" data-chart='{"labels":["Present","Late","Absent"],"data":[18,2,0]}'></canvas>
+        </div>
+    </div>
+
+    <div class="dash-panel reveal mt-2">
+        <div class="progress-label"><span>Monthly presence</span><span>@me.Attendance%</span></div>
+        <div class="progress-bsa grass"><span style="width:@me.Attendance%"></span></div>
+    </div>
+</div>

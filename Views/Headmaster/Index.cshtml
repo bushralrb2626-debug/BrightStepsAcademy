@@ -1,0 +1,45 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var profile = (DashboardProfile)ViewBag.Profile;
+}
+<div class="welcome-banner reveal">
+    <h2>@profile.Greeting</h2>
+    <p>@profile.Subtitle</p>
+</div>
+
+<div class="kpi-grid stagger">
+    <div class="kpi-card accent-royal"><div class="kpi-label">Students</div><strong class="counter" data-target="@store.Students.Count">0</strong></div>
+    <div class="kpi-card accent-mint"><div class="kpi-label">Teachers</div><strong class="counter" data-target="@store.Teachers.Count">0</strong></div>
+    <div class="kpi-card accent-sky"><div class="kpi-label">Attendance</div><strong class="counter" data-target="96" data-suffix="%">0</strong></div>
+    <div class="kpi-card accent-orange"><div class="kpi-label">Pending approvals</div><strong class="counter" data-target="5">0</strong></div>
+</div>
+
+<div class="grid-2">
+    <div class="chart-card reveal"><h3>Campus performance</h3><div class="chart-wrap"><canvas data-chart-type="bar" data-chart='{"labels":["Math","English","Science","Arts"],"data":[91,88,94,86]}'></canvas></div></div>
+    <div class="chart-card reveal"><h3>Weekly attendance</h3><div class="chart-wrap"><canvas data-chart-type="line" data-chart='{"labels":["Mon","Tue","Wed","Thu","Fri"],"datasets":[{"label":"%","data":[95,97,94,96,98]}]}'></canvas></div></div>
+</div>
+
+<div class="grid-2">
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Today's schedule</h3></div>
+        <div class="timeline">
+            @foreach (var t in store.TodaySchedule)
+            {
+                <div class="timeline-item accent-@t.Accent">
+                    <div class="time">@t.Time</div>
+                    <div><strong>@t.Title</strong><span>@t.Meta</span></div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Important alerts</h3></div>
+        <div class="stack">
+            <div class="approval-card accent-coral"><strong>2 leave requests</strong><p class="text-muted mb-0">Awaiting headmaster review.</p></div>
+            <div class="approval-card accent-orange"><strong>Science fair budget</strong><p class="text-muted mb-0">Needs approval by Friday.</p></div>
+            <div class="approval-card accent-sky"><strong>PTM slots nearly full</strong><p class="text-muted mb-0">Remind Grade 4 families.</p></div>
+            <a class="btn-bsa btn-bsa-soft" asp-action="Approvals">Review approvals</a>
+        </div>
+    </div>
+</div>

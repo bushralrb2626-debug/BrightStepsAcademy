@@ -1,0 +1,38 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="section-head reveal mb-2">
+    <h2>Timetable</h2>
+    <p>Monday to Friday — subjects tinted with soft campus colours.</p>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="table-scroll">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var slot in store.Timetable)
+            {
+                <tr>
+                    <td class="tt-time">@slot.Time</td>
+                    <td><span class="tt-cell" data-subject="@slot.Monday">@slot.Monday</span></td>
+                    <td><span class="tt-cell" data-subject="@slot.Tuesday">@slot.Tuesday</span></td>
+                    <td><span class="tt-cell" data-subject="@slot.Wednesday">@slot.Wednesday</span></td>
+                    <td><span class="tt-cell" data-subject="@slot.Thursday">@slot.Thursday</span></td>
+                    <td><span class="tt-cell" data-subject="@slot.Friday">@slot.Friday</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

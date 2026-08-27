@@ -1,0 +1,121 @@
+@model BrightStepsAcademy.Models.Manage.SchoolListVm
+@{
+    ViewData["Title"] = "Schools";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Schools</h1>
+        <p class="mg-page-sub">Search, filter, and manage tenant schools</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/SuperAdmin/Schools/Create">Create school</a>
+</div>
+
+<form method="get" class="mg-filters mg-card">
+    <div class="mg-field">
+        <label>Search</label>
+        <input type="search" name="search" value="@Model.Search" placeholder="Name, code, email, city" />
+    </div>
+    <div class="mg-field">
+        <label>Status</label>
+        <select name="status">
+            <option value="">All</option>
+            @foreach (SchoolStatus st in Enum.GetValues<SchoolStatus>())
+            {
+                <option value="@st" selected="@(string.Equals(Model.StatusFilter, st.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@st</option>
+            }
+        </select>
+    </div>
+    <div class="mg-field">
+        <label>Subscription</label>
+        <select name="subscription">
+            <option value="">All</option>
+            @foreach (SubscriptionStatus st in Enum.GetValues<SubscriptionStatus>())
+            {
+                <option value="@st" selected="@(string.Equals(Model.SubscriptionFilter, st.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@st</option>
+            }
+        </select>
+    </div>
+    <div class="mg-field">
+        <label>Created</label>
+        <select name="date">
+            <option value="">Any time</option>
+            <option value="today" selected="@(Model.DateFilter=="today"?"selected":null)">Today</option>
+            <option value="week" selected="@(Model.DateFilter=="week"?"selected":null)">Last 7 days</option>
+            <option value="month" selected="@(Model.DateFilter=="month"?"selected":null)">Last 30 days</option>
+            <option value="year" selected="@(Model.DateFilter=="year"?"selected":null)">Last year</option>
+        </select>
+    </div>
+    <div class="mg-field" style="align-self:end;">
+        <button type="submit" class="mg-btn mg-btn-primary">Filter</button>
+    </div>
+</form>
+
+@if (Model.Schools.Count == 0)
+{
+    <div class="mg-card" style="margin-top:1rem;">
+        <div class="mg-empty">
+            <h3>No schools found</h3>
+            <p>Try clearing filters or create the first school.</p>
+            <a class="mg-btn mg-btn-primary" href="/Manage/SuperAdmin/Schools/Create">Create school</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="mg-card" style="margin-top:1rem;padding:0;">
+        <div class="mg-table-wrap">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Admin</th>
+                        <th>Admin email</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Expiry</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var s in Model.Schools)
+                {
+                    <tr>
+                        <td><strong>@s.Name</strong></td>
+                        <td>@s.SchoolCode</td>
+                        <td>@(s.AdminName ?? (s.HasAdmin ? "—" : "None"))</td>
+                        <td>@(s.AdminEmail ?? "—")</td>
+                        <td>
+                            @(s.PlanName ?? "—")
+                            @if (s.SubscriptionStatus.HasValue)
+                            {
+                                <div><span class="mg-badge mg-badge-sub-@s.SubscriptionStatus.Value.ToString().ToLowerInvariant()">@s.SubscriptionStatus</span></div>
+                            }
+                        </td>
+                        <td><span class="mg-badge mg-badge-school-@s.Status.ToString().ToLowerInvariant()">@s.Status</span></td>
+                        <td>@s.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td>@(s.ExpiryDate?.ToLocalTime().ToString("dd MMM yyyy") ?? "—")</td>
+                        <td class="mg-row-actions">
+                            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Details/@s.Id">View</a>
+                            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Edit/@s.Id">Edit</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mg-pager">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="mg-btn mg-btn-sm @(p == Model.Page ? "mg-btn-primary" : "mg-btn-secondary")"
+                   href="?search=@Model.Search&status=@Model.StatusFilter&subscription=@Model.SubscriptionFilter&date=@Model.DateFilter&page=@p">@p</a>
+            }
+        </div>
+    }
+}

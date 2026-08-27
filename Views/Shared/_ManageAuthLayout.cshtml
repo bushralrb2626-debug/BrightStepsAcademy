@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Sign in") · BrightSteps Manage</title>
+    <link rel="stylesheet" href="~/css/manage.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="m-content" style="max-width:420px;margin:4rem auto;">
+        <div class="m-brand" style="justify-content:center;border:none;margin-bottom:1.25rem;color:var(--m-navy);">
+            <div class="m-brand-mark">BS</div>
+            <div class="m-brand-text">
+                <strong>BrightSteps</strong>
+                <span style="opacity:0.7;">Manage</span>
+            </div>
+        </div>
+        <div class="m-card">
+            <div class="m-card-body">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

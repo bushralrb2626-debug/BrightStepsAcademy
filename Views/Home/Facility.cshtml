@@ -1,0 +1,43 @@
+@model Facility
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-@Model.Accent"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Facility</p>
+        <h1>@Model.Name</h1>
+        <p>@Model.Description</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="detail-grid">
+        <article class="detail-card card-lift reveal accent-@Model.Accent">
+            <img class="detail-card__hero" src="@Model.Image" alt="@Model.Name" />
+            <div class="detail-card__body">
+                @{ ViewData["Icon"] = Model.Icon; }
+                <partial name="Partials/_Icons" />
+                <h2>Inside @Model.Name</h2>
+                <p>@Model.Description Students use this space throughout the week for lessons, clubs, and celebrations. Safety, accessibility, and joyful design guide every corner.</p>
+                @if (Model.Featured)
+                {
+                    <span class="badge-soft accent-yellow">Featured facility</span>
+                }
+                <a class="btn-bsa btn-bsa-soft" asp-controller="Home" asp-action="Facilities">All facilities</a>
+            </div>
+        </article>
+        <aside class="detail-aside reveal">
+            <h3>Also on campus</h3>
+            <div class="facility-list">
+                @foreach (var f in store.Facilities.Where(x => x.Id != Model.Id).Take(5))
+                {
+                    <a class="facility-mini card-lift accent-@f.Accent" asp-controller="Home" asp-action="Facility" asp-route-id="@f.Id">
+                        <img src="@f.Image" alt="@f.Name" />
+                        <span>@f.Name</span>
+                    </a>
+                }
+            </div>
+        </aside>
+    </div>
+</section>

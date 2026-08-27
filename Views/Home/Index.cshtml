@@ -1,0 +1,534 @@
+﻿@using BrightStepsAcademy.Models
+@{
+    var store = (ISchoolData)ViewBag.Store;
+    var site = ViewBag.Site as PublicWebsiteViewModel;
+    var displayName = site?.ShortName ?? site?.Name ?? store.Schools.First().Name;
+    var teachers = store.Teachers.Take(8).ToList();
+    var programs = store.Programs.ToList();
+    var activities = store.Activities.ToList();
+    var events = store.Events.Take(4).ToList();
+    var facilities = site?.Facilities?.ToList() ?? new List<PublicFacilityDto>();
+    var gallery = site?.Gallery?.ToList() ?? new List<PublicGalleryDto>();
+    var highlights = site?.Highlights?.ToList() ?? new List<PublicHighlightDto>();
+    var heroHeading = site?.Hero?.Heading ?? "WHERE LITTLE MINDS GROW INTO BIG DREAMS";
+    var heroParts = heroHeading.Split(' ', 4);
+    var heroLead = heroParts.Length >= 4
+        ? string.Join(' ', heroParts.Take(3))
+        : heroHeading;
+    var heroSpan = heroParts.Length >= 4
+        ? string.Join(' ', heroParts.Skip(3))
+        : "";
+    var programEmoji = new Dictionary<string, string>
+    {
+        ["Early Learning"] = "📚",
+        ["Primary School"] = "✏️",
+        ["Middle School"] = "🎓",
+        ["Creative Arts"] = "🎨",
+        ["Sports"] = "⚽",
+        ["Science & Technology"] = "🔬"
+    };
+}
+
+@* ===== HERO SHOWSTOPPER ===== *@
+<section class="hero-fancy" id="top">
+    <div class="hero-fancy__clouds" aria-hidden="true">
+        <svg class="cloud-svg" viewBox="0 0 120 60" fill="white"><ellipse cx="40" cy="38" rx="28" ry="18"/><ellipse cx="68" cy="32" rx="24" ry="16"/><ellipse cx="90" cy="40" rx="18" ry="12"/></svg>
+        <svg class="cloud-svg" viewBox="0 0 120 60" fill="white"><ellipse cx="40" cy="38" rx="28" ry="18"/><ellipse cx="68" cy="32" rx="24" ry="16"/><ellipse cx="90" cy="40" rx="18" ry="12"/></svg>
+        <svg class="cloud-svg" viewBox="0 0 120 60" fill="white"><ellipse cx="40" cy="38" rx="28" ry="18"/><ellipse cx="68" cy="32" rx="24" ry="16"/><ellipse cx="90" cy="40" rx="18" ry="12"/></svg>
+    </div>
+    <div class="hero-fancy__grid">
+        <div class="hero-fancy__copy reveal">
+            <p class="eyebrow">@(site?.Hero?.Eyebrow ?? $"Welcome to {displayName}")</p>
+            <h1>@heroLead @if (!string.IsNullOrEmpty(heroSpan)) { <span>@heroSpan</span> }</h1>
+            <p class="hero-fancy__lead">@(site?.Hero?.Description ?? "A colorful campus where curiosity blooms, creativity shines, and every child gets to learn, explore and dream — every single day.")</p>
+            <div class="hero__actions">
+                <a class="btn-bsa btn-hero btn-hero-yellow" href="@(site?.Hero?.CtaLink ?? "#about")">@(site?.Hero?.CtaText ?? "Explore Our School") <span class="btn-ico" aria-hidden="true">→</span></a>
+                <a class="btn-bsa btn-hero btn-hero-outline" asp-controller="Portal" asp-action="Login">Student Portal <span class="btn-ico" aria-hidden="true">🚀</span></a>
+            </div>
+        </div>
+        <div class="hero-stage reveal">
+            <div class="hero-stage__back" role="img" aria-label="@displayName campus"></div>
+            <div class="hero-stage__mid">
+                <img src="@(site?.Hero?.ImagePath ?? Images.KidsRead)" alt="Children learning with books" loading="eager" />
+            </div>
+            <span class="hero-float hero-float--star" aria-hidden="true">
+                <svg width="48" height="48" viewBox="0 0 48 48"><polygon points="24,2 29,18 46,18 32,28 37,44 24,34 11,44 16,28 2,18 19,18" fill="#F5C518"/></svg>
+            </span>
+            <span class="hero-float hero-float--plane" aria-hidden="true">
+                <svg width="56" height="40" viewBox="0 0 56 40"><path d="M2 22 L54 2 L34 38 L26 24 Z" fill="#fff"/><path d="M26 24 L18 30 L22 22 Z" fill="#FF7A1A"/></svg>
+            </span>
+            <span class="hero-float hero-float--book" aria-hidden="true">
+                <svg width="52" height="42" viewBox="0 0 52 42"><rect x="4" y="6" width="20" height="30" rx="3" fill="#E94B6A"/><rect x="24" y="6" width="20" height="30" rx="3" fill="#1565D8"/><path d="M24 8 Q28 14 24 34" stroke="#fff" stroke-width="2" fill="none"/></svg>
+            </span>
+            <span class="hero-float hero-float--pencil" aria-hidden="true">
+                <svg width="20" height="64" viewBox="0 0 20 64"><rect x="6" y="0" width="8" height="48" fill="#F5C518"/><polygon points="6,48 14,48 10,64" fill="#8B5E34"/><rect x="6" y="0" width="8" height="8" fill="#E94B6A"/></svg>
+            </span>
+            <span class="hero-float hero-float--blocks" aria-hidden="true">
+                <svg width="64" height="48" viewBox="0 0 64 48"><rect x="2" y="18" width="28" height="28" rx="4" fill="#21A65A"/><text x="16" y="38" text-anchor="middle" fill="#fff" font-size="16" font-family="Fredoka,sans-serif">A</text><rect x="34" y="2" width="28" height="28" rx="4" fill="#7048C8"/><text x="48" y="22" text-anchor="middle" fill="#fff" font-size="16" font-family="Fredoka,sans-serif">B</text></svg>
+            </span>
+            <span class="hero-float hero-float--bag" aria-hidden="true">
+                <svg width="44" height="48" viewBox="0 0 44 48"><rect x="6" y="14" width="32" height="30" rx="6" fill="#FF7A1A"/><path d="M14 14 Q22 2 30 14" stroke="#F5C518" stroke-width="4" fill="none"/><circle cx="22" cy="28" r="4" fill="#fff"/></svg>
+            </span>
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#FFF9F0" d="M0,40 C240,72 480,8 720,40 C960,72 1200,16 1440,40 L1440,72 L0,72 Z"/></svg>
+
+@* ===== ABOUT STORY ===== *@
+<section class="band about-story" id="about">
+    <div class="bg-shape bg-shape--a" aria-hidden="true"></div>
+    <div class="bg-shape bg-shape--b" aria-hidden="true"></div>
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Our Learning World</p>
+            <h2>@(site?.About?.Heading ?? "A story of bright beginnings")</h2>
+            <p>@(site?.About?.Description ?? "Not just a campus — a colorful journey families love to join.")</p>
+        </div>
+        <div class="story-rail">
+            @if (highlights.Count > 0)
+            {
+                foreach (var h in highlights.Take(4))
+                {
+                    <div class="story-step reveal">
+                        <div class="story-step__marker" aria-hidden="true">@(string.IsNullOrWhiteSpace(h.ImageOrIcon) ? "🌟" : h.ImageOrIcon)</div>
+                        <div class="story-step__card">
+                            <h3>@h.Title</h3>
+                            <p>@h.Description</p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="story-step reveal">
+                    <div class="story-step__marker" aria-hidden="true">🏫</div>
+                    <div class="story-step__card">
+                        <h3>Where learning begins</h3>
+                        <p>Sunlit classrooms, curious questions, and teachers who know every child by name — that’s the @displayName way.</p>
+                    </div>
+                </div>
+                <div class="story-step reveal">
+                    <div class="story-step__marker" aria-hidden="true">🎯</div>
+                    <div class="story-step__card">
+                        <h3>Our mission</h3>
+                        <p>To nurture curious, kind and confident learners through joyful teaching and meaningful experiences.</p>
+                    </div>
+                </div>
+                <div class="story-step reveal">
+                    <div class="story-step__marker" aria-hidden="true">🌈</div>
+                    <div class="story-step__card">
+                        <h3>Our vision</h3>
+                        <p>A world where every child feels seen, challenged and inspired to grow — one bright step at a time.</p>
+                    </div>
+                </div>
+                <div class="story-step reveal">
+                    <div class="story-step__marker" aria-hidden="true">💛</div>
+                    <div class="story-step__card">
+                        <h3>Why families choose us</h3>
+                        <p>Safe spaces, creative learning, strong academics, and a portal that keeps parents close to every milestone.</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="story-mosaic reveal">
+            <img class="story-mosaic__tall" src="@(site?.About?.ImagePath ?? Images.Classroom)" alt="Bright classroom" loading="lazy" />
+            <div class="story-mosaic__stack">
+                <img src="@Images.Play" alt="Children playing" loading="lazy" />
+                <img src="@Images.Library" alt="School library" loading="lazy" />
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===== FUN STATS ===== *@
+<section class="band stats-fun">
+    <div class="band__inner">
+        <div class="stats-fun-grid stagger">
+            <article class="stat-fun reveal">
+                <span class="stat-fun__emoji" aria-hidden="true">👧</span>
+                <div>
+                    <strong class="counter" data-target="1250">0</strong><span>+</span>
+                    <span>HAPPY LEARNERS</span>
+                </div>
+                <small>✨ Growing every year</small>
+            </article>
+            <article class="stat-fun reveal">
+                <span class="stat-fun__emoji" aria-hidden="true">👩‍🏫</span>
+                <div>
+                    <strong class="counter" data-target="86">0</strong>
+                    <span>CARING TEACHERS</span>
+                </div>
+                <small>🎯 Experts who inspire</small>
+            </article>
+            <article class="stat-fun reveal">
+                <span class="stat-fun__emoji" aria-hidden="true">🏫</span>
+                <div>
+                    <strong class="counter" data-target="42">0</strong>
+                    <span>BRIGHT CLASSES</span>
+                </div>
+                <small>📚 Spaces made for wonder</small>
+            </article>
+            <article class="stat-fun reveal">
+                <span class="stat-fun__emoji" aria-hidden="true">🏆</span>
+                <div>
+                    <strong class="counter" data-target="15">0</strong><span>+</span>
+                    <span>YEARS OF JOY</span>
+                </div>
+                <small>🎉 Excellence with heart</small>
+            </article>
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#FFF9F0" d="M0,24 C360,64 720,0 1080,32 C1260,48 1380,40 1440,28 L1440,72 L0,72 Z"/></svg>
+
+@* ===== PROGRAMS ===== *@
+<section class="band programs-fancy" id="programs">
+    <div class="bg-shape bg-shape--c" aria-hidden="true"></div>
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Programs</p>
+            <h2>Pick your adventure</h2>
+            <p>Every pathway is a colorful tile of discovery — not a boring brochure list.</p>
+        </div>
+        <div class="program-tiles stagger">
+            @foreach (var p in programs)
+            {
+                var emoji = programEmoji.GetValueOrDefault(p.Title, "🌟");
+                <a class="program-tile reveal" asp-controller="Home" asp-action="Program" asp-route-name="@p.Title">
+                    <img src="@p.Image" alt="@p.Title" loading="lazy" />
+                    <div class="program-tile__shade"></div>
+                    <div class="program-tile__body">
+                        <div class="program-tile__icon" aria-hidden="true">@emoji</div>
+                        <h3>@p.Title</h3>
+                        <p>@p.Description</p>
+                        <span class="program-tile__go">Explore pathway →</span>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#FFE08A" d="M0,32 C280,8 560,64 840,28 C1120,0 1320,48 1440,24 L1440,72 L0,72 Z"/></svg>
+
+@* ===== FACILITIES ===== *@
+<section class="band facilities-fancy" id="facilities">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Facilities</p>
+            <h2>Everything they need to learn, play &amp; grow</h2>
+            <p>A campus designed like a playground for the imagination — with serious learning spaces inside.</p>
+        </div>
+        <div class="facility-wall stagger">
+            @for (var i = 0; i < facilities.Count; i++)
+            {
+                var f = facilities[i];
+                var size = i == 0 ? "is-lg" : (i % 5 == 0 ? "is-wide" : "");
+                <a class="facility-poster reveal @size" href="#facilities">
+                    <img src="@(f.ImagePath ?? Images.Campus)" alt="@f.Name" loading="lazy" />
+                    <div class="facility-poster__cap">
+                        <h3>@f.Name</h3>
+                        <p>@f.Description</p>
+                        <span class="go">Explore Facility →</span>
+                    </div>
+                </a>
+            }
+        </div>
+        <div class="section-cta reveal" style="margin-top:1.5rem">
+            <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Facilities">See all spaces</a>
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#ffffff" d="M0,40 C360,8 720,64 1080,24 C1260,8 1380,32 1440,40 L1440,72 L0,72 Z"/></svg>
+
+@* ===== TEACHERS ===== *@
+<section class="band teachers-fancy" id="teachers">
+    <div class="bg-shape bg-shape--d" aria-hidden="true"></div>
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Teachers</p>
+            <h2>Faces children love to see</h2>
+            <p>Warm educators with colorful classrooms and even bigger hearts.</p>
+        </div>
+        <div class="teacher-wall stagger">
+            @foreach (var t in teachers)
+            {
+                <a class="teacher-poster reveal" asp-controller="Home" asp-action="TeacherProfile" asp-route-id="@t.Id">
+                    <div class="teacher-poster__blob" aria-hidden="true"></div>
+                    <img class="teacher-poster__photo" src="@t.Photo" alt="@t.Name" loading="lazy" />
+                    <div class="teacher-poster__info">
+                        <h3>@t.Name</h3>
+                        <span>@t.Subject · @t.ExperienceYears yrs</span>
+                        <p>@(t.Bio.Length > 70 ? t.Bio[..70] + "…" : t.Bio)</p>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+@* ===== ACTIVITIES ===== *@
+<section class="band activities-fancy" id="activities">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Activities</p>
+            <h2>Beyond the timetable</h2>
+            <p>The moments kids remember forever — art, science, sports and celebration.</p>
+        </div>
+        <div class="activity-strip stagger">
+            @foreach (var a in activities.Take(6))
+            {
+                <article class="activity-tile reveal">
+                    <img src="@a.Image" alt="@a.Title" loading="lazy" />
+                    <div class="activity-tile__cap">
+                        <h3>@a.Title</h3>
+                        <p>@a.Description</p>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#1565D8" d="M0,28 C320,64 640,0 960,36 C1200,60 1360,20 1440,32 L1440,72 L0,72 Z"/></svg>
+
+@* ===== EVENTS ===== *@
+<section class="band events-fancy" id="events">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Upcoming Events</p>
+            <h2>Mark the calendar — joy is scheduled</h2>
+            <p>Colorful posters for days the whole school talks about.</p>
+        </div>
+        <div class="event-posters stagger">
+            @foreach (var e in events)
+            {
+                <a class="event-poster reveal" asp-controller="Home" asp-action="Event" asp-route-id="@e.Id">
+                    <img src="@e.Image" alt="@e.Title" loading="lazy" />
+                    <div class="event-poster__body">
+                        <span class="event-poster__date">@e.Date.ToString("MMM d").ToUpper()</span>
+                        <h3>@e.Title</h3>
+                        <p>@e.Description</p>
+                        <span class="go">View Event →</span>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#5F3DC4" d="M0,36 C400,8 800,64 1200,24 C1320,12 1400,28 1440,36 L1440,72 L0,72 Z"/></svg>
+
+@* ===== ACHIEVEMENTS ===== *@
+<section class="band achieve-fancy" id="achievements">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Achievements</p>
+            <h2>Celebrations worth a trophy</h2>
+            <p>Wins big and small — always cheered loudly.</p>
+        </div>
+        <div class="achieve-grid stagger">
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">🏆</span>
+                <h3>Academic Excellence</h3>
+                <p><strong class="counter" data-target="95">0</strong>% success rate across core subjects.</p>
+            </article>
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">🎖️</span>
+                <h3>Competition Awards</h3>
+                <p><strong class="counter" data-target="32">0</strong> medals in science, art and debate.</p>
+            </article>
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">⭐</span>
+                <h3>Reading Stars</h3>
+                <p><strong class="counter" data-target="1000">0</strong>+ student achievements celebrated.</p>
+            </article>
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">⚽</span>
+                <h3>Sports Champions</h3>
+                <p><strong class="counter" data-target="18">0</strong> sports trophies this season.</p>
+            </article>
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">🎨</span>
+                <h3>Art Winners</h3>
+                <p>Gallery walls filled with prize-winning color.</p>
+            </article>
+            <article class="achieve-card reveal">
+                <span class="trophy" aria-hidden="true">🎉</span>
+                <h3>Community Awards</h3>
+                <p>Kindness, service and school spirit recognized.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#FFF9F0" d="M0,24 C360,56 720,0 1080,40 C1260,56 1380,24 1440,32 L1440,72 L0,72 Z"/></svg>
+
+@* ===== GALLERY ===== *@
+<section class="band gallery-fancy" id="gallery">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Gallery</p>
+            <h2>Life in colour — a scrapbook wall</h2>
+            <p>Click any photo to open the lightbox. Uneven, editorial, alive.</p>
+        </div>
+        <div class="scrapbook">
+            @foreach (var g in gallery)
+            {
+                var caption = g.Title ?? g.Description ?? g.Category ?? "School moment";
+                <button type="button" class="scrap-item reveal" data-gallery data-src="@g.ImagePath" data-caption="@caption" aria-label="@caption">
+                    <img src="@g.ImagePath" alt="@caption" loading="lazy" />
+                    <span>@(g.Category ?? "Campus")</span>
+                </button>
+            }
+        </div>
+    </div>
+</section>
+
+@* ===== TESTIMONIALS ===== *@
+<section class="band testimonials-fancy" id="testimonials">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Families</p>
+            <h2>What parents are saying</h2>
+            <p>Real voices from the BrightSteps community.</p>
+        </div>
+        <div class="quote-wall stagger">
+            <article class="quote-bubble reveal">
+                <p>Every morning my child is excited to go to school — that says everything.</p>
+                <div class="quote-who">
+                    <img src="@Images.Parents[0]" alt="Amelia Johnson" loading="lazy" />
+                    <div>
+                        <strong>Amelia Johnson</strong>
+                        <small>Parent · Grade 4</small>
+                    </div>
+                </div>
+            </article>
+            <article class="quote-bubble reveal">
+                <p>The teachers know my son’s strengths — and cheer for his quiet wins too.</p>
+                <div class="quote-who">
+                    <img src="@Images.Parents[1]" alt="Marcus Rivera" loading="lazy" />
+                    <div>
+                        <strong>Marcus Rivera</strong>
+                        <small>Parent · Grade 5</small>
+                    </div>
+                </div>
+            </article>
+            <article class="quote-bubble reveal">
+                <p>Creative, safe, and full of colour. BrightSteps feels like a second home.</p>
+                <div class="quote-who">
+                    <img src="@Images.Parents[2]" alt="Priya Patel" loading="lazy" />
+                    <div>
+                        <strong>Priya Patel</strong>
+                        <small>Parent · Grade 3</small>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+@* ===== PORTAL ===== *@
+<section class="band portal-fancy" id="portal">
+    <div class="band__inner">
+        <div class="section-head fancy reveal" style="text-align:center;margin-inline:auto">
+            <p class="eyebrow" style="color:#F5C518!important">School Portal</p>
+            <h2>WHO'S READY TO LEARN?</h2>
+            <p style="color:rgba(255,255,255,.92)">Pick your door — Teacher, Parent, Student, Headmaster, School Admin or Super Admin.</p>
+        </div>
+        <div class="portal-doors stagger">
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="sarah.wilson@brightsteps.academy">
+                <span class="emoji" aria-hidden="true">👩‍🏫</span>
+                <h3>Teacher</h3>
+                <p>Manage classes, students and learning activities.</p>
+                <span class="go">Enter Teacher Portal →</span>
+            </a>
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="amelia.johnson@email.com">
+                <span class="emoji" aria-hidden="true">👨‍👩‍👧</span>
+                <h3>Parent</h3>
+                <p>Stay connected with your child's learning.</p>
+                <span class="go">Enter Parent Portal →</span>
+            </a>
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="alex.rivera@student.brightsteps.academy">
+                <span class="emoji" aria-hidden="true">🧒</span>
+                <h3>Student</h3>
+                <p>Learn, explore and grow.</p>
+                <span class="go">Enter Student Portal →</span>
+            </a>
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="grace.okonkwo@brightsteps.academy">
+                <span class="emoji" aria-hidden="true">🎓</span>
+                <h3>Headmaster</h3>
+                <p>Monitor and manage the school.</p>
+                <span class="go">Enter Headmaster Portal →</span>
+            </a>
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="admin@brightfuture.academy">
+                <span class="emoji" aria-hidden="true">🏫</span>
+                <h3>School Admin</h3>
+                <p>Manage buildings, staff, students and website.</p>
+                <span class="go">Enter School Admin →</span>
+            </a>
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="superadmin@platform.com">
+                <span class="emoji" aria-hidden="true">🛡️</span>
+                <h3>Super Admin</h3>
+                <p>Platform owner — onboard schools and admins.</p>
+                <span class="go">Enter Super Admin →</span>
+            </a>
+        </div>
+        <p class="portal-staff reveal">Already have an account? <a asp-controller="Portal" asp-action="Login">Login</a></p>
+    </div>
+</section>
+
+@* ===== FINAL CTA ===== *@
+<section class="band cta-scene">
+    <span class="cta-deco cta-deco--1" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 48 48"><polygon points="24,2 29,18 46,18 32,28 37,44 24,34 11,44 16,28 2,18 19,18" fill="#F5C518"/></svg></span>
+    <span class="cta-deco cta-deco--2" aria-hidden="true"><svg width="48" height="36" viewBox="0 0 56 40"><path d="M2 22 L54 2 L34 38 L26 24 Z" fill="#fff"/></svg></span>
+    <span class="cta-deco cta-deco--3" aria-hidden="true"><svg width="44" height="36" viewBox="0 0 52 42"><rect x="4" y="6" width="20" height="30" rx="3" fill="#E94B6A"/><rect x="24" y="6" width="20" height="30" rx="3" fill="#21A65A"/></svg></span>
+    <span class="cta-deco cta-deco--4" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#FF7A1A"/></svg></span>
+    <div class="reveal">
+        <p class="eyebrow" style="color:#F5C518!important">Admissions</p>
+        <h2>READY TO START <span>THE ADVENTURE?</span></h2>
+        <p>Join a school where learning feels like discovery — and every hallway holds a new story.</p>
+        <div class="cta-scene__actions">
+            <a class="btn-bsa btn-hero btn-hero-yellow" asp-controller="Home" asp-action="Contact">Join Our School <span class="btn-ico">→</span></a>
+            <a class="btn-bsa btn-hero btn-hero-outline" href="#programs">Explore More</a>
+        </div>
+    </div>
+</section>
+
+<svg class="wave-sep" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true"><path fill="#FFF9F0" d="M0,40 C360,8 720,56 1080,24 C1260,8 1380,40 1440,32 L1440,72 L0,72 Z"/></svg>
+
+@* ===== CONTACT ===== *@
+<section class="band contact-fancy" id="contact" style="background:#FFF9F0">
+    <div class="band__inner">
+        <div class="section-head fancy reveal">
+            <p class="eyebrow">Visit Us</p>
+            <h2>Come say hello</h2>
+            <p>We love meeting new families on Maple Grove.</p>
+        </div>
+        <div class="contact-grid">
+            <form id="contactForm" class="form-bsa card-lift reveal" method="post" action="#">
+                <label>Name <input type="text" name="name" required placeholder="Your name" /></label>
+                <label>Email <input type="email" name="email" required placeholder="you@email.com" /></label>
+                <label>Subject <input type="text" name="subject" required placeholder="Admissions, visit, or question" /></label>
+                <label>Message <textarea name="message" rows="5" required placeholder="How can we help?"></textarea></label>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Send Message <span class="btn-ico">✈️</span></button>
+            </form>
+            <div class="contact-side reveal">
+                <div class="contact-card" style="border:4px solid #FF7A1A;border-radius:1.4rem">
+                    <h3>@(site?.Name ?? displayName)</h3>
+                    <p><strong>Address:</strong> @(site?.Contact?.Address ?? "42 Maple Grove Avenue, Riverside")</p>
+                    <p><strong>Phone:</strong> @(site?.Contact?.Phone ?? "+1 (555) 214-8800")</p>
+                    <p><strong>Email:</strong> @(site?.Contact?.Email ?? "hello@brightfuture.academy")</p>
+                    <p><strong>Office hours:</strong> @(site?.Contact?.OfficeHours ?? "Mon–Fri · 8:00 AM – 4:00 PM")</p>
+                </div>
+                <div class="map-placeholder" role="img" aria-label="Map placeholder">
+                    <span>📍 Map placeholder</span>
+                    <small>@(site?.Contact?.Address ?? "42 Maple Grove, Riverside")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

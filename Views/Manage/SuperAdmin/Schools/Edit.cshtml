@@ -1,0 +1,61 @@
+@model BrightStepsAcademy.Models.Manage.SchoolFormVm
+@{
+    ViewData["Title"] = "Edit school";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Edit school</h1>
+        <p class="mg-page-sub">@Model.Name</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Details/@Model.Id">Back to details</a>
+</div>
+
+<form method="post" action="/Manage/SuperAdmin/Schools/Edit/@Model.Id" enctype="multipart/form-data" class="mg-card mg-form wide" novalidate>
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="LogoPath" />
+    <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+
+    <h2 class="mg-section-title">Basic</h2>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label asp-for="Name"></label><input asp-for="Name" /><span asp-validation-for="Name" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="SchoolCode"></label><input asp-for="SchoolCode" /><span asp-validation-for="SchoolCode" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="ShortName"></label><input asp-for="ShortName" /></div>
+        <div class="mg-field"><label asp-for="Email"></label><input asp-for="Email" type="email" /><span asp-validation-for="Email" class="field-error"></span></div>
+        <div class="mg-field"><label asp-for="Phone"></label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label asp-for="Status"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<SchoolStatus>()"></select></div>
+        <div class="mg-field"><label asp-for="SchoolType"></label><input asp-for="SchoolType" /></div>
+        <div class="mg-field"><label asp-for="PrincipalName"></label><input asp-for="PrincipalName" /></div>
+        <div class="mg-field"><label asp-for="Website"></label><input asp-for="Website" /></div>
+        <div class="mg-field"><label asp-for="RegistrationNumber"></label><input asp-for="RegistrationNumber" /></div>
+        <div class="mg-field"><label asp-for="EstablishedYear"></label><input asp-for="EstablishedYear" type="number" /></div>
+        <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Tagline"></label><input asp-for="Tagline" /></div>
+        <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Description"></label><textarea asp-for="Description" rows="3"></textarea></div>
+    </div>
+
+    <h2 class="mg-section-title">Location</h2>
+    <div class="mg-grid-2">
+        <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Address"></label><textarea asp-for="Address" rows="2"></textarea></div>
+        <div class="mg-field"><label asp-for="City"></label><input asp-for="City" /></div>
+        <div class="mg-field"><label asp-for="StateProvince"></label><input asp-for="StateProvince" /></div>
+        <div class="mg-field"><label asp-for="Country"></label><input asp-for="Country" /></div>
+        <div class="mg-field"><label asp-for="PostalCode"></label><input asp-for="PostalCode" /></div>
+        <div class="mg-field"><label asp-for="PrimaryContactName"></label><input asp-for="PrimaryContactName" /></div>
+        <div class="mg-field"><label asp-for="PrimaryContactEmail"></label><input asp-for="PrimaryContactEmail" /></div>
+        <div class="mg-field"><label asp-for="PrimaryContactPhone"></label><input asp-for="PrimaryContactPhone" /></div>
+        <div class="mg-field"><label asp-for="EmergencyContact"></label><input asp-for="EmergencyContact" /></div>
+    </div>
+
+    <h2 class="mg-section-title">Branding</h2>
+    @if (!string.IsNullOrEmpty(Model.LogoPath))
+    {
+        <img src="@Model.LogoPath" alt="Logo" class="mg-thumb" />
+    }
+    <div class="mg-field"><label asp-for="LogoFile"></label><input asp-for="LogoFile" type="file" accept="image/*" /></div>
+
+    <div class="mg-actions">
+        <button type="submit" class="mg-btn mg-btn-primary">Save changes</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools">Cancel</a>
+    </div>
+</form>

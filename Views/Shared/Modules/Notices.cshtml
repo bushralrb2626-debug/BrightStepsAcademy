@@ -1,0 +1,60 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var role = (string)(ViewBag.RoleKey ?? "");
+    var canCreate = role is "Admin" or "Headmaster" or "Teacher" or "SuperAdmin";
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Notices</h2>
+        <p>Campus announcements families and staff can trust.</p>
+    </div>
+    @if (canCreate)
+    {
+        <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="createNoticeModal">Create Notice</button>
+    }
+</div>
+
+<div class="notice-grid stagger">
+    @foreach (var n in store.Notices)
+    {
+        var badge = n.Category.ToLowerInvariant() switch
+        {
+            "important" => "badge-important",
+            "event" => "badge-event",
+            "holiday" => "badge-holiday",
+            _ => "badge-general"
+        };
+        <article class="notice-card-dash card-lift">
+            <span class="badge-soft @badge">@n.Category</span>
+            <h3 class="mt-1">@n.Title</h3>
+            <p>@n.Body</p>
+            <small class="text-muted">@n.Date.ToString("MMMM d, yyyy")</small>
+        </article>
+    }
+</div>
+
+@if (canCreate)
+{
+    <div class="modal-bsa" id="createNoticeModal" role="dialog" aria-modal="true">
+        <div class="modal-bsa-backdrop"></div>
+        <div class="modal-bsa-dialog">
+            <div class="modal-bsa-header">
+                <h3>Create Notice</h3>
+                <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+            </div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Notice published (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+                <div class="field"><label>Title</label><input required /></div>
+                <div class="field">
+                    <label>Category</label>
+                    <select><option>General</option><option>Important</option><option>Event</option><option>Holiday</option></select>
+                </div>
+                <div class="field"><label>Body</label><textarea required></textarea></div>
+                <div class="modal-bsa-footer">
+                    <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                    <button type="submit" class="btn-bsa btn-bsa-primary">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

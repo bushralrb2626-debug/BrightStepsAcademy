@@ -1,0 +1,39 @@
+@model SearchResultVm
+@{
+    ViewData["Title"] = "Search";
+}
+<h1 class="mg-page-title">Search</h1>
+<p class="mg-page-sub">Find rooms, staff, students, buildings, and furniture</p>
+
+<form class="mg-search" method="get" style="margin-bottom:1.25rem;max-width:520px;">
+    <input type="search" name="q" value="@Model.Query" placeholder="Type at least 2 characters…" />
+    <button type="submit" class="mg-btn mg-btn-primary">Search</button>
+</form>
+
+@if (string.IsNullOrWhiteSpace(Model.Query) || Model.Query.Length < 2)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>Start typing</h3><p>Enter a search term to look across school records.</p></div></div>
+}
+else if (Model.Hits.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No matches</h3><p>Nothing found for “@Model.Query”.</p></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Type</th><th>Title</th><th>Detail</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var h in Model.Hits)
+            {
+                <tr>
+                    <td>@h.Entity</td>
+                    <td>@h.Title</td>
+                    <td>@(h.Subtitle ?? "—")</td>
+                    <td><a class="mg-btn mg-btn-sm mg-btn-secondary" href="@h.Url">Open</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

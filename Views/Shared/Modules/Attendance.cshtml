@@ -1,0 +1,89 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var rows = store.Attendance;
+    var present = rows.Count(r => r.Mark == "Present");
+    var absent = rows.Count(r => r.Mark == "Absent");
+    var late = rows.Count(r => r.Mark == "Late");
+    var pct = rows.Count == 0 ? 0 : (int)Math.Round(100.0 * present / rows.Count);
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Attendance</h2>
+        <p>Mark the day with Present, Absent, or Late — soft and clear.</p>
+    </div>
+    <button type="button" class="btn-bsa btn-bsa-mint" onclick="showToast('Attendance saved for today (demo).','success')">Save attendance</button>
+</div>
+
+<div class="kpi-grid stagger">
+    <div class="kpi-card accent-mint">
+        <div class="kpi-label">Present</div>
+        <strong class="counter" data-target="@present">0</strong>
+    </div>
+    <div class="kpi-card accent-coral">
+        <div class="kpi-label">Absent</div>
+        <strong class="counter" data-target="@absent">0</strong>
+    </div>
+    <div class="kpi-card accent-orange">
+        <div class="kpi-label">Late</div>
+        <strong class="counter" data-target="@late">0</strong>
+    </div>
+    <div class="kpi-card accent-sky">
+        <div class="kpi-label">Rate</div>
+        <strong class="counter" data-target="@pct" data-suffix="%">0</strong>
+    </div>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head">
+        <h3>Today · Grade 5-A</h3>
+        <div class="table-filters" style="border:none;padding:0;background:transparent;">
+            <input type="date" value="2026-08-27" />
+            <select>
+                @foreach (var c in store.Classes)
+                {
+                    if (c.Name == "Grade 5-A")
+                    {
+                        <option selected>@c.Name</option>
+                    }
+                    else
+                    {
+                        <option>@c.Name</option>
+                    }
+                }
+            </select>
+            <select><option>Section A</option><option>Section B</option></select>
+        </div>
+    </div>
+    <div class="progress-label"><span>Class present</span><span>@pct%</span></div>
+    <div class="progress-bsa grass mb-2"><span style="width:@pct%"></span></div>
+    <div class="table-scroll">
+        <table class="table-bsa" id="attendanceTable">
+            <thead>
+                <tr><th>Student</th><th>ID</th><th>Status</th><th>Mark</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var r in rows)
+            {
+                <tr>
+                    <td>
+                        <div class="cell-user">
+                            <img src="@r.Photo" alt="" />
+                            <strong>@r.StudentName</strong>
+                        </div>
+                    </td>
+                    <td>@r.StudentId</td>
+                    <td><span class="badge-soft js-attendance-badge badge-@r.Mark.ToLowerInvariant()">@r.Mark</span></td>
+                    <td>
+                        <div class="attendance-toggle">
+                            <button type="button" data-status="Present" class="@(r.Mark=="Present"?"active":"")">Present</button>
+                            <button type="button" data-status="Absent" class="@(r.Mark=="Absent"?"active":"")">Absent</button>
+                            <button type="button" data-status="Late" class="@(r.Mark=="Late"?"active":"")">Late</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

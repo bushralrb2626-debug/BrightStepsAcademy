@@ -1,0 +1,56 @@
+@model SchoolBrandingVm
+@{
+    ViewData["Title"] = "Branding";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">School branding</h1>
+        <p class="mg-page-sub">Logo, favicon, and display name · @Model.SchoolCode</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Profile">← Profile</a>
+</div>
+
+<div class="mg-card">
+<form method="post" enctype="multipart/form-data" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="mg-flash mg-flash-error" style="@(ViewData.ModelState.IsValid ? "display:none" : null)"></div>
+
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>School name</label><input asp-for="Name" required /></div>
+        <div class="mg-field"><label>Short name</label><input asp-for="ShortName" /></div>
+    </div>
+    <div class="mg-field"><label>Tagline</label><input asp-for="Tagline" placeholder="Learn. Explore. Grow." /></div>
+
+    <div class="mg-grid-2">
+        <div class="mg-field">
+            <label>Logo</label>
+            @if (!string.IsNullOrEmpty(Model.LogoPath))
+            {
+                <img src="@Model.LogoPath" class="mg-thumb" alt="Logo preview" style="max-height:96px;display:block;margin-bottom:0.5rem;" />
+            }
+            else
+            {
+                <p class="mg-muted">Using default branding until you upload a logo.</p>
+            }
+            <input type="file" name="logoFile" accept="image/*" />
+        </div>
+        <div class="mg-field">
+            <label>Favicon</label>
+            @if (!string.IsNullOrEmpty(Model.FaviconPath))
+            {
+                <img src="@Model.FaviconPath" class="mg-thumb" alt="Favicon preview" style="max-height:48px;display:block;margin-bottom:0.5rem;" />
+            }
+            else
+            {
+                <p class="mg-muted">Optional. Defaults to platform favicon.</p>
+            }
+            <input type="file" name="faviconFile" accept="image/*" />
+        </div>
+    </div>
+
+    <div class="mg-actions" style="margin-top:1rem;">
+        <button type="submit" class="mg-btn mg-btn-primary">Save branding</button>
+        <a class="mg-btn mg-btn-secondary" href="/" target="_blank" rel="noopener">Preview website</a>
+    </div>
+</form>
+</div>

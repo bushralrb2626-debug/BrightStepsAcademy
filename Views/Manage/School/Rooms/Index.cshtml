@@ -1,0 +1,48 @@
+@model List<Room>
+@{
+    ViewData["Title"] = "Rooms";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Rooms</h1>
+        <p class="mg-page-sub">Unique room number per school / building / floor</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Rooms/Create">Add room</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No rooms yet</h3><p>Create rooms after buildings and floors are set up.</p><a class="mg-btn mg-btn-primary" href="/Manage/School/Rooms/Create">Add room</a></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Building</th><th>Floor</th><th>Room #</th><th>Name</th><th>Type</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Building?.Name</td>
+                    <td>@r.Floor?.FloorNumber</td>
+                    <td>@r.RoomNumber</td>
+                    <td>@(r.RoomName ?? "—")</td>
+                    <td>@r.RoomType</td>
+                    <td><span class="mg-badge @(r.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(r.IsActive ? "Active" : "Inactive")</span></td>
+                    <td style="white-space:nowrap;">
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Rooms/Details/@r.Id">Details</a>
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Rooms/Edit/@r.Id">Edit</a>
+                        @if (r.IsActive)
+                        {
+                            <form method="post" action="/Manage/School/Rooms/Deactivate/@r.Id" style="display:inline;" onsubmit="return confirm('Deactivate this room?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Deactivate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

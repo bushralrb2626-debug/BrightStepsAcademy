@@ -1,0 +1,44 @@
+@model EventItem
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-orange"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Event</p>
+        <h1>@Model.Title</h1>
+        <p>@Model.Description</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="detail-grid">
+        <article class="event-detail card-lift reveal">
+            <img src="@Model.Image" alt="@Model.Title" />
+            <div>
+                <span class="badge-soft accent-orange">@Model.Date.ToString("MMMM d, yyyy")</span>
+                <h2>Event details</h2>
+                <p>@Model.Description</p>
+                <ul class="detail-meta">
+                    <li><strong>Location</strong> @Model.Location</li>
+                    <li><strong>Time</strong> @Model.Time</li>
+                    <li><strong>Date</strong> @Model.Date.ToString("dddd, MMM d")</li>
+                </ul>
+                <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Events">Back to events</a>
+            </div>
+        </article>
+        <aside class="detail-aside reveal">
+            <h3>More events</h3>
+            @foreach (var e in store.Events.Where(x => x.Id != Model.Id).Take(3))
+            {
+                <a class="event-card card-lift" asp-controller="Home" asp-action="Event" asp-route-id="@e.Id">
+                    <img src="@e.Image" alt="@e.Title" />
+                    <div class="event-card__body">
+                        <h4>@e.Title</h4>
+                        <small>@e.Date.ToString("MMM d") · @e.Location</small>
+                    </div>
+                </a>
+            }
+        </aside>
+    </div>
+</section>

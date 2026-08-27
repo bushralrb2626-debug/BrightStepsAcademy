@@ -1,0 +1,57 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var profile = (DashboardProfile)ViewBag.Profile;
+}
+<div class="playful">
+    <div class="welcome-banner reveal">
+        <span class="sticker" style="top:12px;right:24px;">🚀</span>
+        <span class="sticker" style="bottom:10px;right:80px;animation-delay:1s;">⭐</span>
+        <h2>@profile.Greeting</h2>
+        <p>@profile.Subtitle</p>
+    </div>
+
+    <div class="grid-4 stagger mb-2">
+        <a class="quick-tile accent-sky" asp-action="Classes"><strong>My Classes</strong><p class="text-muted mb-0">Subjects &amp; rooms</p></a>
+        <a class="quick-tile accent-orange" asp-action="Homework"><strong>Homework</strong><p class="text-muted mb-0">Due this week</p></a>
+        <a class="quick-tile accent-mint" asp-action="Attendance"><strong>Attendance</strong><p class="text-muted mb-0">@store.Students.First().Attendance% streak</p></a>
+        <a class="quick-tile accent-pink" asp-action="Achievements"><strong>Achievements</strong><p class="text-muted mb-0">Badges &amp; stars</p></a>
+    </div>
+
+    <div class="dash-panel reveal accent-yellow">
+        <div class="flex-between">
+            <div>
+                <h3 class="mb-0">Upcoming Test</h3>
+                <p class="text-muted mb-0">Science quiz · Friday 10:00</p>
+            </div>
+            <span class="badge-soft badge-event">Prep time!</span>
+        </div>
+    </div>
+
+    <div class="section-head reveal"><h3>Progress with stars</h3></div>
+    <div class="grid-3 stagger mb-2">
+        <div class="info-card accent-sky">
+            <h3>Math ★★★★☆</h3>
+            <div class="progress-label"><span>Mastery</span><span>92%</span></div>
+            <div class="progress-bsa"><span style="width:92%"></span></div>
+        </div>
+        <div class="info-card accent-mint">
+            <h3>Science ★★★★★</h3>
+            <div class="progress-label"><span>Mastery</span><span>95%</span></div>
+            <div class="progress-bsa grass"><span style="width:95%"></span></div>
+        </div>
+        <div class="info-card accent-purple">
+            <h3>English ★★★★☆</h3>
+            <div class="progress-label"><span>Mastery</span><span>88%</span></div>
+            <div class="progress-bsa purple"><span style="width:88%"></span></div>
+        </div>
+    </div>
+
+    <div class="section-head reveal"><h3>Achievement badges</h3></div>
+    <div class="grid-4 stagger">
+        <div class="ach-badge card-lift"><span class="emoji">🦸</span><strong>Homework Hero</strong></div>
+        <div class="ach-badge card-lift"><span class="emoji">📖</span><strong>Reading Star</strong></div>
+        <div class="ach-badge card-lift"><span class="emoji">🎨</span><strong>Creative Explorer</strong></div>
+        <div class="ach-badge card-lift"><span class="emoji">🔬</span><strong>Little Scientist</strong></div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="playful">
+    <div class="section-head reveal mb-2">
+        <h2>Homework ✏️</h2>
+        <p>Tiny quests that make you smarter — one at a time.</p>
+    </div>
+    <div class="stack stagger">
+        @foreach (var a in store.Assignments.Where(x => x.Status == "Published").Take(5))
+        {
+            <article class="assignment-card card-lift">
+                <div class="flex-between">
+                    <span class="badge-soft">@a.Subject</span>
+                    <span class="badge-soft badge-event">Due @a.DueDate.ToString("MMM d")</span>
+                </div>
+                <h3 class="mt-1">@a.Title</h3>
+                <p>@a.Description</p>
+                <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-primary" onclick="showToast('Marked as started (demo)!','success')">Start</button>
+            </article>
+        }
+    </div>
+</div>

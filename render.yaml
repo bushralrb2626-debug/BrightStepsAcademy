@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: brightsteps-academy
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: USE_SQLITE
+        value: "1"
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/tmp/brightsteps.db

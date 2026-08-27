@@ -1,0 +1,25 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="playful">
+    <div class="section-head reveal mb-2">
+        <h2>Assignments 🌟</h2>
+        <p>Projects to explore, create, and share.</p>
+    </div>
+    <div class="grid-2 stagger">
+        @foreach (var a in store.Assignments)
+        {
+            <article class="assignment-card card-lift">
+                <div class="flex-between">
+                    <span class="badge-soft">@a.Subject</span>
+                    <span class="badge-soft @(a.Status=="Draft"?"badge-holiday":"badge-present")">@a.Status</span>
+                </div>
+                <h3 class="mt-1">@a.Title</h3>
+                <p>@a.Description</p>
+                <p class="text-muted">@a.ClassName · Due @a.DueDate.ToString("MMM d, yyyy")</p>
+                <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" onclick="showToast('Opened assignment','info')">Open</button>
+            </article>
+        }
+    </div>
+</div>

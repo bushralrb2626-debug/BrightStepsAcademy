@@ -1,0 +1,52 @@
+@model SchoolProfileVm
+@{
+    ViewData["Title"] = "School Profile";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">School profile</h1>
+        <p class="mg-page-sub">Basic information · Code @Model.SchoolCode</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Profile/Branding">Manage branding</a>
+</div>
+
+<div class="mg-card">
+<form method="post" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="mg-flash mg-flash-error" style="@(ViewData.ModelState.IsValid ? "display:none" : null)"></div>
+
+    <h2 class="mg-section-title">Basic information</h2>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>School name</label><input asp-for="Name" required /></div>
+        <div class="mg-field"><label>Short name</label><input asp-for="ShortName" /></div>
+        <div class="mg-field"><label>School ID</label><input value="@Model.SchoolCode" class="mg-readonly" readonly /></div>
+        <div class="mg-field"><label>Registration number</label><input asp-for="RegistrationNumber" /></div>
+        <div class="mg-field"><label>School type</label><input asp-for="SchoolType" placeholder="Primary, K-12…" /></div>
+        <div class="mg-field"><label>Established year</label><input asp-for="EstablishedYear" type="number" /></div>
+    </div>
+    <div class="mg-field"><label>Description</label><textarea asp-for="Description" rows="3"></textarea></div>
+
+    <h2 class="mg-section-title">Contact</h2>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /></div>
+        <div class="mg-field"><label>Phone</label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label>Website</label><input asp-for="Website" /></div>
+        <div class="mg-field"><label>City</label><input asp-for="City" /></div>
+        <div class="mg-field"><label>State / Province</label><input asp-for="StateProvince" /></div>
+        <div class="mg-field"><label>Country</label><input asp-for="Country" /></div>
+        <div class="mg-field"><label>Postal code</label><input asp-for="PostalCode" /></div>
+    </div>
+    <div class="mg-field"><label>Address</label><textarea asp-for="Address" rows="2"></textarea></div>
+
+    <h2 class="mg-section-title">Management</h2>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Principal / Head name</label><input asp-for="PrincipalName" /></div>
+        <div class="mg-field"><label>Emergency contact</label><input asp-for="EmergencyContact" /></div>
+    </div>
+
+    <div class="mg-actions" style="margin-top:1rem;">
+        <button type="submit" class="mg-btn mg-btn-primary">Save profile</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School">Cancel</a>
+    </div>
+</form>
+</div>

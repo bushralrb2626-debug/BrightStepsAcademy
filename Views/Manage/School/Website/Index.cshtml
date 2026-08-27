@@ -1,0 +1,40 @@
+@model WebsiteHubVm
+@{
+    ViewData["Title"] = "Website";
+}
+<h1 class="mg-page-title">Website customization</h1>
+<p class="mg-page-sub">Edit content only — the public homepage layout stays the same</p>
+<div class="mg-actions">
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Website/Hero">Edit hero</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/About">Edit about</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/Highlights">Highlights</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/Facilities">Facilities</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/Gallery">Gallery</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/Contact">Contact</a>
+    <a class="mg-btn mg-btn-secondary" href="/" target="_blank" rel="noopener">Preview site</a>
+</div>
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@(Model.Hero is null ? "—" : "✓")</div><div class="mg-stat__label">Hero</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@(Model.About is null ? "—" : "✓")</div><div class="mg-stat__label">About</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Highlights.Count(h => h.IsActive)</div><div class="mg-stat__label">Highlights</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Facilities.Count(f => f.IsActive)</div><div class="mg-stat__label">Facilities</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Gallery.Count(g => g.IsActive)</div><div class="mg-stat__label">Gallery</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@(Model.Contact is null ? "—" : "✓")</div><div class="mg-stat__label">Contact</div></div>
+</div>
+@if (Model.Hero is not null)
+{
+    <div class="mg-card" style="margin-bottom:1rem;">
+        <strong>Hero:</strong> @Model.Hero.Heading
+        <p style="color:var(--mg-muted);margin:0.35rem 0 0;">@Model.Hero.Description</p>
+    </div>
+}
+@if (Model.Facilities.Count == 0 && Model.Gallery.Count == 0 && Model.Highlights.Count == 0)
+{
+    <div class="mg-card">
+        <div class="mg-empty">
+            <h3>Start with your public story</h3>
+            <p>Demo content is already seeded. Replace hero, facilities, and gallery anytime.</p>
+            <a class="mg-btn mg-btn-primary" href="/Manage/School/Website/Hero">Edit hero</a>
+        </div>
+    </div>
+}

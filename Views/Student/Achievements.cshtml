@@ -1,0 +1,28 @@
+@{
+    Layout = "_DashboardLayout";
+    var badges = new[]
+    {
+        new { Emoji = "🦸", Title = "Homework Hero", Desc = "Turned in five assignments on time." },
+        new { Emoji = "📖", Title = "Reading Star", Desc = "Logged 20 minutes a day for a week." },
+        new { Emoji = "🎨", Title = "Creative Explorer", Desc = "Shared art that made the hallway smile." },
+        new { Emoji = "🔬", Title = "Little Scientist", Desc = "Asked brilliant lab questions." },
+        new { Emoji = "🤝", Title = "Kindness Captain", Desc = "Helped a classmate without being asked." },
+        new { Emoji = "🏃", Title = "Active Ace", Desc = "Gave full effort in PE all month." }
+    };
+}
+<div class="playful">
+    <div class="section-head reveal mb-2">
+        <h2>Achievements 🏆</h2>
+        <p>Tasteful badges for real growth — not noisy game noise.</p>
+    </div>
+    <div class="grid-3 stagger">
+        @foreach (var b in badges)
+        {
+            <article class="ach-badge card-lift">
+                <span class="emoji">@b.Emoji</span>
+                <h3>@b.Title</h3>
+                <p class="text-muted mb-0">@b.Desc</p>
+            </article>
+        }
+    </div>
+</div>

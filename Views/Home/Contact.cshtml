@@ -1,0 +1,49 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+    var school = store.Schools.First();
+}
+<section class="page-hero section">
+    <div class="blob accent-grass"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Contact</p>
+        <h1>Visit us</h1>
+        <p>We would love to meet your family.</p>
+    </div>
+</section>
+
+<section class="section contact-section">
+    <div class="contact-grid">
+        <form id="contactForm" class="form-bsa card-lift reveal" method="post" action="#">
+            <label>
+                Full name
+                <input type="text" name="name" required placeholder="Your name" />
+            </label>
+            <label>
+                Email
+                <input type="email" name="email" required placeholder="you@email.com" />
+            </label>
+            <label>
+                Phone
+                <input type="tel" name="phone" placeholder="+1 555 000 0000" />
+            </label>
+            <label>
+                Message
+                <textarea name="message" rows="5" required placeholder="Tell us a little about your child or visit request"></textarea>
+            </label>
+            <button type="submit" class="btn-bsa btn-bsa-primary">Send message</button>
+        </form>
+        <div class="contact-side reveal">
+            <div class="contact-card">
+                <h3>@school.Name</h3>
+                <p>@school.Address</p>
+                <p>@school.Phone</p>
+                <p>@school.Email</p>
+                <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">Login</a>
+            </div>
+            <div class="map-placeholder" role="img" aria-label="Map placeholder">
+                <span>📍 Map coming soon</span>
+                <small>@school.Address</small>
+            </div>
+        </div>
+    </div>
+</section>

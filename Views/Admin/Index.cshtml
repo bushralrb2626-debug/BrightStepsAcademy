@@ -1,0 +1,148 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var presentPct = 94;
+}
+<div class="welcome-banner reveal">
+    <h2>@profile.Greeting</h2>
+    <p>@profile.Subtitle</p>
+</div>
+
+<div class="kpi-grid stagger">
+    <div class="kpi-card accent-sky"><div class="kpi-label">Students</div><strong class="counter" data-target="@store.Students.Count">0</strong></div>
+    <div class="kpi-card accent-mint"><div class="kpi-label">Teachers</div><strong class="counter" data-target="@store.Teachers.Count">0</strong></div>
+    <div class="kpi-card accent-pink"><div class="kpi-label">Parents</div><strong class="counter" data-target="@store.Parents.Count">0</strong></div>
+    <div class="kpi-card accent-orange"><div class="kpi-label">Classes</div><strong class="counter" data-target="@store.Classes.Count">0</strong></div>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Quick actions</h3></div>
+    <div class="quick-actions">
+        <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="addStudentModal">Add Student</button>
+        <button type="button" class="btn-bsa btn-bsa-soft" data-modal-open="addTeacherModal">Add Teacher</button>
+        <button type="button" class="btn-bsa btn-bsa-mint" data-modal-open="addParentModal">Add Parent</button>
+        <button type="button" class="btn-bsa btn-bsa-orange" data-modal-open="createClassModal">Create Class</button>
+        <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-open="createNoticeModal">Create Notice</button>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Today's Attendance</h3><span class="badge-soft badge-present">@presentPct%</span></div>
+        <div class="progress-bsa grass mb-2"><span style="width:@presentPct%"></span></div>
+        <div class="chart-wrap"><canvas data-chart-type="doughnut" data-chart='{"labels":["Present","Absent","Late"],"data":[112,6,8]}'></canvas></div>
+    </div>
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Upcoming Events</h3></div>
+        <div class="stack">
+            @foreach (var e in store.Events.Take(4))
+            {
+                <div class="info-row"><span>@e.Date.ToString("MMM d") · @e.Title</span><strong>@e.Time</strong></div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Recent Registrations</h3></div>
+        <div class="activity-list">
+            @foreach (var s in store.Students.Take(5))
+            {
+                <div class="item"><span>@s.Name · @s.ClassName-@s.Section</span><time>New</time></div>
+            }
+        </div>
+    </div>
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Notices</h3></div>
+        @foreach (var n in store.Notices.Take(3))
+        {
+            <p class="mb-2"><strong>@n.Title</strong><br /><span class="text-muted">@n.Body</span></p>
+        }
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Assignments</h3></div>
+        @foreach (var a in store.Assignments.Take(4))
+        {
+            <div class="info-row"><span>@a.Title</span><strong>@a.SubmissionPercent%</strong></div>
+            <div class="progress-soft mb-2"><span style="width:@a.SubmissionPercent%"></span></div>
+        }
+    </div>
+    <div class="dash-panel reveal">
+        <div class="dash-panel__head"><h3>Teacher Activity</h3></div>
+        <div class="activity-list">
+            @foreach (var t in store.Teachers.Take(5))
+            {
+                <div class="item"><span>@t.Name posted in @t.Subject</span><time>@t.ExperienceYears yrs</time></div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal-bsa" id="addStudentModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Student</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Student added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="form-row">
+                <div class="field"><label>Class</label><select>@foreach (var c in store.Classes){<option>@c.Name</option>}</select></div>
+                <div class="field"><label>Parent</label><select>@foreach (var p in store.Parents){<option>@p.Name</option>}</select></div>
+            </div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Save</button></div>
+        </form>
+    </div>
+</div>
+<div class="modal-bsa" id="addTeacherModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Teacher</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Teacher added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="field"><label>Subject</label><select>@foreach (var s in store.Subjects){<option>@s</option>}</select></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Save</button></div>
+        </form>
+    </div>
+</div>
+<div class="modal-bsa" id="addParentModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Parent</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Parent added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="field"><label>Email</label><input type="email" /></div>
+            <div class="field"><label>Phone</label><input /></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Save</button></div>
+        </form>
+    </div>
+</div>
+<div class="modal-bsa" id="createClassModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Create Class</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Class created (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="form-row">
+                <div class="field"><label>Grade</label><input placeholder="5" /></div>
+                <div class="field"><label>Section</label><input placeholder="A" /></div>
+            </div>
+            <div class="field"><label>Teacher</label><select>@foreach (var t in store.Teachers){<option>@t.Name</option>}</select></div>
+            <div class="field"><label>Room</label><input /></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Create</button></div>
+        </form>
+    </div>
+</div>
+<div class="modal-bsa" id="createNoticeModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Create Notice</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Notice published (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Title</label><input required /></div>
+            <div class="field"><label>Body</label><textarea></textarea></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Publish</button></div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,137 @@
+@model BrightStepsAcademy.Models.Manage.SuperAdminDashboardVm
+@{
+    ViewData["Title"] = "Dashboard";
+    var growthJson = System.Text.Json.JsonSerializer.Serialize(Model.GrowthPoints.Select(g => new { label = g.Label, count = g.Count }));
+    var statusJson = System.Text.Json.JsonSerializer.Serialize(new[]
+    {
+        new { label = "Active", count = Model.ActiveSchools },
+        new { label = "Pending", count = Model.PendingSchools },
+        new { label = "Suspended", count = Model.SuspendedSchools },
+        new { label = "Inactive", count = Model.InactiveSchools }
+    });
+}
+
+<p class="mg-page-sub">Platform overview · schools, subscriptions, and recent activity</p>
+
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@Model.TotalSchools</div><div class="mg-stat__label">Total schools</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ActiveSchools</div><div class="mg-stat__label">Active</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.PendingSchools</div><div class="mg-stat__label">Pending</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.SuspendedSchools</div><div class="mg-stat__label">Suspended</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ActiveSubscriptions</div><div class="mg-stat__label">Active plans</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ExpiringSoon</div><div class="mg-stat__label">Expiring soon</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ExpiredSubscriptions</div><div class="mg-stat__label">Expired</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.TotalSchoolAdmins</div><div class="mg-stat__label">School admins</div></div>
+</div>
+
+<div class="mg-dash-grid">
+    <div class="mg-card">
+        <h2 class="mg-section-title">School growth</h2>
+        <div class="mg-chart-wrap"><canvas id="growthChart" height="160"></canvas></div>
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">School status</h2>
+        <div class="mg-chart-wrap"><canvas id="statusChart" height="160"></canvas></div>
+    </div>
+</div>
+
+<div class="mg-dash-grid" style="margin-top:1.25rem;">
+    <div class="mg-card">
+        <div class="mg-toolbar">
+            <h2 class="mg-section-title" style="margin:0;">Expiring soon</h2>
+            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Subscriptions/Expiring">View all</a>
+        </div>
+        @if (Model.ExpiringSchools.Count == 0)
+        {
+            <div class="mg-empty"><h3>No expiring schools</h3><p>Subscriptions in the warning window will appear here.</p></div>
+        }
+        else
+        {
+            <div class="mg-table-wrap">
+                <table class="mg-table">
+                    <thead><tr><th>School</th><th>Plan</th><th>Expiry</th><th></th></tr></thead>
+                    <tbody>
+                    @foreach (var s in Model.ExpiringSchools)
+                    {
+                        <tr>
+                            <td><strong>@s.Name</strong><div class="mg-muted">@s.SchoolCode</div></td>
+                            <td>@(s.PlanName ?? "—")</td>
+                            <td>@(s.ExpiryDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                            <td><a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Details/@s.Id">Open</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="mg-card">
+        <div class="mg-toolbar">
+            <h2 class="mg-section-title" style="margin:0;">Recent activity</h2>
+            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Activity">Audit log</a>
+        </div>
+        @if (Model.RecentAuditLogs.Count == 0)
+        {
+            <div class="mg-empty"><h3>No activity yet</h3><p>Platform actions will show up here.</p></div>
+        }
+        else
+        {
+            <ul class="mg-activity-list">
+                @foreach (var a in Model.RecentAuditLogs)
+                {
+                    <li>
+                        <strong>@a.Action</strong>
+                        <span class="mg-muted">@a.Module · @a.Timestamp.ToLocalTime().ToString("g")</span>
+                        <div>@(a.Details ?? "")</div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@if (Model.RecentNotifications.Count > 0)
+{
+    <div class="mg-card" style="margin-top:1.25rem;">
+        <div class="mg-toolbar">
+            <h2 class="mg-section-title" style="margin:0;">Notifications</h2>
+            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Notifications">All</a>
+        </div>
+        <ul class="mg-activity-list">
+            @foreach (var n in Model.RecentNotifications)
+            {
+                <li>
+                    <strong>@n.Title</strong>
+                    <span class="mg-muted">@n.CreatedAt.ToLocalTime().ToString("g")</span>
+                    <div>@n.Message</div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    const growth = @Html.Raw(growthJson);
+    const status = @Html.Raw(statusJson);
+    const brand = '#0f6e56';
+    new Chart(document.getElementById('growthChart'), {
+        type: 'bar',
+        data: {
+            labels: growth.map(x => x.label),
+            datasets: [{ label: 'New schools', data: growth.map(x => x.count), backgroundColor: brand }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: status.map(x => x.label),
+            datasets: [{ data: status.map(x => x.count), backgroundColor: ['#027a48', '#b54708', '#b42318', '#5b6b7c'] }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+}

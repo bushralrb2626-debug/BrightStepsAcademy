@@ -1,0 +1,47 @@
+@{
+    var email = (string?)ViewBag.Email ?? "";
+    var error = ViewBag.LoginError as string;
+}
+<section class="login-page">
+    <div class="login-page__visual">
+        <div class="blob accent-yellow"></div>
+        <div class="blob accent-mint"></div>
+        <img src="@Images.Login" alt="Bright classroom at BrightSteps Academy" />
+        <div class="login-page__quote reveal">
+            <partial name="Partials/_Logo" />
+            <h1>Welcome back</h1>
+            <p>Authorized school staff and users only. Your dashboard opens based on your account.</p>
+        </div>
+    </div>
+    <div class="login-page__form reveal">
+        <p class="eyebrow">Sign in</p>
+        <h2>School Login</h2>
+        <p class="login-page__hint">Enter your email and password. Role is determined from your account — not from this form.</p>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="login-error" role="alert">
+                @error
+            </div>
+        }
+
+        <form class="form-bsa" method="post" asp-controller="Portal" asp-action="Login">
+            <input type="hidden" name="returnUrl" value="@((string?)ViewBag.ReturnUrl)" />
+            <label>
+                Email or Login ID
+                <input type="text" name="email" required placeholder="Email or login ID" value="@email" autocomplete="username" />
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password" />
+            </label>
+            <label class="form-bsa__check">
+                <input type="checkbox" name="remember" value="true" />
+                <span>Remember me</span>
+            </label>
+            <button type="submit" class="btn-bsa btn-bsa-primary">Login</button>
+            <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="ForgotPassword">Forgot password?</a>
+            <a class="btn-bsa btn-bsa-ghost" asp-controller="Portal" asp-action="Index">School portals</a>
+        </form>
+    </div>
+</section>

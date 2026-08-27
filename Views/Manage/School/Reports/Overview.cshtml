@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Reports Overview";
+}
+<h1 class="mg-page-title">Reports overview</h1>
+<p class="mg-page-sub">Quick counts for this school</p>
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Buildings</div><div class="mg-stat__label">Buildings</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Floors</div><div class="mg-stat__label">Floors</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Rooms</div><div class="mg-stat__label">Rooms</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Furniture</div><div class="mg-stat__label">Furniture</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Staff</div><div class="mg-stat__label">Staff</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@ViewBag.Students</div><div class="mg-stat__label">Students</div></div>
+</div>
+<div class="mg-actions">
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Reports/Rooms">Rooms report</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Reports/Furniture">Furniture report</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Reports/Staff">Staff report</a>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/School/Reports/Students">Students report</a>
+</div>

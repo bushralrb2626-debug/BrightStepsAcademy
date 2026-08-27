@@ -1,0 +1,23 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-purple"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Gallery</p>
+        <h1>School gallery</h1>
+        <p>Moments from classrooms, fields, studios, and celebrations.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="gallery-grid">
+        @foreach (var g in store.Gallery)
+        {
+            <button type="button" class="gallery-item card-lift reveal" data-gallery data-src="@g.Image" data-caption="@g.Caption" aria-label="@g.Caption">
+                <img src="@g.Image" alt="@g.Caption" loading="lazy" />
+                <span>@g.Category</span>
+            </button>
+        }
+    </div>
+</section>

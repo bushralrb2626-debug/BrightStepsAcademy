@@ -1,0 +1,112 @@
+@model BrightStepsAcademy.Models.Manage.SchoolDetailsVm
+@{
+    ViewData["Title"] = Model.School.Name;
+    var s = Model.School;
+    var sub = Model.Subscription;
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">@s.Name</h1>
+        <p class="mg-page-sub">@s.SchoolCode · <span class="mg-badge mg-badge-school-@s.Status.ToString().ToLowerInvariant()">@s.Status</span></p>
+    </div>
+    <div class="mg-actions" style="margin:0;">
+        <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Edit/@s.Id">Edit</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/@s.Id/Admin">Manage admin</a>
+        @if (sub is not null)
+        {
+            <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Subscriptions/Edit/@sub.Id">Subscription</a>
+        }
+    </div>
+</div>
+
+<div class="mg-actions">
+    @if (s.Status != SchoolStatus.Active)
+    {
+        <form method="post" action="/Manage/SuperAdmin/Schools/Activate/@s.Id" onsubmit="return confirm('Activate this school?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="mg-btn mg-btn-primary">Activate</button>
+        </form>
+    }
+    @if (s.Status != SchoolStatus.Suspended)
+    {
+        <form method="post" action="/Manage/SuperAdmin/Schools/Suspend/@s.Id" onsubmit="return confirm('Suspend this school? Users will be blocked from signing in.');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="mg-btn mg-btn-danger">Suspend</button>
+        </form>
+    }
+    @if (s.Status != SchoolStatus.Inactive)
+    {
+        <form method="post" action="/Manage/SuperAdmin/Schools/Deactivate/@s.Id" onsubmit="return confirm('Deactivate this school?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="mg-btn mg-btn-secondary">Deactivate</button>
+        </form>
+    }
+</div>
+
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Buildings</div><div class="mg-stat__label">Buildings</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Floors</div><div class="mg-stat__label">Floors</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Rooms</div><div class="mg-stat__label">Rooms</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Furniture</div><div class="mg-stat__label">Furniture</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Staff</div><div class="mg-stat__label">Staff</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Students</div><div class="mg-stat__label">Students</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Administrators</div><div class="mg-stat__label">Admins</div></div>
+</div>
+
+<div class="mg-dash-grid">
+    <div class="mg-card">
+        <h2 class="mg-section-title">School profile</h2>
+        <dl class="mg-review">
+            <div><dt>Email</dt><dd>@(s.Email ?? "—")</dd></div>
+            <div><dt>Phone</dt><dd>@(s.Phone ?? "—")</dd></div>
+            <div><dt>Address</dt><dd>@(s.Address ?? "—")</dd></div>
+            <div><dt>City</dt><dd>@(s.City ?? "—"), @(s.StateProvince ?? "") @(s.PostalCode ?? "")</dd></div>
+            <div><dt>Country</dt><dd>@(s.Country ?? "—")</dd></div>
+            <div><dt>Type</dt><dd>@(s.SchoolType ?? "—")</dd></div>
+            <div><dt>Principal</dt><dd>@(s.PrincipalName ?? "—")</dd></div>
+            <div><dt>Created</dt><dd>@s.CreatedAt.ToLocalTime().ToString("g")</dd></div>
+        </dl>
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">Subscription</h2>
+        @if (sub is null)
+        {
+            <div class="mg-empty"><h3>No subscription</h3><p>Assign a plan from the subscriptions area.</p></div>
+        }
+        else
+        {
+            <dl class="mg-review">
+                <div><dt>Plan</dt><dd>@sub.PlanName</dd></div>
+                <div><dt>Status</dt><dd><span class="mg-badge mg-badge-sub-@sub.Status.ToString().ToLowerInvariant()">@sub.Status</span></dd></div>
+                <div><dt>Cycle</dt><dd>@sub.BillingCycle</dd></div>
+                <div><dt>Start</dt><dd>@sub.StartDate.ToLocalTime().ToString("dd MMM yyyy")</dd></div>
+                <div><dt>Expiry</dt><dd>@sub.ExpiryDate.ToLocalTime().ToString("dd MMM yyyy")</dd></div>
+                <div><dt>Price</dt><dd>@(sub.Price?.ToString("C") ?? "—")</dd></div>
+            </dl>
+        }
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">Primary admin</h2>
+        @if (Model.PrimaryAdmin is null)
+        {
+            <div class="mg-empty">
+                <h3>No admin yet</h3>
+                <p>Create a primary school administrator.</p>
+                <a class="mg-btn mg-btn-primary" href="/Manage/SuperAdmin/Schools/@s.Id/Admin">Add admin</a>
+            </div>
+        }
+        else
+        {
+            var a = Model.PrimaryAdmin;
+            <dl class="mg-review">
+                <div><dt>Name</dt><dd>@a.FullName</dd></div>
+                <div><dt>Email</dt><dd>@a.Email</dd></div>
+                <div><dt>Login ID</dt><dd>@(a.LoginId ?? "—")</dd></div>
+                <div><dt>Phone</dt><dd>@(a.Phone ?? "—")</dd></div>
+                <div><dt>Status</dt><dd>@(a.IsActive ? "Active" : "Inactive")</dd></div>
+            </dl>
+            <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/@s.Id/Admin">Manage</a>
+        }
+    </div>
+</div>

@@ -1,0 +1,22 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var students = store.Students.Where(s =>
+        s.ClassName.Contains("3") || s.ClassName.Contains("4") || s.ClassName.Contains("5")).ToList();
+}
+<div class="section-head reveal mb-2">
+    <h2>Students</h2>
+    <p>Learners across your BrightSteps classes.</p>
+</div>
+
+<div class="grid-4 stagger">
+    @foreach (var s in students)
+    {
+        <article class="person-card card-lift">
+            <img src="@s.Photo" alt="@s.Name" />
+            <h3 style="font-size:1rem;">@s.Name</h3>
+            <p class="text-muted">@s.ClassName-@s.Section</p>
+            <span class="badge-soft">@s.Attendance% attendance</span>
+        </article>
+    }
+</div>

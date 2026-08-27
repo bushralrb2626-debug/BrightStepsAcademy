@@ -1,0 +1,62 @@
+@model Room
+@{
+    ViewData["Title"] = $"Room {Model.RoomNumber}";
+    var furnitureForm = ViewBag.FurnitureForm as FurnitureFormVm ?? new FurnitureFormVm { RoomId = Model.Id, Quantity = 1 };
+}
+<h1 class="mg-page-title">Room @Model.RoomNumber @(string.IsNullOrEmpty(Model.RoomName) ? "" : "— " + Model.RoomName)</h1>
+<p class="mg-page-sub">@Model.Building?.Name · Floor @Model.Floor?.FloorNumber · @Model.RoomType · <a href="/Manage/School/Rooms">← Rooms</a></p>
+
+<div class="mg-card" style="margin-bottom:1rem;">
+    <p style="margin:0;color:var(--mg-muted);">@(Model.Description ?? "No description.") Cap: @(Model.Capacity?.ToString() ?? "—")</p>
+</div>
+
+<div class="mg-card" style="margin-bottom:1rem;">
+    <h3 style="margin-top:0;font-family:var(--mg-display);font-size:1.1rem;">Add furniture</h3>
+    <p style="color:var(--mg-muted);font-size:0.9rem;">If the same name already exists in this room, quantity is merged.</p>
+    <form method="post" action="/Manage/School/Rooms/Details/@Model.Id/Furniture" class="mg-form">
+        @Html.AntiForgeryToken()
+        <div class="mg-grid-2">
+            <div class="mg-field"><label>Name</label><input name="Name" required /></div>
+            <div class="mg-field"><label>Category</label><input name="Category" value="General" /></div>
+            <div class="mg-field"><label>Quantity</label><input name="Quantity" type="number" value="1" min="1" /></div>
+            <div class="mg-field">
+                <label>Condition</label>
+                <select name="Condition">
+                    @foreach (FurnitureCondition c in Enum.GetValues<FurnitureCondition>())
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="mg-field"><label>Description</label><textarea name="Description"></textarea></div>
+        <button type="submit" class="mg-btn mg-btn-primary">Add / merge</button>
+    </form>
+</div>
+
+@{
+    var items = Model.FurnitureItems?.Where(f => f.IsActive).OrderBy(f => f.Name).ToList() ?? new List<FurnitureItem>();
+}
+@if (items.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No furniture in this room</h3><p>Add items using the form above.</p></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Condition</th></tr></thead>
+            <tbody>
+            @foreach (var f in items)
+            {
+                <tr>
+                    <td>@f.Name</td>
+                    <td>@f.Category</td>
+                    <td>@f.Quantity</td>
+                    <td>@f.Condition</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

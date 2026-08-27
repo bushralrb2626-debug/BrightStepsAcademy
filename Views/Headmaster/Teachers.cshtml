@@ -1,0 +1,41 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Teachers</h2>
+        <p>Oversight of subject leads and classroom assignments.</p>
+    </div>
+    <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="assignTeacherModal">Assign Teacher</button>
+</div>
+
+<div class="grid-3 stagger">
+    @foreach (var t in store.Teachers)
+    {
+        <article class="person-card card-lift">
+            <img src="@t.Photo" alt="@t.Name" />
+            <h3>@t.Name</h3>
+            <p class="text-muted">@t.Subject</p>
+            <p style="font-size:.88rem;">@t.Classes</p>
+            <span class="badge-soft">@t.ExperienceYears yrs</span>
+        </article>
+    }
+</div>
+
+<div class="modal-bsa" id="assignTeacherModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Assign Teacher</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Teacher assigned (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Teacher</label><select>@foreach (var t in store.Teachers){<option>@t.Name</option>}</select></div>
+            <div class="field"><label>Class</label><select>@foreach (var c in store.Classes){<option>@c.Name</option>}</select></div>
+            <div class="field"><label>Subject</label><select>@foreach (var s in store.Subjects){<option>@s</option>}</select></div>
+            <div class="field"><label>Schedule</label><input placeholder="Mon/Wed 09:00" /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>

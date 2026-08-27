@@ -1,0 +1,45 @@
+@model List<Floor>
+@{
+    ViewData["Title"] = "Floors";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Floors</h1>
+        <p class="mg-page-sub">Unique floor number per building</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Floors/Create">Add floor</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No floors yet</h3><p>Add a floor to a building.</p><a class="mg-btn mg-btn-primary" href="/Manage/School/Floors/Create">Add floor</a></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Building</th><th>Floor #</th><th>Name</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var f in Model)
+            {
+                <tr>
+                    <td>@f.Building?.Name</td>
+                    <td>@f.FloorNumber</td>
+                    <td>@(f.FloorName ?? "—")</td>
+                    <td><span class="mg-badge @(f.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(f.IsActive ? "Active" : "Inactive")</span></td>
+                    <td>
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Floors/Edit/@f.Id">Edit</a>
+                        @if (f.IsActive)
+                        {
+                            <form method="post" action="/Manage/School/Floors/Deactivate/@f.Id" style="display:inline;" onsubmit="return confirm('Deactivate this floor?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Deactivate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

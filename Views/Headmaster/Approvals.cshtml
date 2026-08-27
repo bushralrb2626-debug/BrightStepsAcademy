@@ -1,0 +1,29 @@
+@{
+    Layout = "_DashboardLayout";
+    var items = new[]
+    {
+        new { Title = "Teacher leave — Fatima Ali", Detail = "Urdu, Sep 2–3", Accent = "sky" },
+        new { Title = "Field trip transport quote", Detail = "Riverside Park picnic", Accent = "mint" },
+        new { Title = "Budget — Science Exhibition", Detail = "$420 materials", Accent = "orange" },
+        new { Title = "New elective proposal", Detail = "Coding club expansion", Accent = "purple" },
+        new { Title = "Parent concern follow-up", Detail = "Grade 4-B lunch seating", Accent = "pink" }
+    };
+}
+<div class="section-head reveal mb-2">
+    <h2>Approvals</h2>
+    <p>Pending requests waiting for a kind, clear decision.</p>
+</div>
+
+<div class="grid-2 stagger">
+    @foreach (var item in items)
+    {
+        <article class="approval-card accent-@item.Accent card-lift">
+            <h3>@item.Title</h3>
+            <p class="text-muted">@item.Detail</p>
+            <div class="quick-actions mt-1">
+                <button type="button" class="btn-bsa btn-bsa-mint btn-bsa-sm" onclick="showToast('Approved (demo).','success')">Approve</button>
+                <button type="button" class="btn-bsa btn-bsa-ghost btn-bsa-sm" onclick="showToast('Rejected (demo).','warning')">Reject</button>
+            </div>
+        </article>
+    }
+</div>

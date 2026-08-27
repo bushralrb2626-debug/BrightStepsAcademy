@@ -1,0 +1,29 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var accents = new[] { "sky", "mint", "purple", "orange", "pink" };
+    var i = 0;
+}
+<div class="section-head reveal mb-2">
+    <h2>Results</h2>
+    <p>Marks, grades, and progress — celebrated with soft colour.</p>
+</div>
+
+<div class="grid-2 stagger">
+    @foreach (var r in store.Results)
+    {
+        var pct = r.Total == 0 ? 0 : (int)Math.Round(100.0 * r.Marks / r.Total);
+        var accent = accents[i++ % accents.Length];
+        <article class="info-card accent-@accent card-lift">
+            <div class="flex-between">
+                <h3 class="mb-0">@r.Subject</h3>
+                <span class="badge-soft">@r.Grade</span>
+            </div>
+            <p class="text-muted mt-1">@r.Performance</p>
+            <div class="info-row"><span>Marks</span><strong>@r.Marks / @r.Total</strong></div>
+            <div class="info-row"><span>Percentage</span><strong>@pct%</strong></div>
+            <div class="progress-label mt-1"><span>Progress</span><span>@pct%</span></div>
+            <div class="progress-bsa"><span style="width:@pct%"></span></div>
+        </article>
+    }
+</div>

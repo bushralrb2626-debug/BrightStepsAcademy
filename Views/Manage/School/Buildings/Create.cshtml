@@ -1,0 +1,16 @@
+@model Building
+@{
+    ViewData["Title"] = "Create Building";
+}
+<h1 class="mg-page-title">Add building</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Buildings">← Buildings</a></p>
+<div class="mg-card">
+<form method="post" class="mg-form">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <div class="mg-field"><label>Name</label><input asp-for="Name" required /></div>
+    <div class="mg-field"><label>Building number</label><input asp-for="BuildingNumber" /></div>
+    <div class="mg-field"><label>Description</label><textarea asp-for="Description"></textarea></div>
+    <button type="submit" class="mg-btn mg-btn-primary">Create</button>
+</form>
+</div>

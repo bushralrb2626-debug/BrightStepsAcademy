@@ -1,0 +1,48 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-yellow"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">About Scuola Materna</p>
+        <h1>A school that feels like home</h1>
+        <p>Learn. Explore. Grow. — our promise to every child and family.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="about-page__grid">
+        <div class="reveal">
+            <img class="about-page__img" src="@Images.Campus" alt="BrightSteps campus" />
+        </div>
+        <div class="reveal">
+            <h2>Our story</h2>
+            <p>Scuola Materna began with a simple idea: childhood should be colourful, safe, and full of discovery. Today we welcome more than a thousand learners across bright classrooms, creative studios, and lively fields.</p>
+            <p>Our teachers blend strong academics with kindness. Parents stay connected through notices, events, and a friendly portal. Together we celebrate curiosity, friendship, and growth.</p>
+            <div class="stat-row">
+                <div class="stat-chip accent-sky"><strong class="counter" data-target="1248" data-count="1248">0</strong><span>Students</span></div>
+                <div class="stat-chip accent-coral"><strong class="counter" data-target="86" data-count="86">0</strong><span>Teachers</span></div>
+                <div class="stat-chip accent-mint"><strong class="counter" data-target="42" data-count="42">0</strong><span>Classes</span></div>
+                <div class="stat-chip accent-orange"><strong class="counter" data-target="15" data-count="15">0</strong><span>Years</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head reveal">
+        <p class="eyebrow">Why families choose us</p>
+        <h2>Care at the centre of learning</h2>
+    </div>
+    <div class="feature-grid">
+        @foreach (var f in store.Features)
+        {
+            <article class="feature-card card-lift reveal accent-@f.Accent">
+                @{ ViewData["Icon"] = f.Icon; }
+                <partial name="Partials/_Icons" />
+                <h3>@f.Title</h3>
+                <p>@f.Description</p>
+            </article>
+        }
+    </div>
+</section>

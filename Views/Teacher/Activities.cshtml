@@ -1,0 +1,19 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="section-head reveal mb-2">
+    <h2>Activities</h2>
+    <p>Clubs, fairs, and joyful campus moments.</p>
+</div>
+
+<div class="grid-3 stagger">
+    @foreach (var a in store.Activities)
+    {
+        <article class="assignment-card card-lift">
+            <h3>@a.Title</h3>
+            <p>@a.Description</p>
+            <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" onclick="showToast('Opened @a.Title','info')">Open</button>
+        </article>
+    }
+</div>

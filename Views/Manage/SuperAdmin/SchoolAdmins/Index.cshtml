@@ -1,0 +1,63 @@
+@model BrightStepsAcademy.Models.Manage.PlatformSchoolAdminListVm
+@{
+    ViewData["Title"] = "School admins";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">School admins</h1>
+        <p class="mg-page-sub">Administrators across all schools</p>
+    </div>
+</div>
+
+<form method="get" class="mg-filters mg-card">
+    <div class="mg-field">
+        <label>Search</label>
+        <input type="search" name="search" value="@Model.Search" placeholder="Name, email, school" />
+    </div>
+    <div class="mg-field" style="align-self:end;">
+        <button type="submit" class="mg-btn mg-btn-primary">Search</button>
+    </div>
+</form>
+
+@if (Model.Admins.Count == 0)
+{
+    <div class="mg-card" style="margin-top:1rem;">
+        <div class="mg-empty"><h3>No admins found</h3><p>Create a school admin from a school’s details page.</p></div>
+    </div>
+}
+else
+{
+    <div class="mg-card" style="margin-top:1rem;padding:0;">
+        <div class="mg-table-wrap">
+            <table class="mg-table">
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Login</th><th>School</th><th>Primary</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var a in Model.Admins)
+                {
+                    <tr>
+                        <td>@a.FullName</td>
+                        <td>@a.Email</td>
+                        <td>@(a.LoginId ?? "—")</td>
+                        <td>@a.SchoolName <span class="mg-muted">(@a.SchoolCode)</span></td>
+                        <td>@(a.IsPrimary ? "Yes" : "No")</td>
+                        <td><span class="mg-badge @(a.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(a.IsActive ? "Active" : "Inactive")</span></td>
+                        <td><a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Schools/@a.SchoolId/Admin">Manage</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mg-pager">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="mg-btn mg-btn-sm @(p == Model.Page ? "mg-btn-primary" : "mg-btn-secondary")" href="?search=@Model.Search&page=@p">@p</a>
+            }
+        </div>
+    }
+}

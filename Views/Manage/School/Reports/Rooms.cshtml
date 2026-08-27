@@ -1,0 +1,31 @@
+@model List<Room>
+@{
+    ViewData["Title"] = "Rooms Report";
+}
+<h1 class="mg-page-title">Rooms report</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Reports">← Overview</a></p>
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No rooms</h3><p>Nothing to report yet.</p></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Building</th><th>Floor</th><th>Room</th><th>Type</th><th>Capacity</th><th>Active</th></tr></thead>
+            <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Building?.Name</td>
+                    <td>@r.Floor?.FloorNumber</td>
+                    <td>@r.RoomNumber</td>
+                    <td>@r.RoomType</td>
+                    <td>@(r.Capacity?.ToString() ?? "—")</td>
+                    <td>@(r.IsActive ? "Yes" : "No")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

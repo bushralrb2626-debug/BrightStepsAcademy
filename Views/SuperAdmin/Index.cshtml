@@ -1,0 +1,106 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var admins = store.Users.Count(u => u.Role is "Admin" or "Super Admin");
+}
+<div class="welcome-banner reveal">
+    <h2>@profile.Greeting</h2>
+    <p>@profile.Subtitle</p>
+</div>
+
+<div class="kpi-grid stagger">
+    <div class="kpi-card accent-sky card-lift">
+        <div class="kpi-label">Schools</div>
+        <strong class="counter" data-target="@store.Schools.Count">0</strong>
+    </div>
+    <div class="kpi-card accent-royal card-lift">
+        <div class="kpi-label">Admins</div>
+        <strong class="counter" data-target="@admins">0</strong>
+    </div>
+    <div class="kpi-card accent-mint card-lift">
+        <div class="kpi-label">Teachers</div>
+        <strong class="counter" data-target="@store.Teachers.Count">0</strong>
+    </div>
+    <div class="kpi-card accent-orange card-lift">
+        <div class="kpi-label">Students</div>
+        <strong class="counter" data-target="@store.Students.Count">0</strong>
+    </div>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Quick actions</h3></div>
+    <div class="quick-actions">
+        <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="addSchoolModal">Add School</button>
+        <button type="button" class="btn-bsa btn-bsa-soft" data-modal-open="addAdminModal">Add Admin</button>
+        <button type="button" class="btn-bsa btn-bsa-mint" data-modal-open="assignIdModal">Assign User ID</button>
+        <a class="btn-bsa btn-bsa-ghost" asp-action="Reports">View Reports</a>
+    </div>
+</div>
+
+<div class="grid-2 stagger">
+    <div class="chart-card"><h3>Schools growth</h3><div class="chart-wrap"><canvas data-chart-type="line" data-chart='{"labels":["Jan","Mar","May","Jul"],"datasets":[{"label":"Schools","data":[1,2,2,3]}]}'></canvas></div></div>
+    <div class="chart-card"><h3>Users by role</h3><div class="chart-wrap"><canvas data-chart-type="doughnut" data-chart='{"labels":["Admins","Teachers","Parents","Students"],"data":[3,8,8,12]}'></canvas></div></div>
+    <div class="chart-card"><h3>Platform activity</h3><div class="chart-wrap"><canvas data-chart-type="bar" data-chart='{"labels":["Logins","Messages","Notices","Approvals"],"data":[420,186,42,28]}'></canvas></div></div>
+    <div class="chart-card"><h3>Enrollment</h3><div class="chart-wrap"><canvas data-chart-type="line" data-chart='{"labels":["Q1","Q2","Q3","Q4"],"datasets":[{"label":"Students","data":[980,1080,1180,1248]}]}'></canvas></div></div>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Recent activity</h3></div>
+    <div class="activity-list">
+        @foreach (var a in store.RecentActivity)
+        {
+            <div class="item accent-@a.Accent"><span>@a.Text</span><time>@a.Time</time></div>
+        }
+    </div>
+</div>
+
+<div class="modal-bsa" id="addSchoolModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add School</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('School added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Name</label><input required /></div>
+            <div class="field"><label>Address</label><input /></div>
+            <div class="form-row">
+                <div class="field"><label>Phone</label><input /></div>
+                <div class="field"><label>Email</label><input type="email" /></div>
+            </div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-bsa" id="addAdminModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Admin</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Admin invited (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="field"><label>Email</label><input type="email" required /></div>
+            <div class="field"><label>School</label><select>@foreach (var s in store.Schools){<option>@s.Name</option>}</select></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Invite</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-bsa" id="assignIdModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Assign User ID</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('User ID assigned (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>User</label><select>@foreach (var u in store.Users){<option>@u.FullName (@u.Role)</option>}</select></div>
+            <div class="field"><label>New User ID</label><input placeholder="BSA-XXX-000" required /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>

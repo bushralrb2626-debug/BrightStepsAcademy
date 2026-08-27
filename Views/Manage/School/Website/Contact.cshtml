@@ -1,0 +1,23 @@
+@model ContactContent
+@{
+    ViewData["Title"] = "Contact";
+}
+<h1 class="mg-page-title">Contact section</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Website">← Website</a> · Public homepage contact details</p>
+
+<div class="mg-card">
+<form method="post" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /></div>
+        <div class="mg-field"><label>Phone</label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label>Office hours</label><input asp-for="OfficeHours" placeholder="Mon–Fri 8:00–16:00" /></div>
+    </div>
+    <div class="mg-field"><label>Address</label><textarea asp-for="Address" rows="2"></textarea></div>
+    <div class="mg-field"><label>Map embed (optional HTML/iframe)</label><textarea asp-for="MapEmbed" rows="3"></textarea></div>
+    <div class="mg-actions">
+        <button type="submit" class="mg-btn mg-btn-primary">Save contact</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website">Cancel</a>
+    </div>
+</form>
+</div>

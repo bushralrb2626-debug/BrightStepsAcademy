@@ -1,0 +1,74 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Teachers</h2>
+        <p>Subjects, classes, and years of warm classroom craft.</p>
+    </div>
+    <div class="quick-actions">
+        <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="addTeacherModal">Add Teacher</button>
+        <button type="button" class="btn-bsa btn-bsa-soft" data-modal-open="assignClassModal">Assign Class</button>
+    </div>
+</div>
+
+<div class="table-shell reveal">
+    <div class="table-filters">
+        <input class="js-filter-table" data-table="#teachersTable" type="search" placeholder="Search teachers…" />
+    </div>
+    <div class="table-scroll">
+        <table class="table-bsa" id="teachersTable">
+            <thead>
+                <tr><th>Teacher</th><th>ID</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+            @foreach (var t in store.Teachers)
+            {
+                <tr>
+                    <td><div class="cell-user"><img src="@t.Photo" alt="" /><strong>@t.Name</strong></div></td>
+                    <td>@t.TeacherId</td>
+                    <td>@t.Subject</td>
+                    <td>@t.Classes</td>
+                    <td>@t.ExperienceYears yrs</td>
+                    <td><span class="badge-soft badge-present">@t.Status</span></td>
+                    <td>
+                        <details class="action-menu">
+                            <summary>⋯</summary>
+                            <div class="menu">
+                                <button type="button" onclick="showToast('View @t.Name','info')">View</button>
+                                <button type="button" data-modal-open="assignClassModal">Assign Class</button>
+                            </div>
+                        </details>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-bsa" id="addTeacherModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Teacher</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Teacher added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="field"><label>Email</label><input type="email" /></div>
+            <div class="field"><label>Subject</label><select>@foreach (var s in store.Subjects){<option>@s</option>}</select></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Save</button></div>
+        </form>
+    </div>
+</div>
+<div class="modal-bsa" id="assignClassModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Assign Class</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Class assigned (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Teacher</label><select>@foreach (var t in store.Teachers){<option>@t.Name</option>}</select></div>
+            <div class="field"><label>Class</label><select>@foreach (var c in store.Classes){<option>@c.Name</option>}</select></div>
+            <div class="field"><label>Subject</label><select>@foreach (var s in store.Subjects){<option>@s</option>}</select></div>
+            <div class="modal-bsa-footer"><button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button><button type="submit" class="btn-bsa btn-bsa-primary">Assign</button></div>
+        </form>
+    </div>
+</div>

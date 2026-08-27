@@ -1,0 +1,41 @@
+@model BrightStepsAcademy.Models.Manage.SubscriptionEditVm
+@{
+    ViewData["Title"] = "Edit subscription";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Edit subscription</h1>
+        <p class="mg-page-sub">@Model.SchoolName</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Subscriptions">Back</a>
+</div>
+
+<form method="post" action="/Manage/SuperAdmin/Subscriptions/Edit/@Model.Id" class="mg-card mg-form" novalidate>
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="SchoolId" />
+    <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+
+    <div class="mg-field"><label asp-for="PlanName"></label>
+        <select asp-for="PlanName">
+            @foreach (var p in BrightStepsAcademy.Services.SubscriptionStatusHelper.DefaultPlans)
+            {
+                <option value="@p">@p</option>
+            }
+        </select>
+    </div>
+    <div class="mg-field"><label asp-for="PlanCode"></label><input asp-for="PlanCode" /></div>
+    <div class="mg-field"><label asp-for="BillingCycle"></label><select asp-for="BillingCycle" asp-items="Html.GetEnumSelectList<BillingCycle>()"></select></div>
+    <div class="mg-field"><label asp-for="Price"></label><input asp-for="Price" type="number" step="0.01" /></div>
+    <div class="mg-field"><label asp-for="StartDate"></label><input asp-for="StartDate" type="date" value="@Model.StartDate.ToString("yyyy-MM-dd")" /></div>
+    <div class="mg-field"><label asp-for="ExpiryDate"></label><input asp-for="ExpiryDate" type="date" value="@Model.ExpiryDate.ToString("yyyy-MM-dd")" /><span asp-validation-for="ExpiryDate" class="field-error"></span></div>
+    <div class="mg-field"><label asp-for="Status"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<SubscriptionStatus>()"></select></div>
+    <div class="mg-field"><label asp-for="Notes"></label><textarea asp-for="Notes" rows="3"></textarea></div>
+    <div class="mg-check"><input asp-for="RenewOneYear" /><label asp-for="RenewOneYear">Extend expiry by 1 year (renew)</label></div>
+
+    <div class="mg-actions">
+        <button type="submit" class="mg-btn mg-btn-primary">Save subscription</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools/Details/@Model.SchoolId">School details</a>
+    </div>
+</form>

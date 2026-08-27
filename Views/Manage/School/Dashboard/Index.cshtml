@@ -1,0 +1,153 @@
+@model SchoolDashboardVm
+@{
+    ViewData["Title"] = "Dashboard";
+    var staffJson = System.Text.Json.JsonSerializer.Serialize(Model.StaffByCategory.Select(x => new { label = x.Label, count = x.Count }));
+    var roomsJson = System.Text.Json.JsonSerializer.Serialize(Model.RoomsByType.Select(x => new { label = x.Label, count = x.Count }));
+    var furnitureJson = System.Text.Json.JsonSerializer.Serialize(Model.FurnitureByCondition.Select(x => new { label = x.Label, count = x.Count }));
+    var studentsJson = System.Text.Json.JsonSerializer.Serialize(Model.StudentsByClass.Select(x => new { label = x.Label, count = x.Count }));
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">@Model.SchoolName</h1>
+        <p class="mg-page-sub">School administration overview</p>
+    </div>
+</div>
+
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Buildings</div><div class="mg-stat__label">Buildings</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Floors</div><div class="mg-stat__label">Floors</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Rooms</div><div class="mg-stat__label">Rooms</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Furniture</div><div class="mg-stat__label">Furniture</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Staff</div><div class="mg-stat__label">Staff</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Teachers</div><div class="mg-stat__label">Teachers</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Students</div><div class="mg-stat__label">Students</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Admins</div><div class="mg-stat__label">Admins</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.Facilities</div><div class="mg-stat__label">Facilities</div></div>
+</div>
+
+<div class="mg-card">
+    <h2 class="mg-section-title">Quick actions</h2>
+    <div class="mg-actions">
+        <a class="mg-btn mg-btn-primary" href="/Manage/School/Buildings/Create">+ Add building</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Floors/Create">+ Add floor</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Rooms/Create">+ Add room</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Furniture/Create">+ Add furniture</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Staff/Create">+ Add staff</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Students/Create">+ Add student</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Administrators/Create">+ Add administrator</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Website/Facilities">+ Add facility</a>
+    </div>
+</div>
+
+<div class="mg-dash-grid" style="margin-top:1.25rem;">
+    <div class="mg-card">
+        <h2 class="mg-section-title">Staff distribution</h2>
+        @if (Model.StaffByCategory.Count == 0)
+        {
+            <div class="mg-empty"><h3>No staff yet</h3><p>Add staff to see category breakdown.</p></div>
+        }
+        else
+        {
+            <div class="mg-chart-wrap"><canvas id="staffChart" height="160"></canvas></div>
+        }
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">Room distribution</h2>
+        @if (Model.RoomsByType.Count == 0)
+        {
+            <div class="mg-empty"><h3>No rooms yet</h3><p>Add rooms to see type breakdown.</p></div>
+        }
+        else
+        {
+            <div class="mg-chart-wrap"><canvas id="roomsChart" height="160"></canvas></div>
+        }
+    </div>
+</div>
+
+<div class="mg-dash-grid" style="margin-top:1.25rem;">
+    <div class="mg-card">
+        <h2 class="mg-section-title">Furniture condition</h2>
+        @if (Model.FurnitureByCondition.Count == 0)
+        {
+            <div class="mg-empty"><h3>No furniture yet</h3><p>Track condition once items are added.</p></div>
+        }
+        else
+        {
+            <div class="mg-chart-wrap"><canvas id="furnitureChart" height="160"></canvas></div>
+        }
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">Students by class</h2>
+        @if (Model.StudentsByClass.Count == 0)
+        {
+            <div class="mg-empty"><h3>No students yet</h3><p>Enrollment by class will appear here.</p></div>
+        }
+        else
+        {
+            <div class="mg-chart-wrap"><canvas id="studentsChart" height="160"></canvas></div>
+        }
+    </div>
+</div>
+
+<div class="mg-card" style="margin-top:1.25rem;">
+    <div class="mg-toolbar">
+        <h2 class="mg-section-title" style="margin:0;">Recent activity</h2>
+        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Activity">View all</a>
+    </div>
+    @if (Model.RecentActivity.Count == 0)
+    {
+        <div class="mg-empty"><h3>No activity yet</h3><p>School actions will show up here.</p></div>
+    }
+    else
+    {
+        <ul class="mg-activity-list">
+            @foreach (var a in Model.RecentActivity)
+            {
+                <li>
+                    <strong>@a.Action</strong>
+                    <span class="mg-muted">@a.Module · @a.Timestamp.ToLocalTime().ToString("g")</span>
+                    <div>@(a.Details ?? "")</div>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    const palette = ['#0f6e56','#c45c26','#1d4ed8','#7c3aed','#b54708','#027a48','#0e7490','#be123c'];
+    function doughnut(id, data) {
+        const el = document.getElementById(id);
+        if (!el || !data.length) return;
+        new Chart(el, {
+            type: 'doughnut',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [{ data: data.map(d => d.count), backgroundColor: palette, borderWidth: 0 }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } }, cutout: '58%' }
+        });
+    }
+    function bars(id, data) {
+        const el = document.getElementById(id);
+        if (!el || !data.length) return;
+        new Chart(el, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.label),
+                datasets: [{ data: data.map(d => d.count), backgroundColor: '#0f6e56', borderRadius: 6, maxBarThickness: 36 }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+    doughnut('staffChart', @Html.Raw(staffJson));
+    doughnut('roomsChart', @Html.Raw(roomsJson));
+    doughnut('furnitureChart', @Html.Raw(furnitureJson));
+    bars('studentsChart', @Html.Raw(studentsJson));
+</script>
+}

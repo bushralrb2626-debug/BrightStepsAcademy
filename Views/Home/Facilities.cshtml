@@ -1,0 +1,27 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-mint"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Facilities</p>
+        <h1>Spaces built for wonder</h1>
+        <p>Explore libraries, labs, fields, studios, and safe play areas.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="facility-masonry">
+        @foreach (var f in store.Facilities)
+        {
+            <a class="facility-card card-lift reveal size-@f.Size accent-@f.Accent @(f.Featured ? "is-featured" : "")"
+               asp-controller="Home" asp-action="Facility" asp-route-id="@f.Id">
+                <img src="@f.Image" alt="@f.Name" />
+                <div class="facility-card__overlay">
+                    <span class="badge-soft">@f.Name</span>
+                    <p>@f.Description</p>
+                </div>
+            </a>
+        }
+    </div>
+</section>

@@ -1,0 +1,28 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-coral"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Teachers</p>
+        <h1>Meet our teachers</h1>
+        <p>Warm educators who turn classrooms into places of belonging.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="teachers-grid">
+        @foreach (var t in store.Teachers)
+        {
+            <a class="teacher-card card-lift reveal" asp-controller="Home" asp-action="TeacherProfile" asp-route-id="@t.Id">
+                <img src="@t.Photo" alt="@t.Name" />
+                <div class="teacher-card__body">
+                    <h3>@t.Name</h3>
+                    <span class="badge-soft accent-sky">@t.Subject</span>
+                    <p>@t.ExperienceYears years experience</p>
+                    <p>@t.Classes</p>
+                </div>
+            </a>
+        }
+    </div>
+</section>

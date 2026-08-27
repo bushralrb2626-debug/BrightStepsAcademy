@@ -1,0 +1,23 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="section-head reveal mb-2">
+    <h2>Schools</h2>
+    <p>Every campus in the BrightSteps network.</p>
+</div>
+
+<div class="grid-3 stagger">
+    @foreach (var s in store.Schools)
+    {
+        <article class="school-card card-lift accent-sky">
+            <h3>@s.Name</h3>
+            <p class="text-muted">@s.Address</p>
+            <div class="info-row"><span>Students</span><strong>@s.Students</strong></div>
+            <div class="info-row"><span>Teachers</span><strong>@s.Teachers</strong></div>
+            <div class="info-row"><span>Phone</span><strong>@s.Phone</strong></div>
+            <div class="info-row"><span>Email</span><strong>@s.Email</strong></div>
+            <button type="button" class="btn-bsa btn-bsa-soft btn-bsa-sm mt-1" onclick="showToast('Opening @s.Name','info')">View campus</button>
+        </article>
+    }
+</div>

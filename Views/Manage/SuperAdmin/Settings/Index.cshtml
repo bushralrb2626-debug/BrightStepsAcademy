@@ -1,0 +1,23 @@
+@model BrightStepsAcademy.Models.Manage.PlatformSettingsVm
+@{
+    ViewData["Title"] = "Platform settings";
+}
+
+<h1 class="mg-page-title">Platform settings</h1>
+<p class="mg-page-sub">Defaults for subscriptions and support contacts</p>
+
+<form method="post" action="/Manage/SuperAdmin/Settings" class="mg-card mg-form" novalidate>
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+
+    <div class="mg-field"><label asp-for="PlatformName"></label><input asp-for="PlatformName" /><span asp-validation-for="PlatformName" class="field-error"></span></div>
+    <div class="mg-field"><label asp-for="SupportEmail"></label><input asp-for="SupportEmail" type="email" /></div>
+    <div class="mg-field"><label asp-for="SupportPhone"></label><input asp-for="SupportPhone" /></div>
+    <div class="mg-field"><label asp-for="Website"></label><input asp-for="Website" /></div>
+    <div class="mg-field"><label asp-for="DefaultSubscriptionMonths"></label><input asp-for="DefaultSubscriptionMonths" type="number" /></div>
+    <div class="mg-field"><label asp-for="ExpiryWarningDays"></label><input asp-for="ExpiryWarningDays" type="number" /></div>
+    <div class="mg-field"><label asp-for="AvailablePlans"></label><input asp-for="AvailablePlans" placeholder="Basic, Standard, Premium, Enterprise" /></div>
+
+    <button type="submit" class="mg-btn mg-btn-primary">Save settings</button>
+</form>

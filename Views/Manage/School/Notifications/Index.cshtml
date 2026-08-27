@@ -1,0 +1,30 @@
+@model List<AppNotification>
+@{
+    ViewData["Title"] = "Notifications";
+}
+<h1 class="mg-page-title">Notifications</h1>
+<p class="mg-page-sub">Recent alerts for your account</p>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>All caught up</h3><p>No notifications right now.</p></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Title</th><th>Message</th><th>When</th><th>Read</th></tr></thead>
+            <tbody>
+            @foreach (var n in Model)
+            {
+                <tr>
+                    <td>@n.Title</td>
+                    <td>@n.Message</td>
+                    <td>@n.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@(n.IsRead ? "Yes" : "No")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

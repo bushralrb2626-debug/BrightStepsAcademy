@@ -1,0 +1,27 @@
+@{
+    EmptyStateVm vm;
+    if (Model is EmptyStateVm m)
+    {
+        vm = m;
+    }
+    else
+    {
+        vm = new EmptyStateVm
+        {
+            Title = ViewData["EmptyTitle"] as string ?? "Nothing here yet",
+            Message = ViewData["EmptyMessage"] as string ?? "Check back soon — something wonderful is on the way.",
+            Emoji = ViewData["EmptyEmoji"] as string ?? "🎨",
+            ActionLabel = ViewData["EmptyActionLabel"] as string,
+            ActionAttr = ViewData["EmptyActionAttr"] as string
+        };
+    }
+}
+<div class="empty-state reveal">
+    <div class="empty-state__emoji" aria-hidden="true">@vm.Emoji</div>
+    <h3>@vm.Title</h3>
+    <p>@vm.Message</p>
+    @if (!string.IsNullOrWhiteSpace(vm.ActionLabel))
+    {
+        <button type="button" class="btn-bsa btn-bsa-primary" @Html.Raw(vm.ActionAttr ?? "")>@vm.ActionLabel</button>
+    }
+</div>

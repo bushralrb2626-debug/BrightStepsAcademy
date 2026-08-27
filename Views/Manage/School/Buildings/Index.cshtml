@@ -1,0 +1,51 @@
+@model List<Building>
+@{
+    ViewData["Title"] = "Buildings";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Buildings</h1>
+        <p class="mg-page-sub">Campus buildings</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Buildings/Create">Add building</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No buildings yet</h3><p>Create your first building to start mapping floors and rooms.</p><a class="mg-btn mg-btn-primary" href="/Manage/School/Buildings/Create">Add building</a></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Name</th><th>Number</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var b in Model)
+            {
+                <tr>
+                    <td>@b.Name</td>
+                    <td>@(b.BuildingNumber ?? "—")</td>
+                    <td><span class="mg-badge @(b.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(b.IsActive ? "Active" : "Inactive")</span></td>
+                    <td style="white-space:nowrap;">
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Buildings/Edit/@b.Id">Edit</a>
+                        @if (b.IsActive)
+                        {
+                            <form method="post" action="/Manage/School/Buildings/Deactivate/@b.Id" style="display:inline;" onsubmit="return confirm('Deactivate this building?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Deactivate</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" action="/Manage/School/Buildings/Activate/@b.Id" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-secondary">Activate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,87 @@
+@model BrightStepsAcademy.Models.Manage.SubscriptionListVm
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">@Model.Title</h1>
+        <p class="mg-page-sub">Manage school subscription plans</p>
+    </div>
+</div>
+
+<form method="get" class="mg-filters mg-card">
+    <div class="mg-field">
+        <label>Search</label>
+        <input type="search" name="search" value="@Model.Search" placeholder="School or plan" />
+    </div>
+    @if (Model.Title == "Subscriptions")
+    {
+        <div class="mg-field">
+            <label>Status</label>
+            <select name="status">
+                <option value="">All</option>
+                @foreach (SubscriptionStatus st in Enum.GetValues<SubscriptionStatus>())
+                {
+                    <option value="@st" selected="@(string.Equals(Model.StatusFilter, st.ToString(), StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@st</option>
+                }
+            </select>
+        </div>
+    }
+    <div class="mg-field" style="align-self:end;">
+        <button type="submit" class="mg-btn mg-btn-primary">Filter</button>
+    </div>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="mg-card" style="margin-top:1rem;">
+        <div class="mg-empty"><h3>No subscriptions</h3><p>Nothing matches this filter.</p></div>
+    </div>
+}
+else
+{
+    <div class="mg-card" style="margin-top:1rem;padding:0;">
+        <div class="mg-table-wrap">
+            <table class="mg-table">
+                <thead>
+                    <tr>
+                        <th>School</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Cycle</th>
+                        <th>Start</th>
+                        <th>Expiry</th>
+                        <th>Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var i in Model.Items)
+                {
+                    <tr>
+                        <td><strong>@i.SchoolName</strong><div class="mg-muted">@i.SchoolCode</div></td>
+                        <td>@i.PlanName</td>
+                        <td><span class="mg-badge mg-badge-sub-@i.Status.ToString().ToLowerInvariant()">@i.Status</span></td>
+                        <td>@i.BillingCycle</td>
+                        <td>@i.StartDate.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td>@i.ExpiryDate.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td>@(i.Price?.ToString("C") ?? "—")</td>
+                        <td><a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/SuperAdmin/Subscriptions/Edit/@i.Id">Edit / renew</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mg-pager">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="mg-btn mg-btn-sm @(p == Model.Page ? "mg-btn-primary" : "mg-btn-secondary")"
+                   href="?search=@Model.Search&status=@Model.StatusFilter&page=@p">@p</a>
+            }
+        </div>
+    }
+}

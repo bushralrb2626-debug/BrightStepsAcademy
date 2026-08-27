@@ -1,0 +1,30 @@
+@model CreateAdminVm
+@{
+    ViewData["Title"] = "Create Admin";
+}
+<h1 class="mg-page-title">Create custom admin</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Administrators">← Administrators</a></p>
+<div class="mg-card">
+<form method="post" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /></div>
+        <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" required /></div>
+        <div class="mg-field"><label>Login ID (optional)</label><input asp-for="LoginId" /></div>
+        <div class="mg-field"><label>Password</label><input asp-for="Password" type="password" required /></div>
+    </div>
+    <h3 style="font-family:var(--mg-display);font-size:1.05rem;">Permissions</h3>
+    <div class="mg-perm-grid">
+        @foreach (var p in Model.AllPermissions)
+        {
+            var checkedAttr = Model.PermissionCodes.Contains(p.Code) ? "checked" : null;
+            <label class="mg-check">
+                <input type="checkbox" name="permissionCodes" value="@p.Code" @checkedAttr />
+                <span>@p.Name <small style="color:var(--mg-muted);">(@p.Module)</small></span>
+            </label>
+        }
+    </div>
+    <button type="submit" class="mg-btn mg-btn-primary" style="margin-top:1rem;">Create admin</button>
+</form>
+</div>

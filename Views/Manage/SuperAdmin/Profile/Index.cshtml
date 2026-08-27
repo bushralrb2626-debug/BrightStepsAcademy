@@ -1,0 +1,22 @@
+@model BrightStepsAcademy.Models.Manage.SuperAdminProfileVm
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Profile</h1>
+        <p class="mg-page-sub">Your Super Admin account</p>
+    </div>
+    <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/ChangePassword">Change password</a>
+</div>
+
+<form method="post" action="/Manage/SuperAdmin/Profile" class="mg-card mg-form" novalidate>
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+    <div class="mg-field"><label asp-for="FullName"></label><input asp-for="FullName" /><span asp-validation-for="FullName" class="field-error"></span></div>
+    <div class="mg-field"><label asp-for="Email"></label><input asp-for="Email" readonly class="mg-readonly" /></div>
+    <div class="mg-field"><label asp-for="LoginId"></label><input asp-for="LoginId" readonly class="mg-readonly" /></div>
+    <div class="mg-field"><label asp-for="Phone"></label><input asp-for="Phone" /></div>
+    <button type="submit" class="mg-btn mg-btn-primary">Save profile</button>
+</form>

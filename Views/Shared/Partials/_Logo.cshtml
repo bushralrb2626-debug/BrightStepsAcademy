@@ -1,0 +1,32 @@
+@{
+    var compact = ViewData["Compact"] as bool? == true;
+    var brand = ViewData["SchoolName"] as string ?? "Scuola Materna";
+    var tagline = ViewData["Tagline"] as string ?? "Learn. Explore. Grow.";
+    var logo = ViewData["LogoPath"] as string;
+}
+<a class="brand-logo @(compact ? "is-compact" : "")" asp-controller="Home" asp-action="Index" aria-label="@brand home">
+    @if (!string.IsNullOrWhiteSpace(logo))
+    {
+        <span class="brand-mark" aria-hidden="true">
+            <img src="@logo" alt="" width="40" height="40" style="border-radius:10px;object-fit:cover" />
+        </span>
+    }
+    else
+    {
+        <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="10" width="28" height="30" rx="6" fill="#5B8DEF"/>
+                <path d="M10 16h16M10 22h12M10 28h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M34 8l2.2 5.4L42 16l-5.4 2.2L34 24l-2.2-5.8L26 16l5.8-2.6L34 8z" fill="#F6C445"/>
+                <circle cx="38" cy="34" r="6" fill="#7ED6A5"/>
+            </svg>
+        </span>
+    }
+    <span class="brand-text">
+        <strong>@brand</strong>
+        @if (!compact)
+        {
+            <small>@tagline</small>
+        }
+    </span>
+</a>

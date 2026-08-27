@@ -1,0 +1,45 @@
+@model BrightStepsAcademy.Models.Manage.AnalyticsPageVm
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<h1 class="mg-page-title">Analytics</h1>
+<p class="mg-page-sub">Growth and status distribution across the platform</p>
+
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@Model.TotalSchools</div><div class="mg-stat__label">Schools</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ActiveSchools</div><div class="mg-stat__label">Active</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.PendingSchools</div><div class="mg-stat__label">Pending</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ActiveSubscriptions</div><div class="mg-stat__label">Active plans</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ExpiringSoon</div><div class="mg-stat__label">Expiring</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.ExpiredSubscriptions</div><div class="mg-stat__label">Expired</div></div>
+</div>
+
+<div class="mg-dash-grid">
+    <div class="mg-card">
+        <h2 class="mg-section-title">New schools (12 months)</h2>
+        <div class="mg-chart-wrap"><canvas id="growthChart" height="200"></canvas></div>
+    </div>
+    <div class="mg-card">
+        <h2 class="mg-section-title">Status mix</h2>
+        <div class="mg-chart-wrap"><canvas id="statusChart" height="200"></canvas></div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    const growth = @Html.Raw(Model.GrowthJson);
+    const status = @Html.Raw(Model.StatusJson);
+    new Chart(document.getElementById('growthChart'), {
+        type: 'bar',
+        data: { labels: growth.map(x => x.label), datasets: [{ data: growth.map(x => x.count), backgroundColor: '#0f6e56', label: 'Schools' }] },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: { labels: status.map(x => x.label), datasets: [{ data: status.map(x => x.count), backgroundColor: ['#027a48','#b54708','#b42318','#5b6b7c','#102a43'] }] },
+        options: { plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+}

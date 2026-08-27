@@ -1,0 +1,23 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="section-head reveal mb-2">
+    <h2>Homework</h2>
+    <p>Gentle reminders — what's due and what's done.</p>
+</div>
+
+<div class="stack stagger">
+    @foreach (var a in store.Assignments.Where(x => x.Status == "Published"))
+    {
+        <article class="assignment-card card-lift">
+            <div class="flex-between">
+                <span class="badge-soft">@a.Subject</span>
+                <span class="text-muted">Due @a.DueDate.ToString("MMM d")</span>
+            </div>
+            <h3 class="mt-1">@a.Title</h3>
+            <p>@a.Description</p>
+            <p class="text-muted mb-0">@a.ClassName</p>
+        </article>
+    }
+</div>

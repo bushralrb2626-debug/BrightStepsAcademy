@@ -1,0 +1,142 @@
+@model BrightStepsAcademy.Models.Manage.SchoolFormVm
+@{
+    ViewData["Title"] = "Create school";
+    var step = Model.Step <= 0 ? 1 : Model.Step;
+    string[] labels = ["Basic", "Location", "Branding", "Admin", "Subscription", "Review"];
+}
+
+<h1 class="mg-page-title">Create school</h1>
+<p class="mg-page-sub">Multi-step wizard · create as Active or Pending</p>
+
+<div class="mg-wizard-steps">
+    @for (var i = 0; i < labels.Length; i++)
+    {
+        var n = i + 1;
+        <div class="mg-wizard-step @(n == step ? "is-current" : n < step ? "is-done" : null)">
+            <span class="mg-wizard-num">@n</span>
+            <span>@labels[i]</span>
+        </div>
+    }
+</div>
+
+<form method="post" action="/Manage/SuperAdmin/Schools/Create" enctype="multipart/form-data" novalidate class="mg-card mg-form wide" style="margin-top:1rem;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Step" />
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="LogoPath" />
+    <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+
+    @if (step == 1)
+    {
+        <h2 class="mg-section-title">Basic information</h2>
+        <div class="mg-grid-2">
+            <div class="mg-field"><label asp-for="Name"></label><input asp-for="Name" /><span asp-validation-for="Name" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="SchoolCode"></label><input asp-for="SchoolCode" /><span asp-validation-for="SchoolCode" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="ShortName"></label><input asp-for="ShortName" /></div>
+            <div class="mg-field"><label asp-for="Email"></label><input asp-for="Email" type="email" /><span asp-validation-for="Email" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="Phone"></label><input asp-for="Phone" /></div>
+            <div class="mg-field"><label asp-for="SchoolType"></label><input asp-for="SchoolType" placeholder="Primary, K-12…" /></div>
+            <div class="mg-field"><label asp-for="PrincipalName"></label><input asp-for="PrincipalName" /></div>
+            <div class="mg-field"><label asp-for="Website"></label><input asp-for="Website" /></div>
+            <div class="mg-field"><label asp-for="RegistrationNumber"></label><input asp-for="RegistrationNumber" /></div>
+            <div class="mg-field"><label asp-for="EstablishedYear"></label><input asp-for="EstablishedYear" type="number" /></div>
+            <div class="mg-field"><label asp-for="Status"></label>
+                <select asp-for="Status">
+                    <option value="@((int)SchoolStatus.Active)">Active</option>
+                    <option value="@((int)SchoolStatus.Pending)">Pending</option>
+                </select>
+            </div>
+            <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Tagline"></label><input asp-for="Tagline" /></div>
+            <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Description"></label><textarea asp-for="Description" rows="3"></textarea></div>
+        </div>
+    }
+    else if (step == 2)
+    {
+        <h2 class="mg-section-title">Location & contacts</h2>
+        <div class="mg-grid-2">
+            <div class="mg-field" style="grid-column:1/-1;"><label asp-for="Address"></label><textarea asp-for="Address" rows="2"></textarea></div>
+            <div class="mg-field"><label asp-for="City"></label><input asp-for="City" /></div>
+            <div class="mg-field"><label asp-for="StateProvince"></label><input asp-for="StateProvince" /></div>
+            <div class="mg-field"><label asp-for="Country"></label><input asp-for="Country" /></div>
+            <div class="mg-field"><label asp-for="PostalCode"></label><input asp-for="PostalCode" /></div>
+            <div class="mg-field"><label asp-for="EmergencyContact"></label><input asp-for="EmergencyContact" /></div>
+            <div class="mg-field"><label asp-for="PrimaryContactName"></label><input asp-for="PrimaryContactName" /></div>
+            <div class="mg-field"><label asp-for="PrimaryContactEmail"></label><input asp-for="PrimaryContactEmail" /></div>
+            <div class="mg-field"><label asp-for="PrimaryContactPhone"></label><input asp-for="PrimaryContactPhone" /></div>
+        </div>
+    }
+    else if (step == 3)
+    {
+        <h2 class="mg-section-title">Branding</h2>
+        <p class="mg-page-sub">Optional logo upload (jpg, png, webp, gif · max 5 MB)</p>
+        @if (!string.IsNullOrEmpty(Model.LogoPath))
+        {
+            <p>Current: <a href="@Model.LogoPath" target="_blank" rel="noopener">View logo</a></p>
+            <img src="@Model.LogoPath" alt="Logo" class="mg-thumb" />
+        }
+        <div class="mg-field"><label asp-for="LogoFile"></label><input asp-for="LogoFile" type="file" accept="image/*" /><span asp-validation-for="LogoFile" class="field-error"></span></div>
+    }
+    else if (step == 4)
+    {
+        <h2 class="mg-section-title">School admin</h2>
+        <div class="mg-check"><input asp-for="CreateAdmin" /><label asp-for="CreateAdmin"></label></div>
+        <div class="mg-grid-2">
+            <div class="mg-field"><label asp-for="AdminFullName"></label><input asp-for="AdminFullName" /><span asp-validation-for="AdminFullName" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="AdminEmail"></label><input asp-for="AdminEmail" type="email" /><span asp-validation-for="AdminEmail" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="AdminLoginId"></label><input asp-for="AdminLoginId" /><span asp-validation-for="AdminLoginId" class="field-error"></span></div>
+            <div class="mg-field"><label asp-for="AdminPhone"></label><input asp-for="AdminPhone" /></div>
+            <div class="mg-field"><label asp-for="AdminTemporaryPassword"></label><input asp-for="AdminTemporaryPassword" type="password" autocomplete="new-password" /><span asp-validation-for="AdminTemporaryPassword" class="field-error"></span></div>
+        </div>
+    }
+    else if (step == 5)
+    {
+        <h2 class="mg-section-title">Subscription</h2>
+        <div class="mg-grid-2">
+            <div class="mg-field"><label asp-for="PlanName"></label>
+                <select asp-for="PlanName">
+                    @foreach (var p in BrightStepsAcademy.Services.SubscriptionStatusHelper.DefaultPlans)
+                    {
+                        <option value="@p">@p</option>
+                    }
+                </select>
+            </div>
+            <div class="mg-field"><label asp-for="PlanCode"></label><input asp-for="PlanCode" /></div>
+            <div class="mg-field"><label asp-for="BillingCycle"></label><select asp-for="BillingCycle" asp-items="Html.GetEnumSelectList<BillingCycle>()"></select></div>
+            <div class="mg-field"><label asp-for="SubscriptionPrice"></label><input asp-for="SubscriptionPrice" type="number" step="0.01" /></div>
+            <div class="mg-field"><label asp-for="SubscriptionStart"></label><input asp-for="SubscriptionStart" type="date" value="@Model.SubscriptionStart.ToString("yyyy-MM-dd")" /></div>
+            <div class="mg-field"><label asp-for="SubscriptionExpiry"></label><input asp-for="SubscriptionExpiry" type="date" value="@Model.SubscriptionExpiry.ToString("yyyy-MM-dd")" /><span asp-validation-for="SubscriptionExpiry" class="field-error"></span></div>
+            <div class="mg-field" style="grid-column:1/-1;"><label asp-for="SubscriptionNotes"></label><textarea asp-for="SubscriptionNotes" rows="2"></textarea></div>
+        </div>
+    }
+    else
+    {
+        <h2 class="mg-section-title">Review & create</h2>
+        <dl class="mg-review">
+            <div><dt>Name</dt><dd>@Model.Name (@Model.SchoolCode)</dd></div>
+            <div><dt>Email</dt><dd>@Model.Email</dd></div>
+            <div><dt>Location</dt><dd>@(Model.City ?? "—"), @(Model.Country ?? "—")</dd></div>
+            <div><dt>Status</dt><dd><span class="mg-badge mg-badge-school-@Model.Status.ToString().ToLowerInvariant()">@Model.Status</span></dd></div>
+            <div><dt>Plan</dt><dd>@Model.PlanName · @Model.BillingCycle · until @Model.SubscriptionExpiry.ToString("dd MMM yyyy")</dd></div>
+            <div><dt>Admin</dt><dd>@(Model.CreateAdmin ? $"{Model.AdminFullName} · {Model.AdminEmail}" : "Skip for now")</dd></div>
+        </dl>
+    }
+
+    <div class="mg-actions" style="margin-top:1.25rem;">
+        @if (step > 1)
+        {
+            <button type="submit" name="nav" value="back" class="mg-btn mg-btn-secondary" formnovalidate>Back</button>
+        }
+        else
+        {
+            <a class="mg-btn mg-btn-secondary" href="/Manage/SuperAdmin/Schools">Cancel</a>
+        }
+        @if (step < 6)
+        {
+            <button type="submit" name="nav" value="next" class="mg-btn mg-btn-primary">Continue</button>
+        }
+        else
+        {
+            <button type="submit" name="nav" value="finish" class="mg-btn mg-btn-primary">Create school</button>
+        }
+    </div>
+</form>

@@ -1,0 +1,39 @@
+@{
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var groups = ViewBag.NavGroups as IReadOnlyList<NavGroup> ?? Array.Empty<NavGroup>();
+    var roleKey = (string)(ViewBag.RoleKey ?? "Student");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+}
+<aside class="dash-sidebar">
+    <div class="dash-sidebar__brand">
+        @{ ViewData["Compact"] = true; }
+        <partial name="Partials/_Logo" />
+        <span class="badge-soft accent-royal role-badge">@profile.Role</span>
+    </div>
+    <nav class="dash-sidebar__nav">
+        @foreach (var group in groups)
+        {
+            <div class="dash-nav-group">
+                <p class="dash-nav-group__title">@group.Title</p>
+                @foreach (var item in group.Items)
+                {
+                    var active = string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase)
+                                 && string.Equals(item.Action, currentAction, StringComparison.OrdinalIgnoreCase);
+                    <a class="dash-nav-link @(active ? "is-active" : "")"
+                       asp-controller="@item.Controller"
+                       asp-action="@item.Action">
+                        @{ ViewData["Icon"] = item.Icon; }
+                        <partial name="Partials/_Icons" />
+                        <span>@item.Label</span>
+                    </a>
+                }
+            </div>
+        }
+    </nav>
+    <div class="dash-sidebar__foot">
+        <a class="btn-bsa btn-bsa-ghost" asp-controller="Portal" asp-action="Login">
+            Log out
+        </a>
+    </div>
+</aside>

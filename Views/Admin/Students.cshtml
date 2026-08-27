@@ -1,0 +1,85 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Students</h2>
+        <p>Photos, classes, parents, and attendance at a glance.</p>
+    </div>
+    <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="addStudentModal">Add Student</button>
+</div>
+
+<div class="table-shell reveal">
+    <div class="table-filters">
+        <input class="js-filter-table" data-table="#studentsTable" type="search" placeholder="Search students…" />
+        <select class="js-filter-select" data-table="#studentsTable" data-col="3">
+            <option value="">All classes</option>
+            @foreach (var c in store.Classes.Select(x => x.Grade).Distinct()) { <option>Grade @c</option> }
+        </select>
+    </div>
+    <div class="table-scroll">
+        <table class="table-bsa" id="studentsTable">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>ID</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>Parent</th>
+                    <th>Attendance</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var s in store.Students)
+            {
+                <tr>
+                    <td><div class="cell-user"><img src="@s.Photo" alt="" /><strong>@s.Name</strong></div></td>
+                    <td>@s.StudentId</td>
+                    <td>@s.ClassName</td>
+                    <td>@s.Section</td>
+                    <td>@s.ParentName</td>
+                    <td>
+                        <div class="progress-label"><span></span><span>@s.Attendance%</span></div>
+                        <div class="progress-bsa"><span style="width:@s.Attendance%"></span></div>
+                    </td>
+                    <td><span class="badge-soft badge-present">@s.Status</span></td>
+                    <td>
+                        <details class="action-menu">
+                            <summary>⋯</summary>
+                            <div class="menu">
+                                <button type="button" onclick="showToast('View @s.Name','info')">View</button>
+                                <button type="button" onclick="showToast('Edit @s.Name','info')">Edit</button>
+                                <button type="button" onclick="showToast('Assign ID for @s.Name','info')">Assign ID</button>
+                                <a asp-controller="Admin" asp-action="Profile">View Profile</a>
+                            </div>
+                        </details>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-bsa" id="addStudentModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Add Student</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Student added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Full name</label><input required /></div>
+            <div class="form-row">
+                <div class="field"><label>Class</label><select>@foreach (var c in store.Classes){<option>@c.Name</option>}</select></div>
+                <div class="field"><label>Section</label><input value="A" /></div>
+            </div>
+            <div class="field"><label>Parent</label><select>@foreach (var p in store.Parents){<option>@p.Name</option>}</select></div>
+            <div class="field"><label>Student ID</label><input placeholder="BSA-STU-000" /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

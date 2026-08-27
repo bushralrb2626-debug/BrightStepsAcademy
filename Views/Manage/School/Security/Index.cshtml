@@ -1,0 +1,37 @@
+@model BrightStepsAcademy.Models.Manage.ChangePasswordVm
+@{
+    ViewData["Title"] = "Security";
+    var mustChange = ViewBag.MustChangePassword as bool? == true;
+}
+<h1 class="mg-page-title">Security</h1>
+<p class="mg-page-sub">Change your password@(mustChange ? " — required before continuing" : "")</p>
+
+@if (mustChange)
+{
+    <div class="mg-flash mg-flash-error">You must change your temporary password before using the portal.</div>
+}
+
+<div class="mg-card" style="max-width:480px;">
+    <form method="post" asp-action="Security" novalidate>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="mg-flash mg-flash-error"></div>
+        <div class="mg-form">
+            <div class="mg-field">
+                <label asp-for="CurrentPassword"></label>
+                <input asp-for="CurrentPassword" autocomplete="current-password" />
+                <span asp-validation-for="CurrentPassword" class="field-error"></span>
+            </div>
+            <div class="mg-field">
+                <label asp-for="NewPassword"></label>
+                <input asp-for="NewPassword" autocomplete="new-password" />
+                <span asp-validation-for="NewPassword" class="field-error"></span>
+            </div>
+            <div class="mg-field">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+            <button type="submit" class="mg-btn mg-btn-primary">Update password</button>
+        </div>
+    </form>
+</div>

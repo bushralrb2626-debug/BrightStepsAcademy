@@ -1,0 +1,32 @@
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-sky"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Notices</p>
+        <h1>Latest notices</h1>
+        <p>Important updates from Scuola Materna.</p>
+    </div>
+</section>
+
+<section class="section">
+    @if (!store.Notices.Any())
+    {
+        <partial name="Partials/_EmptyState" model='new EmptyStateVm { Title = "No notices yet", Message = "Check back soon for school updates.", Emoji = "📣" }' />
+    }
+    else
+    {
+        <div class="notices-grid notices-grid--full">
+            @foreach (var n in store.Notices)
+            {
+                <article class="notice-card card-lift reveal">
+                    <span class="badge-soft accent-sky">@n.Category</span>
+                    <h3>@n.Title</h3>
+                    <p>@n.Body</p>
+                    <small>@n.Date.ToString("MMMM d, yyyy")</small>
+                </article>
+            }
+        </div>
+    }
+</section>

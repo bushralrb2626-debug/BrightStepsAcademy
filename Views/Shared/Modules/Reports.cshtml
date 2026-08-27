@@ -1,0 +1,40 @@
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2">
+    <h2>Reports &amp; Insights</h2>
+    <p>Colorful snapshots of attendance, learning, and campus rhythm.</p>
+</div>
+
+<div class="grid-2 stagger">
+    <div class="chart-card accent-sky card-lift">
+        <h3>Attendance trend</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="line" data-chart='{"labels":["Mon","Tue","Wed","Thu","Fri"],"datasets":[{"label":"Attendance %","data":[94,96,92,97,95]}]}'></canvas>
+        </div>
+    </div>
+    <div class="chart-card accent-mint card-lift">
+        <h3>Performance by subject</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="bar" data-chart='{"labels":["Math","English","Science","Computer","Urdu"],"data":[92,88,95,90,84]}'></canvas>
+        </div>
+    </div>
+    <div class="chart-card accent-purple card-lift">
+        <h3>Teacher activity</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="doughnut" data-chart='{"labels":["Lessons","Grading","Meetings","Planning"],"data":[42,28,18,12]}'></canvas>
+        </div>
+    </div>
+    <div class="chart-card accent-orange card-lift">
+        <h3>Assignment submissions</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="bar" data-chart='{"labels":["On time","Late","Pending"],"data":[68,14,18]}'></canvas>
+        </div>
+    </div>
+    <div class="chart-card accent-pink card-lift" style="grid-column: 1 / -1;">
+        <h3>Class engagement</h3>
+        <div class="chart-wrap">
+            <canvas data-chart-type="line" data-chart='{"labels":["Grade 3","Grade 4","Grade 5"],"datasets":[{"label":"Engagement","data":[88,91,86]},{"label":"Participation","data":[82,89,90]}]}'></canvas>
+        </div>
+    </div>
+</div>

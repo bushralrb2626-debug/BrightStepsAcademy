@@ -1,0 +1,55 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="section-head reveal mb-2">
+    <h2>Parents</h2>
+    <p>Families linked to BrightSteps learners.</p>
+</div>
+
+<div class="table-shell reveal">
+    <div class="table-filters">
+        <input class="js-filter-table" data-table="#parentsTable" type="search" placeholder="Search parents…" />
+    </div>
+    <div class="table-scroll">
+        <table class="table-bsa" id="parentsTable">
+            <thead>
+                <tr><th>Parent</th><th>ID</th><th>Phone</th><th>Email</th><th>Children</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+            @foreach (var p in store.Parents)
+            {
+                <tr>
+                    <td><div class="cell-user"><img src="@p.Photo" alt="" /><strong>@p.Name</strong></div></td>
+                    <td>@p.ParentId</td>
+                    <td>@p.Phone</td>
+                    <td>@p.Email</td>
+                    <td>@p.Children</td>
+                    <td><span class="badge-soft badge-present">@p.Status</span></td>
+                    <td>
+                        <div class="quick-actions">
+                            <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" data-modal-open="linkStudentModal">Link Student</button>
+                            <a class="btn-bsa btn-bsa-sm btn-bsa-ghost" asp-action="Messages">Message</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-bsa" id="linkStudentModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Link Student</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Student linked (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Parent</label><select>@foreach (var p in store.Parents){<option>@p.Name</option>}</select></div>
+            <div class="field"><label>Student</label><select>@foreach (var s in store.Students){<option>@s.Name</option>}</select></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Link</button>
+            </div>
+        </form>
+    </div>
+</div>

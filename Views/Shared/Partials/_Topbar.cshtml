@@ -1,0 +1,26 @@
+@{
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var pageTitle = ViewData["Title"] as string ?? profile.Role;
+}
+<header class="dash-topbar">
+    <div class="dash-topbar__left">
+        <button type="button" class="dash-topbar__menu" id="sidebarToggle" data-dash-toggle aria-label="Toggle sidebar" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <div>
+            <p class="eyebrow">@profile.Role dashboard</p>
+            <h1>@pageTitle</h1>
+        </div>
+    </div>
+    <div class="dash-topbar__right">
+        <partial name="Partials/_NotificationDropdown" />
+        <div class="dash-user">
+            <img src="@profile.Avatar" alt="@profile.DisplayName" width="44" height="44" />
+            <div>
+                <strong>@profile.DisplayName</strong>
+                <small>@profile.UserId</small>
+            </div>
+            <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">Logout</a>
+        </div>
+    </div>
+</header>

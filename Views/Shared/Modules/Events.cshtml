@@ -1,0 +1,57 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var role = (string)(ViewBag.RoleKey ?? "");
+    var canCreate = role is "Admin" or "Headmaster" or "SuperAdmin";
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Events</h2>
+        <p>Sports days, exhibitions, picnics — the bright calendar.</p>
+    </div>
+    @if (canCreate)
+    {
+        <button type="button" class="btn-bsa btn-bsa-orange" data-modal-open="addEventModal">Add Event</button>
+    }
+</div>
+
+<div class="event-grid stagger">
+    @foreach (var e in store.Events)
+    {
+        <article class="event-card-dash card-lift">
+            <div class="flex-between">
+                <span class="badge-soft badge-event">@e.Date.ToString("MMM d")</span>
+                <small class="text-muted">@e.Time</small>
+            </div>
+            <h3 class="mt-1">@e.Title</h3>
+            <p>@e.Description</p>
+            <p class="text-muted mb-0">@e.Location</p>
+        </article>
+    }
+</div>
+
+@if (canCreate)
+{
+    <div class="modal-bsa" id="addEventModal" role="dialog" aria-modal="true">
+        <div class="modal-bsa-backdrop"></div>
+        <div class="modal-bsa-dialog">
+            <div class="modal-bsa-header">
+                <h3>Add Event</h3>
+                <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+            </div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Event added (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+                <div class="field"><label>Title</label><input required /></div>
+                <div class="form-row">
+                    <div class="field"><label>Date</label><input type="date" /></div>
+                    <div class="field"><label>Time</label><input placeholder="10:00 AM" /></div>
+                </div>
+                <div class="field"><label>Location</label><input /></div>
+                <div class="field"><label>Description</label><textarea></textarea></div>
+                <div class="modal-bsa-footer">
+                    <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                    <button type="submit" class="btn-bsa btn-bsa-primary">Save event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

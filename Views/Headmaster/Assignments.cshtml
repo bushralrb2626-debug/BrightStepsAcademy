@@ -1,0 +1,60 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Assignments</h2>
+        <p>Assign teachers to classes, subjects, coordinators, and activities.</p>
+    </div>
+    <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="assignTeacherModal">Assign Teacher</button>
+</div>
+
+<div class="grid-2 stagger">
+    <div class="dash-panel">
+        <h3>Class / subject</h3>
+        @foreach (var c in store.Classes)
+        {
+            <div class="info-row"><span>@c.Name</span><strong>@c.Teacher</strong></div>
+        }
+    </div>
+    <div class="dash-panel">
+        <h3>Coordinators &amp; tasks</h3>
+        <div class="info-row"><span>Science Fair</span><strong>David Chen</strong></div>
+        <div class="info-row"><span>Reading Week</span><strong>Amina Rahman</strong></div>
+        <div class="info-row"><span>Sports Day</span><strong>James Okonkwo</strong></div>
+        <div class="info-row"><span>Art Showcase</span><strong>Priya Sharma</strong></div>
+    </div>
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Activity leads</h3></div>
+    <div class="grid-3">
+        @foreach (var a in store.Activities.Take(6))
+        {
+            <article class="assignment-card">
+                <h3>@a.Title</h3>
+                <p class="text-muted">@a.Description</p>
+                <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" data-modal-open="assignTeacherModal">Assign lead</button>
+            </article>
+        }
+    </div>
+</div>
+
+<div class="modal-bsa" id="assignTeacherModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Assign Teacher</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Assignment saved (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Teacher</label><select>@foreach (var t in store.Teachers){<option>@t.Name</option>}</select></div>
+            <div class="field"><label>Class</label><select>@foreach (var c in store.Classes){<option>@c.Name</option>}</select></div>
+            <div class="field"><label>Subject</label><select>@foreach (var s in store.Subjects){<option>@s</option>}</select></div>
+            <div class="field"><label>Role</label><select><option>Class teacher</option><option>Subject lead</option><option>Coordinator</option><option>Activity lead</option></select></div>
+            <div class="field"><label>Task / activity</label><input placeholder="Optional" /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

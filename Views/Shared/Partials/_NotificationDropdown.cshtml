@@ -1,0 +1,35 @@
+@{
+    var notes = ViewBag.Notifications as IReadOnlyList<NotificationItem> ?? Array.Empty<NotificationItem>();
+    var unread = ViewBag.Unread as int? ?? notes.Count;
+}
+<div class="notif-dropdown dropdown">
+    <button class="notif-dropdown__btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+        @{ ViewData["Icon"] = "bell"; }
+        <partial name="Partials/_Icons" />
+        @if (unread > 0)
+        {
+            <span class="notif-dropdown__badge">@unread</span>
+        }
+    </button>
+    <div class="dropdown-menu dropdown-menu-end notif-dropdown__menu">
+        <div class="notif-dropdown__head">
+            <strong>Notifications</strong>
+            <span class="badge-soft accent-sky">@unread new</span>
+        </div>
+        @if (notes.Count == 0)
+        {
+            <partial name="Partials/_EmptyState" model='new EmptyStateVm { Title = "All caught up", Message = "No new notifications right now.", Emoji = "✨" }' />
+        }
+        else
+        {
+            foreach (var n in notes)
+            {
+                <div class="notif-dropdown__item">
+                    <strong>@n.Title</strong>
+                    <p>@n.Body</p>
+                    <small>@n.Time</small>
+                </div>
+            }
+        }
+    </div>
+</div>

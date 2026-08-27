@@ -1,0 +1,26 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var myClasses = store.Classes.Where(c => c.Teacher.Contains("Sarah")).ToList();
+    if (myClasses.Count == 0) { myClasses = store.Classes.Take(3).ToList(); }
+    var accents = new[] { "sky", "mint", "orange" };
+    var i = 0;
+}
+<div class="section-head reveal mb-2">
+    <h2>My Classes</h2>
+    <p>Grade 3-A, 4-B, and 5-A — your colourful week.</p>
+</div>
+
+<div class="grid-3 stagger">
+    @foreach (var c in myClasses)
+    {
+        var accent = accents[i++ % accents.Length];
+        <article class="class-card card-lift accent-@accent">
+            <h3>@c.Name</h3>
+            <p class="text-muted">@c.Room</p>
+            <div class="info-row"><span>Students</span><strong>@c.Students</strong></div>
+            <div class="info-row"><span>Schedule</span><strong>@c.Schedule</strong></div>
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-1" asp-action="Students">View students</a>
+        </article>
+    }
+</div>

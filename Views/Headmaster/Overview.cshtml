@@ -1,0 +1,35 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var school = store.Schools.First();
+}
+<div class="section-head reveal mb-2">
+    <h2>School Overview</h2>
+    <p>A visual pulse of @school.Name.</p>
+</div>
+
+<div class="dash-panel reveal accent-sky">
+    <h3>@school.Name</h3>
+    <p class="text-muted">@school.Address · @school.Phone · @school.Email</p>
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Students</div><strong>@school.Students</strong></div>
+        <div class="kpi-card"><div class="kpi-label">Teachers</div><strong>@school.Teachers</strong></div>
+        <div class="kpi-card"><div class="kpi-label">Classes</div><strong>@store.Classes.Count</strong></div>
+        <div class="kpi-card"><div class="kpi-label">Programs</div><strong>@store.Programs.Count</strong></div>
+    </div>
+</div>
+
+<div class="grid-3 stagger">
+    @foreach (var f in store.Facilities.Where(x => x.Featured).Take(3))
+    {
+        <article class="class-card card-lift accent-@f.Accent">
+            <h3>@f.Name</h3>
+            <p>@f.Description</p>
+        </article>
+    }
+</div>
+
+<div class="grid-2 mt-2">
+    <div class="chart-card reveal"><h3>Enrollment by grade</h3><div class="chart-wrap"><canvas data-chart-type="bar" data-chart='{"labels":["Grade 3","Grade 4","Grade 5"],"data":[54,57,57]}'></canvas></div></div>
+    <div class="chart-card reveal"><h3>House spirit</h3><div class="chart-wrap"><canvas data-chart-type="doughnut" data-chart='{"labels":["Maple","Oak","Willow","Cedar"],"data":[28,26,24,22]}'></canvas></div></div>
+</div>

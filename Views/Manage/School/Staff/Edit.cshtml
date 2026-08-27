@@ -1,0 +1,57 @@
+@model StaffFormVm
+@{
+    ViewData["Title"] = "Edit Staff";
+}
+<h1 class="mg-page-title">Edit staff</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Staff">← Staff</a></p>
+<div class="mg-card">
+<form method="post" action="/Manage/School/Staff/Edit/@Model.Id" class="mg-form wide" id="staffEditForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="All" class="mg-flash mg-flash-error" style="@(ViewData.ModelState.IsValid ? "display:none" : null)"></div>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Staff code</label><input asp-for="StaffCode" required /><span asp-validation-for="StaffCode" class="field-error"></span></div>
+        <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /><span asp-validation-for="FullName" class="field-error"></span></div>
+        <div class="mg-field">
+            <label>Category</label>
+            <select asp-for="StaffCategoryId" asp-items="ViewBag.Categories" required>
+                <option value="">Select category…</option>
+            </select>
+            <span asp-validation-for="StaffCategoryId" class="field-error"></span>
+        </div>
+        <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /><span asp-validation-for="Email" class="field-error"></span></div>
+        <div class="mg-field"><label>Phone</label><input asp-for="Phone" /></div>
+        <div class="mg-field"><label>Employee ID</label><input asp-for="EmployeeId" /></div>
+        <div class="mg-field"><label>Designation</label><input asp-for="Designation" /></div>
+        <div class="mg-field"><label>Department</label><input asp-for="Department" /></div>
+        <div class="mg-field"><label>Qualification</label><input asp-for="Qualification" /></div>
+        <div class="mg-field"><label>Date of joining</label><input asp-for="DateOfJoining" type="date" /></div>
+        <div class="mg-field"><label>Login ID (optional)</label><input asp-for="LoginId" placeholder="e.g. SAR-102" autocomplete="off" /></div>
+    </div>
+    <div class="mg-field"><label>Address</label><textarea asp-for="Address"></textarea></div>
+    <div class="mg-field">
+        <label class="mg-check"><input asp-for="HasLoginAccess" id="HasLoginAccess" /> Enable login access</label>
+        <p class="mg-muted" style="margin:0.35rem 0 0;">Leave unchecked to keep this person as a record only.</p>
+    </div>
+    <div class="mg-field" id="loginPasswordField">
+        <label>Temporary password <span class="mg-muted">(only when enabling login for the first time)</span></label>
+        <input asp-for="LoginPassword" type="password" autocomplete="new-password" />
+        <span asp-validation-for="LoginPassword" class="field-error"></span>
+    </div>
+    <div class="mg-actions">
+        <button type="submit" class="mg-btn mg-btn-primary">Save changes</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Staff">Cancel</a>
+    </div>
+</form>
+</div>
+@section Scripts {
+<script>
+(() => {
+  const box = document.getElementById('HasLoginAccess');
+  const field = document.getElementById('loginPasswordField');
+  const sync = () => { if (field) field.style.display = box?.checked ? '' : 'none'; };
+  box?.addEventListener('change', sync);
+  sync();
+})();
+</script>
+}

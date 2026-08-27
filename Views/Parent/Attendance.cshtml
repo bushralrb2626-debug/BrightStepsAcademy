@@ -1,0 +1,37 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var children = store.Students.Where(s => s.ParentName.Contains("Amelia") || s.Name is "Emma Johnson" or "Zara Ahmed").ToList();
+    if (children.Count == 0) { children = store.Students.Take(2).ToList(); }
+}
+<div class="section-head reveal mb-2">
+    <h2>Attendance</h2>
+    <p>A friendly summary for each child this week.</p>
+</div>
+
+<div class="grid-2 stagger">
+    @foreach (var child in children)
+    {
+        <article class="dash-panel accent-mint">
+            <div class="flex-between">
+                <div class="cell-user">
+                    <img src="@child.Photo" alt="" />
+                    <strong>@child.Name</strong>
+                </div>
+                <span class="badge-soft badge-present">@child.Attendance%</span>
+            </div>
+            <div class="progress-label mt-2"><span>This month</span><span>@child.Attendance%</span></div>
+            <div class="progress-bsa grass mb-2"><span style="width:@child.Attendance%"></span></div>
+            <div class="info-row"><span>Present days</span><strong>18</strong></div>
+            <div class="info-row"><span>Late</span><strong>1</strong></div>
+            <div class="info-row"><span>Absent</span><strong>0</strong></div>
+        </article>
+    }
+</div>
+
+<div class="chart-card reveal mt-2">
+    <h3>Weekly overview</h3>
+    <div class="chart-wrap">
+        <canvas data-chart-type="bar" data-chart='{"labels":["Mon","Tue","Wed","Thu","Fri"],"datasets":[{"label":"Emma","data":[1,1,1,1,1]},{"label":"Zara","data":[1,1,0.5,1,1]}]}'></canvas>
+    </div>
+</div>

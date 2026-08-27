@@ -1,0 +1,64 @@
+@model List<StaffMember>
+@{
+    var teachersOnly = ViewBag.TeachersOnly as bool? == true;
+    ViewData["Title"] = teachersOnly ? "Teachers" : "Staff";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">@(teachersOnly ? "Teachers" : "Staff")</h1>
+        <p class="mg-page-sub">@(teachersOnly ? "Teaching staff directory" : "People directory")</p>
+    </div>
+    <div class="mg-actions">
+        @if (!teachersOnly)
+        {
+            <a class="mg-btn mg-btn-secondary" href="/Manage/School/Staff/Teachers">Teachers only</a>
+        }
+        else
+        {
+            <a class="mg-btn mg-btn-secondary" href="/Manage/School/Staff">All staff</a>
+        }
+        <a class="mg-btn mg-btn-primary" href="/Manage/School/Staff/Create">Add @(teachersOnly ? "teacher" : "staff")</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card">
+        <div class="mg-empty">
+            <h3>@(teachersOnly ? "No teachers yet" : "No staff yet")</h3>
+            <p>@(teachersOnly ? "Add staff under the Teachers category." : "Add categories first, then staff members.")</p>
+            <a class="mg-btn mg-btn-primary" href="/Manage/School/Staff/Create">Add staff</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Department</th><th>Login</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.StaffCode</td>
+                    <td>@s.FullName</td>
+                    <td>@s.StaffCategory?.Name</td>
+                    <td>@(s.Department ?? "—")</td>
+                    <td>@(s.HasLoginAccess ? "Yes" : "No")</td>
+                    <td><span class="mg-badge @(s.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(s.IsActive ? "Active" : "Inactive")</span></td>
+                    <td>
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Staff/Edit/@s.Id">Edit</a>
+                        @if (s.IsActive)
+                        {
+                            <form method="post" action="/Manage/School/Staff/Deactivate/@s.Id" style="display:inline;" onsubmit="return confirm('Deactivate this staff member?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Deactivate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,70 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var role = (string)(ViewBag.RoleKey ?? "");
+    var canCreate = role is "Admin" or "Teacher" or "Headmaster" or "SuperAdmin";
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>Assignments</h2>
+        <p>Projects and homework across BrightSteps classes.</p>
+    </div>
+    @if (canCreate)
+    {
+        <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="createAssignmentModal">Create Assignment</button>
+    }
+</div>
+
+<div class="grid-2 stagger">
+    @foreach (var a in store.Assignments)
+    {
+        <article class="assignment-card card-lift">
+            <div class="flex-between">
+                <span class="badge-soft">@a.Subject</span>
+                <span class="badge-soft @(a.Status == "Draft" ? "badge-holiday" : "badge-present")">@a.Status</span>
+            </div>
+            <h3 class="mt-1">@a.Title</h3>
+            <p class="text-muted mb-0">@a.ClassName · Due @a.DueDate.ToString("MMM d, yyyy")</p>
+            <p class="mt-1">@a.Description</p>
+            <div class="progress-label"><span>Submissions</span><span>@a.SubmissionPercent%</span></div>
+            <div class="progress-soft progress-bsa"><span style="width:@a.SubmissionPercent%"></span></div>
+        </article>
+    }
+</div>
+
+@if (canCreate)
+{
+    <div class="modal-bsa" id="createAssignmentModal" role="dialog" aria-modal="true">
+        <div class="modal-bsa-backdrop"></div>
+        <div class="modal-bsa-dialog">
+            <div class="modal-bsa-header">
+                <h3>Create Assignment</h3>
+                <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+            </div>
+            <form class="form-bsa">
+                <div class="field"><label>Title</label><input placeholder="e.g. Fractions in the Wild" required /></div>
+                <div class="form-row">
+                    <div class="field">
+                        <label>Subject</label>
+                        <select>@foreach (var s in store.Subjects) { <option>@s</option> }</select>
+                    </div>
+                    <div class="field">
+                        <label>Class</label>
+                        <select>@foreach (var c in store.Classes) { <option>@c.Name</option> }</select>
+                    </div>
+                </div>
+                <div class="field"><label>Due date</label><input type="date" /></div>
+                <div class="field"><label>Description</label><textarea placeholder="What should students create or discover?"></textarea></div>
+                <div class="field">
+                    <label>Attachment</label>
+                    <input type="file" disabled />
+                    <span class="hint">Placeholder — uploads come later.</span>
+                </div>
+                <div class="modal-bsa-footer">
+                    <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close onclick="showToast('Draft saved (demo).','info')">Save Draft</button>
+                    <button type="button" class="btn-bsa btn-bsa-primary" data-publish-assignment>Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

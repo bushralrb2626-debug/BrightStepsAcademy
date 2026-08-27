@@ -1,0 +1,17 @@
+## Dotnet
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+*.swp
+.appHost/
+*.log
+
+*.db
+*.db-*
+uploads/*
+!uploads/.gitkeep

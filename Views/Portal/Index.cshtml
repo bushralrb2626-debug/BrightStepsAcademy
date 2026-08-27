@@ -1,0 +1,38 @@
+@{
+    var roles = new[]
+    {
+        new { Key = "Teacher", Label = "Teacher Portal", Accent = "coral", Blurb = "Manage classes, students and learning activities.", Icon = "apple", Email = "sarah.wilson@brightsteps.academy", Emoji = "👩‍🏫" },
+        new { Key = "Parent", Label = "Parent Portal", Accent = "orange", Blurb = "Stay connected with your child's learning.", Icon = "family", Email = "amelia.johnson@email.com", Emoji = "👨‍👩‍👧" },
+        new { Key = "Student", Label = "Student Portal", Accent = "pink", Blurb = "Learn, explore and grow.", Icon = "backpack", Email = "alex.rivera@student.brightsteps.academy", Emoji = "🧒" },
+        new { Key = "Headmaster", Label = "Headmaster Portal", Accent = "mint", Blurb = "Monitor and manage the school.", Icon = "cap", Email = "grace.okonkwo@brightsteps.academy", Emoji = "🎓" },
+        new { Key = "SchoolAdmin", Label = "School Admin", Accent = "sky", Blurb = "Manage your school infrastructure, staff and website.", Icon = "school", Email = "admin@brightfuture.academy", Emoji = "🏫" },
+        new { Key = "SuperAdmin", Label = "Super Admin", Accent = "navy", Blurb = "Platform owner — onboard schools and school admins.", Icon = "shield", Email = "superadmin@platform.com", Emoji = "🛡️" }
+    };
+}
+<section class="portal-page section">
+    <div class="blob accent-yellow"></div>
+    <div class="blob accent-sky"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Your School, Connected.</p>
+        <h1>Welcome to Your School Portal</h1>
+        <p>Choose how you connect — teachers, parents, students and school leaders.</p>
+    </div>
+    <div class="portal-roles">
+        @foreach (var r in roles)
+        {
+            <a class="portal-role-card card-lift reveal accent-@r.Accent"
+               asp-controller="Portal"
+               asp-action="Login"
+               asp-route-email="@r.Email">
+                <span style="font-size:2rem" aria-hidden="true">@r.Emoji</span>
+                <h2>@r.Label</h2>
+                <p>@r.Blurb</p>
+                <span class="btn-bsa btn-bsa-soft">Enter @r.Key Portal →</span>
+            </a>
+        }
+    </div>
+    <div class="portal-page__foot reveal">
+        <a class="btn-bsa btn-bsa-ghost" asp-controller="Home" asp-action="Index">Back to website</a>
+        <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">Staff Login</a>
+    </div>
+</section>

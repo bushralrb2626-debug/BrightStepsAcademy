@@ -1,0 +1,174 @@
+@using BrightStepsAcademy.Data
+@using BrightStepsAcademy.Domain
+@using BrightStepsAcademy.Models.Manage
+@using BrightStepsAcademy.Services
+@{
+    var perms = ViewBag.NavPermissions as Dictionary<string, bool> ?? new Dictionary<string, bool>();
+    bool CanNav(string code) => perms.TryGetValue(code, out var v) ? v : true;
+    var path = Context.Request.Path.Value ?? "";
+    bool IsActive(string segment) => path.Contains(segment, StringComparison.OrdinalIgnoreCase);
+    var isDashboard = path.Equals("/Manage/School", StringComparison.OrdinalIgnoreCase)
+        || path.Equals("/Manage/School/", StringComparison.OrdinalIgnoreCase)
+        || path.Equals("/Manage/School/Dashboard", StringComparison.OrdinalIgnoreCase);
+    var schoolName = ViewBag.SchoolDisplayName as string ?? "School";
+    var schoolFull = ViewBag.SchoolFullName as string ?? schoolName;
+    var logo = ViewBag.SchoolLogoPath as string;
+    var favicon = ViewBag.SchoolFaviconPath as string;
+    var tagline = ViewBag.SchoolTagline as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "School Admin") · @schoolName</title>
+    @if (!string.IsNullOrEmpty(favicon))
+    {
+        <link rel="icon" href="@favicon" />
+    }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/manage.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="manage-body">
+<button type="button" class="mg-nav-toggle" id="mgNavToggle" aria-label="Open menu">☰ Menu</button>
+<div class="mg-sidebar-backdrop" id="mgSidebarBackdrop"></div>
+<div class="mg-shell">
+    <aside class="mg-sidebar" id="mgSidebar">
+        <div class="mg-brand">
+            @if (!string.IsNullOrEmpty(logo))
+            {
+                <img src="@logo" alt="" class="mg-brand__logo" />
+            }
+            <div class="mg-brand__name">@schoolName</div>
+            <div class="mg-brand__sub">School Admin@(string.IsNullOrEmpty(tagline) ? "" : " · " + tagline)</div>
+        </div>
+        <nav class="mg-nav">
+            <div class="mg-nav-group">
+                <a href="/Manage/School" class="@(isDashboard ? "active" : null)">Dashboard</a>
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">School</div>
+                @if (CanNav(PermissionCodes.SchoolProfile))
+                {
+                    <a href="/Manage/School/Profile" class="@(IsActive("/Profile") && !IsActive("/Branding") ? "active" : null)">School profile</a>
+                    <a href="/Manage/School/Profile/Branding" class="@(IsActive("/Branding") ? "active" : null)">Branding</a>
+                }
+                @if (CanNav(PermissionCodes.WebsiteManage))
+                {
+                    <a href="/Manage/School/Website" class="@(IsActive("/Website") && !IsActive("/Facilities") && !IsActive("/Gallery") ? "active" : null)">Website</a>
+                    <a href="/Manage/School/Website/Facilities" class="@(IsActive("/Website/Facilities") ? "active" : null)">Facilities</a>
+                    <a href="/Manage/School/Website/Gallery" class="@(IsActive("/Website/Gallery") ? "active" : null)">Gallery</a>
+                }
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Infrastructure</div>
+                @if (CanNav(PermissionCodes.BuildingsView) || CanNav(PermissionCodes.BuildingsManage))
+                {
+                    <a href="/Manage/School/Buildings" class="@(IsActive("/Buildings") ? "active" : null)">Buildings</a>
+                }
+                @if (CanNav(PermissionCodes.FloorsManage))
+                {
+                    <a href="/Manage/School/Floors" class="@(IsActive("/Floors") ? "active" : null)">Floors</a>
+                }
+                @if (CanNav(PermissionCodes.RoomsView) || CanNav(PermissionCodes.RoomsManage))
+                {
+                    <a href="/Manage/School/Rooms" class="@(IsActive("/Rooms") ? "active" : null)">Rooms</a>
+                }
+                @if (CanNav(PermissionCodes.FurnitureManage))
+                {
+                    <a href="/Manage/School/Furniture" class="@(IsActive("/Furniture") ? "active" : null)">Furniture</a>
+                }
+                @if (CanNav(PermissionCodes.BuildingsView))
+                {
+                    <a href="/Manage/School/Explorer" class="@(IsActive("/Explorer") ? "active" : null)">Explorer</a>
+                }
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">People</div>
+                @if (CanNav(PermissionCodes.StudentsView) || CanNav(PermissionCodes.StudentsManage))
+                {
+                    <a href="/Manage/School/Students" class="@(IsActive("/Students") ? "active" : null)">Students</a>
+                }
+                @if (CanNav(PermissionCodes.StaffView) || CanNav(PermissionCodes.StaffManage))
+                {
+                    <a href="/Manage/School/Staff" class="@(IsActive("/Staff") && !IsActive("/Teachers") && !IsActive("/Categories") ? "active" : null)">Staff</a>
+                    <a href="/Manage/School/Staff/Teachers" class="@(IsActive("/Teachers") ? "active" : null)">Teachers</a>
+                    <a href="/Manage/School/Staff/Categories" class="@(IsActive("/Categories") ? "active" : null)">Staff categories</a>
+                }
+                @if (CanNav(PermissionCodes.AdminsManage))
+                {
+                    <a href="/Manage/School/Administrators" class="@(IsActive("/Administrators") ? "active" : null)">Administrators</a>
+                }
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Reports</div>
+                @if (CanNav(PermissionCodes.ReportsView))
+                {
+                    <a href="/Manage/School/Reports" class="@(IsActive("/Reports") && !IsActive("/Reports/") ? "active" : (IsActive("/Reports/Overview") || path.EndsWith("/Reports") ? "active" : null))">Overview</a>
+                    <a href="/Manage/School/Reports/Rooms" class="@(IsActive("/Reports/Rooms") ? "active" : null)">Room inventory</a>
+                    <a href="/Manage/School/Reports/Furniture" class="@(IsActive("/Reports/Furniture") ? "active" : null)">Furniture inventory</a>
+                    <a href="/Manage/School/Reports/Staff" class="@(IsActive("/Reports/Staff") ? "active" : null)">Staff</a>
+                    <a href="/Manage/School/Reports/Students" class="@(IsActive("/Reports/Students") ? "active" : null)">Students</a>
+                }
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Activity</div>
+                <a href="/Manage/School/Activity" class="@(IsActive("/Activity") ? "active" : null)">Activity log</a>
+                <a href="/Manage/School/Notifications" class="@(IsActive("/Notifications") ? "active" : null)">Notifications</a>
+            </div>
+
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Settings</div>
+                @if (CanNav(PermissionCodes.PermissionsManage))
+                {
+                    <a href="/Manage/School/Permissions" class="@(IsActive("/Permissions") ? "active" : null)">Permissions</a>
+                }
+                <a href="/Manage/School/Account" class="@(IsActive("/Account") ? "active" : null)">Account</a>
+                <a href="/Manage/School/Security" class="@(IsActive("/Security") ? "active" : null)">Security</a>
+                <form asp-controller="Portal" asp-action="Logout" method="post" style="margin:0.35rem 0.5rem;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="mg-btn mg-btn-secondary" style="width:100%;">Logout</button>
+                </form>
+            </div>
+        </nav>
+    </aside>
+    <div class="mg-main">
+        <header class="mg-topbar">
+            <form class="mg-search" action="/Manage/School/Search" method="get">
+                <input type="search" name="q" placeholder="Search rooms, staff, students…" value="@Context.Request.Query["q"]" />
+                <button type="submit" class="mg-btn mg-btn-secondary">Search</button>
+            </form>
+            <div class="mg-topbar__school" title="@schoolFull">@schoolFull</div>
+        </header>
+        <main class="mg-content">
+            @if (TempData["Flash"] is string flash)
+            {
+                var type = TempData["FlashType"] as string ?? "success";
+                <div class="mg-flash mg-flash-@type">@flash</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+</div>
+<script>
+(() => {
+  const sidebar = document.getElementById('mgSidebar');
+  const toggle = document.getElementById('mgNavToggle');
+  const backdrop = document.getElementById('mgSidebarBackdrop');
+  const close = () => { sidebar?.classList.remove('is-open'); backdrop?.classList.remove('is-open'); };
+  const open = () => { sidebar?.classList.add('is-open'); backdrop?.classList.add('is-open'); };
+  toggle?.addEventListener('click', () => sidebar?.classList.contains('is-open') ? close() : open());
+  backdrop?.addEventListener('click', close);
+})();
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

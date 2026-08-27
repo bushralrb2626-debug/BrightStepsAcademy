@@ -1,0 +1,149 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var users = store.Users;
+}
+<div class="flex-between mb-2 reveal">
+    <div class="section-head mb-0">
+        <h2>User Management</h2>
+        <p>Search, filter, and care for every BrightSteps account.</p>
+    </div>
+    <button type="button" class="btn-bsa btn-bsa-primary" data-modal-open="createUserModal">Create New User</button>
+</div>
+
+<div class="tabs-bsa reveal" id="userTabs">
+    <button type="button" class="tab-btn active" data-role-filter="">All</button>
+    <button type="button" class="tab-btn" data-role-filter="Admin">Admins</button>
+    <button type="button" class="tab-btn" data-role-filter="Headmaster">Headmasters</button>
+    <button type="button" class="tab-btn" data-role-filter="Teacher">Teachers</button>
+    <button type="button" class="tab-btn" data-role-filter="Parent">Parents</button>
+    <button type="button" class="tab-btn" data-role-filter="Student">Students</button>
+</div>
+
+<div class="table-shell reveal">
+    <div class="table-filters">
+        <input class="js-filter-table" data-table="#usersTable" type="search" placeholder="Search name, email, ID…" />
+        <select class="js-filter-select" data-table="#usersTable" data-col="4">
+            <option value="">All schools</option>
+            @foreach (var s in store.Schools) { <option value="@s.Name">@s.Name</option> }
+        </select>
+        <select class="js-filter-select" data-table="#usersTable" data-col="5">
+            <option value="">Any status</option>
+            <option>Active</option>
+            <option>Disabled</option>
+        </select>
+    </div>
+    <div class="table-scroll">
+        <table class="table-bsa" id="usersTable">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>User ID</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>School</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var u in users)
+            {
+                <tr data-role="@u.Role">
+                    <td>
+                        <div class="cell-user">
+                            <img src="@u.Avatar" alt="" />
+                            <div>
+                                <strong>@u.FullName</strong>
+                                @if (!string.IsNullOrEmpty(u.Subject))
+                                {
+                                    <div class="text-muted" style="font-size:.8rem;">@u.Subject</div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                    <td>@u.UserId</td>
+                    <td>@u.Email</td>
+                    <td><span class="badge-soft">@u.Role</span></td>
+                    <td>@u.School</td>
+                    <td><span class="badge-soft badge-present">@u.Status</span></td>
+                    <td>
+                        <details class="action-menu">
+                            <summary aria-label="Actions">⋯</summary>
+                            <div class="menu">
+                                <button type="button" onclick="showToast('Viewing @u.FullName','info')">View</button>
+                                <button type="button" onclick="showToast('Edit @u.FullName','info')">Edit</button>
+                                <button type="button" data-modal-open="assignIdModal" onclick="showToast('Assign ID for @u.FullName','info')">Assign ID</button>
+                                <button type="button" onclick="showToast('Disabled @u.FullName (demo)','warning')">Disable</button>
+                                <button type="button" onclick="showToast('Delete requested (demo)','error')">Delete</button>
+                            </div>
+                        </details>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <nav class="pagination-bsa" aria-label="Pagination">
+        <button type="button" class="page-prev">‹</button>
+        <button type="button" class="active">1</button>
+        <button type="button">2</button>
+        <button type="button">3</button>
+        <button type="button" class="page-next">›</button>
+    </nav>
+</div>
+
+<div class="modal-bsa" id="createUserModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Create New User</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('User created (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="form-row">
+                <div class="field"><label>Full name</label><input required /></div>
+                <div class="field"><label>Email</label><input type="email" required /></div>
+            </div>
+            <div class="form-row">
+                <div class="field">
+                    <label>Role</label>
+                    <select><option>Admin</option><option>Headmaster</option><option>Teacher</option><option>Parent</option><option>Student</option></select>
+                </div>
+                <div class="field"><label>School</label><select>@foreach (var s in store.Schools){<option>@s.Name</option>}</select></div>
+            </div>
+            <div class="field"><label>User ID</label><input placeholder="BSA-XXX-000" /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-bsa" id="assignIdModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header"><h3>Assign User ID</h3><button type="button" class="modal-close" data-modal-close>&times;</button></div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('ID assigned (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>New User ID</label><input required /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Assign</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.querySelectorAll("#userTabs [data-role-filter]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.querySelectorAll("#userTabs .tab-btn").forEach(function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    var role = (btn.getAttribute("data-role-filter") || "").toLowerCase();
+    document.querySelectorAll("#usersTable tbody tr").forEach(function (row) {
+      var r = (row.getAttribute("data-role") || "").toLowerCase();
+      row.style.display = !role || r.indexOf(role) !== -1 ? "" : "none";
+    });
+  });
+});
+</script>
+}

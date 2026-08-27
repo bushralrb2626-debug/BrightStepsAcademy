@@ -1,0 +1,46 @@
+@model List<AdminListItemVm>
+@{
+    ViewData["Title"] = "Administrators";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Administrators</h1>
+        <p class="mg-page-sub">School and custom admins</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Administrators/Create">Add custom admin</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No administrators</h3><p>Create a custom admin with scoped permissions.</p></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Primary</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.FullName</td>
+                    <td>@a.Email</td>
+                    <td>@a.AdminType</td>
+                    <td>@(a.IsPrimary ? "Yes" : "No")</td>
+                    <td><span class="mg-badge @(a.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(a.IsActive ? "Active" : "Inactive")</span></td>
+                    <td>
+                        @if (!a.IsPrimary && a.IsActive)
+                        {
+                            <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Permissions?userId=@a.UserId">Permissions</a>
+                            <form method="post" action="/Manage/School/Administrators/Deactivate/@a.UserId" style="display:inline;" onsubmit="return confirm('Deactivate this administrator?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Deactivate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

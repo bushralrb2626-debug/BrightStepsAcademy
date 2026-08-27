@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Super Admin") · BrightSteps Manage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/manage.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="manage-body">
+@{
+    var path = (Context.Request.Path.Value ?? "").TrimEnd('/');
+    bool NavActive(string segment)
+    {
+        var s = segment.TrimEnd('/');
+        return path.Equals(s, StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith(s + "/", StringComparison.OrdinalIgnoreCase);
+    }
+    bool IsDashboard =
+        path.Equals("/Manage/SuperAdmin", StringComparison.OrdinalIgnoreCase)
+        || path.Equals("/superadmin", StringComparison.OrdinalIgnoreCase)
+        || path.Equals("/Manage/SuperAdmin/Index", StringComparison.OrdinalIgnoreCase);
+}
+<div class="mg-shell">
+    <aside class="mg-sidebar">
+        <div class="mg-brand">
+            <div class="mg-brand__name">BrightSteps</div>
+            <div class="mg-brand__sub">Super Admin · Platform</div>
+        </div>
+        <nav class="mg-nav">
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Overview</div>
+                <a href="/Manage/SuperAdmin" class="@(IsDashboard ? "active" : null)">Dashboard</a>
+                <a href="/Manage/SuperAdmin/Analytics" class="@(NavActive("/Manage/SuperAdmin/Analytics") ? "active" : null)">Analytics</a>
+                <a href="/Manage/SuperAdmin/Notifications" class="@(NavActive("/Manage/SuperAdmin/Notifications") ? "active" : null)">Notifications</a>
+            </div>
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Schools</div>
+                <a href="/Manage/SuperAdmin/Schools" class="@(NavActive("/Manage/SuperAdmin/Schools") && !path.Contains("/Create") ? "active" : null)">All schools</a>
+                <a href="/Manage/SuperAdmin/Schools/Create" class="@(path.Contains("/Schools/Create") ? "active" : null)">Create school</a>
+                <a href="/Manage/SuperAdmin/SchoolAdmins" class="@(NavActive("/Manage/SuperAdmin/SchoolAdmins") ? "active" : null)">School admins</a>
+            </div>
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Subscriptions</div>
+                <a href="/Manage/SuperAdmin/Subscriptions" class="@(NavActive("/Manage/SuperAdmin/Subscriptions") && !path.Contains("Expir") && !path.Contains("Expired") ? "active" : null)">All plans</a>
+                <a href="/Manage/SuperAdmin/Subscriptions/Expiring" class="@(path.Contains("/Expiring") ? "active" : null)">Expiring soon</a>
+                <a href="/Manage/SuperAdmin/Subscriptions/Expired" class="@(path.Contains("/Expired") ? "active" : null)">Expired</a>
+            </div>
+            <div class="mg-nav-group">
+                <div class="mg-nav-label">Platform</div>
+                <a href="/Manage/SuperAdmin/Activity" class="@(NavActive("/Manage/SuperAdmin/Activity") || NavActive("/Manage/SuperAdmin/AuditLogs") ? "active" : null)">Activity</a>
+                <a href="/Manage/SuperAdmin/Settings" class="@(NavActive("/Manage/SuperAdmin/Settings") ? "active" : null)">Settings</a>
+                <a href="/Manage/SuperAdmin/Profile" class="@(NavActive("/Manage/SuperAdmin/Profile") || NavActive("/Manage/SuperAdmin/ChangePassword") ? "active" : null)">Profile</a>
+            </div>
+        </nav>
+        <div style="padding:0.75rem; margin-top:auto;">
+            <form method="post" action="/Manage/SuperAdmin/Logout">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="mg-btn mg-btn-secondary" style="width:100%;">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="mg-main">
+        <header class="mg-topbar">
+            <div>
+                <h1 class="mg-page-title" style="margin:0;font-size:1.25rem;">@(ViewData["Title"] ?? "Dashboard")</h1>
+            </div>
+            <div style="color:var(--mg-muted);font-size:0.9rem;">Super Admin</div>
+        </header>
+        <main class="mg-content">
+            <div id="toastHost" class="mg-toast-host" aria-live="polite"></div>
+            @if (TempData["Success"] is string ok)
+            {
+                <div class="mg-flash mg-flash-success" data-toast>@ok</div>
+            }
+            @if (TempData["Error"] is string err)
+            {
+                <div class="mg-flash mg-flash-error" data-toast>@err</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+</div>
+<script>
+    (function () {
+        document.querySelectorAll('[data-toast]').forEach(function (el) {
+            setTimeout(function () { el.classList.add('mg-flash-fade'); }, 4500);
+        });
+    })();
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

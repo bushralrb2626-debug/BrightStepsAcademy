@@ -1,0 +1,114 @@
+@{
+    Layout = "_DashboardLayout";
+    var profile = (DashboardProfile)ViewBag.Profile;
+}
+<div class="section-head reveal mb-2">
+    <h2>Settings</h2>
+    <p>Personalize your BrightSteps experience — frontend demo only.</p>
+</div>
+
+<div class="settings-layout reveal">
+    <nav class="settings-nav" id="settingsNav">
+        <button type="button" class="active" data-settings-tab="profile">Profile</button>
+        <button type="button" data-settings-tab="account">Account</button>
+        <button type="button" data-settings-tab="notifications">Notifications</button>
+        <button type="button" data-settings-tab="appearance">Appearance</button>
+        <button type="button" data-settings-tab="security">Security</button>
+        <button type="button" data-settings-tab="school">School Settings</button>
+    </nav>
+
+    <div class="stack">
+        <div class="dash-panel tab-panel" data-settings-panel="profile">
+            <div class="dash-panel__head"><h3>Profile</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Profile saved (demo).','success');">
+                <div class="form-row">
+                    <div class="field"><label>Display name</label><input value="@profile.DisplayName" /></div>
+                    <div class="field"><label>Role</label><input value="@profile.Role" readonly /></div>
+                </div>
+                <div class="field"><label>Bio</label><textarea>Helping BrightSteps stay warm, organized, and joyful.</textarea></div>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save profile</button>
+            </form>
+        </div>
+
+        <div class="dash-panel tab-panel" data-settings-panel="account" hidden>
+            <div class="dash-panel__head"><h3>Account</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Account updated (demo).','success');">
+                <div class="form-row">
+                    <div class="field"><label>Email</label><input type="email" value="@profile.Email" /></div>
+                    <div class="field"><label>Phone</label><input value="@profile.Phone" /></div>
+                </div>
+                <div class="field"><label>User ID</label><input value="@profile.UserId" readonly /></div>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save account</button>
+            </form>
+        </div>
+
+        <div class="dash-panel tab-panel" data-settings-panel="notifications" hidden>
+            <div class="dash-panel__head"><h3>Notifications</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Notification prefs saved.','success');">
+                <label class="form-check-bsa"><input type="checkbox" checked /> Email digests</label>
+                <label class="form-check-bsa"><input type="checkbox" checked /> Assignment alerts</label>
+                <label class="form-check-bsa"><input type="checkbox" /> SMS reminders</label>
+                <label class="form-check-bsa"><input type="checkbox" checked /> Event invitations</label>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save preferences</button>
+            </form>
+        </div>
+
+        <div class="dash-panel tab-panel" data-settings-panel="appearance" hidden>
+            <div class="dash-panel__head"><h3>Appearance</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Appearance saved.','success');">
+                <div class="field">
+                    <label>Accent mood</label>
+                    <select>
+                        <option>Sky &amp; mint (default)</option>
+                        <option>Sunny playground</option>
+                        <option>Soft violet</option>
+                    </select>
+                </div>
+                <label class="form-check-bsa"><input type="checkbox" checked /> Compact sidebar labels</label>
+                <label class="form-check-bsa"><input type="checkbox" /> Reduce motion</label>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save appearance</button>
+            </form>
+        </div>
+
+        <div class="dash-panel tab-panel" data-settings-panel="security" hidden>
+            <div class="dash-panel__head"><h3>Security</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Security settings saved.','success');">
+                <div class="field"><label>Current password</label><input type="password" placeholder="••••••••" /></div>
+                <div class="form-row">
+                    <div class="field"><label>New password</label><input type="password" /></div>
+                    <div class="field"><label>Confirm</label><input type="password" /></div>
+                </div>
+                <label class="form-check-bsa"><input type="checkbox" /> Require 2-step on new devices</label>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Update security</button>
+            </form>
+        </div>
+
+        <div class="dash-panel tab-panel" data-settings-panel="school" hidden>
+            <div class="dash-panel__head"><h3>School Settings</h3></div>
+            <form class="form-bsa" onsubmit="event.preventDefault(); showToast('School settings saved.','success');">
+                <div class="field"><label>School name</label><input value="Scuola Materna" /></div>
+                <div class="form-row">
+                    <div class="field"><label>Timezone</label><select><option>UTC+5</option><option>UTC</option><option>UTC-5</option></select></div>
+                    <div class="field"><label>Academic year</label><input value="2026–27" /></div>
+                </div>
+                <div class="field"><label>Attendance window</label><input value="08:00 – 08:40" /></div>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save school settings</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.querySelectorAll("#settingsNav [data-settings-tab]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.querySelectorAll("#settingsNav [data-settings-tab]").forEach(function (b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    var id = btn.getAttribute("data-settings-tab");
+    document.querySelectorAll("[data-settings-panel]").forEach(function (p) {
+      p.hidden = p.getAttribute("data-settings-panel") !== id;
+    });
+  });
+});
+</script>
+}

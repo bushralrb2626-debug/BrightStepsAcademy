@@ -1,0 +1,68 @@
+@{
+    Layout = "_DashboardLayout";
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var store = (ISchoolData)ViewBag.Store;
+}
+<div class="profile-header reveal">
+    <img src="@profile.Avatar" alt="@profile.DisplayName" />
+    <div class="meta">
+        <h2>@profile.DisplayName</h2>
+        <p>@profile.Role · @profile.UserId</p>
+        <div class="mt-1">
+            <span class="badge-soft badge-present">@profile.Status</span>
+        </div>
+    </div>
+    <div class="ms-auto quick-actions">
+        <button type="button" class="btn-bsa btn-bsa-soft" data-modal-open="editProfileModal">Edit profile</button>
+        <a class="btn-bsa btn-bsa-ghost" asp-action="Settings">Settings</a>
+    </div>
+</div>
+
+<div class="grid-2 stagger">
+    <div class="info-card">
+        <h3>Personal</h3>
+        <div class="info-row"><span>Full name</span><strong>@profile.DisplayName</strong></div>
+        <div class="info-row"><span>First name</span><strong>@profile.FirstName</strong></div>
+        <div class="info-row"><span>Role</span><strong>@profile.Role</strong></div>
+        <div class="info-row"><span>Status</span><strong>@profile.Status</strong></div>
+    </div>
+    <div class="info-card">
+        <h3>Contact</h3>
+        <div class="info-row"><span>Email</span><strong>@profile.Email</strong></div>
+        <div class="info-row"><span>Phone</span><strong>@profile.Phone</strong></div>
+        <div class="info-row"><span>Campus</span><strong>@store.Schools.First().Name</strong></div>
+        <div class="info-row"><span>Preferred channel</span><strong>Portal + email</strong></div>
+    </div>
+    <div class="info-card">
+        <h3>Academic</h3>
+        <div class="info-row"><span>Year</span><strong>2026–27</strong></div>
+        <div class="info-row"><span>House</span><strong>Maple</strong></div>
+        <div class="info-row"><span>Focus</span><strong>@(profile.Role == "Teacher" ? "Mathematics" : profile.Role == "Student" ? "Grade 5-A" : "Campus leadership")</strong></div>
+        <div class="info-row"><span>Joined</span><strong>August 2022</strong></div>
+    </div>
+    <div class="info-card">
+        <h3>Account</h3>
+        <div class="info-row"><span>User ID</span><strong>@profile.UserId</strong></div>
+        <div class="info-row"><span>Login</span><strong>Portal SSO</strong></div>
+        <div class="info-row"><span>Last active</span><strong>Today</strong></div>
+        <div class="info-row"><span>Notifications</span><strong>On</strong></div>
+    </div>
+</div>
+
+<div class="modal-bsa" id="editProfileModal" role="dialog" aria-modal="true">
+    <div class="modal-bsa-backdrop"></div>
+    <div class="modal-bsa-dialog">
+        <div class="modal-bsa-header">
+            <h3>Edit profile</h3>
+            <button type="button" class="modal-close" data-modal-close aria-label="Close">&times;</button>
+        </div>
+        <form class="form-bsa" onsubmit="event.preventDefault(); showToast('Profile updated (demo).','success'); this.closest('.modal-bsa').classList.remove('open');">
+            <div class="field"><label>Display name</label><input value="@profile.DisplayName" /></div>
+            <div class="field"><label>Phone</label><input value="@profile.Phone" /></div>
+            <div class="modal-bsa-footer">
+                <button type="button" class="btn-bsa btn-bsa-ghost" data-modal-close>Cancel</button>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+@{
+    Layout = "_DashboardLayout";
+    var store = (ISchoolData)ViewBag.Store;
+    var threads = store.Threads;
+    var first = threads.FirstOrDefault();
+}
+<div class="section-head reveal mb-2">
+    <h2>Messages</h2>
+    <p>Conversations with teachers, parents, and campus teams.</p>
+</div>
+
+<div class="messages-split reveal">
+    <div class="msg-list">
+        @foreach (var t in threads)
+        {
+            <div class="msg-thread @(t.Id == first?.Id ? "active" : "")" data-thread="@t.Id">
+                <img class="avatar-sm" src="@t.Avatar" alt="" />
+                <div class="preview">
+                    <strong>@t.Name</strong>
+                    <p>@t.Preview</p>
+                </div>
+                <div>
+                    <small class="text-muted">@t.Time</small>
+                    @if (t.Unread > 0)
+                    {
+                        <span class="badge-soft">@t.Unread</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="msg-pane">
+        <div class="msg-pane-header">
+            <strong class="js-thread-name">@(first?.Name ?? "Select a conversation")</strong>
+        </div>
+        @foreach (var t in threads)
+        {
+            <div class="msg-pane-body" data-thread-panel="@t.Id" @(t.Id != first?.Id ? "hidden" : null)>
+                @foreach (var m in t.Messages)
+                {
+                    <div class="msg-bubble @(m.Mine ? "mine" : "")">@m.Text</div>
+                }
+            </div>
+        }
+        <div class="msg-compose">
+            <input type="text" placeholder="Write a friendly message…" aria-label="Message" />
+            <button type="button" class="btn-bsa btn-bsa-primary btn-bsa-sm">Send</button>
+        </div>
+    </div>
+</div>

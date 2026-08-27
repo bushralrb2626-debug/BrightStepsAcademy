@@ -1,0 +1,60 @@
+@model BrightStepsAcademy.Models.Manage.AuditLogListVm
+@{
+    ViewData["Title"] = "Activity";
+}
+
+<h1 class="mg-page-title">Activity</h1>
+<p class="mg-page-sub">Platform audit log</p>
+
+<form method="get" class="mg-filters mg-card">
+    <div class="mg-field">
+        <label>Search</label>
+        <input type="search" name="search" value="@Model.Search" placeholder="Action, user, details" />
+    </div>
+    <div class="mg-field">
+        <label>Module</label>
+        <input name="module" value="@Model.ModuleFilter" placeholder="e.g. Schools" />
+    </div>
+    <div class="mg-field" style="align-self:end;">
+        <button type="submit" class="mg-btn mg-btn-primary">Filter</button>
+    </div>
+</form>
+
+@if (Model.Logs.Count == 0)
+{
+    <div class="mg-card" style="margin-top:1rem;">
+        <div class="mg-empty"><h3>No activity</h3><p>Audit entries will appear as you manage the platform.</p></div>
+    </div>
+}
+else
+{
+    <div class="mg-card" style="margin-top:1rem;padding:0;">
+        <div class="mg-table-wrap">
+            <table class="mg-table">
+                <thead><tr><th>When</th><th>Action</th><th>Module</th><th>User</th><th>Details</th></tr></thead>
+                <tbody>
+                @foreach (var a in Model.Logs)
+                {
+                    <tr>
+                        <td>@a.Timestamp.ToLocalTime().ToString("g")</td>
+                        <td>@a.Action</td>
+                        <td>@a.Module</td>
+                        <td>@(a.UserName ?? a.UserId)</td>
+                        <td>@(a.Details ?? "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="mg-pager">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="mg-btn mg-btn-sm @(p == Model.Page ? "mg-btn-primary" : "mg-btn-secondary")"
+                   href="?search=@Model.Search&module=@Model.ModuleFilter&page=@p">@p</a>
+            }
+        </div>
+    }
+}

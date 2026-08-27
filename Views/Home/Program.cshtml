@@ -1,0 +1,48 @@
+@model ProgramItem
+@{
+    var store = (ISchoolData)ViewBag.Store;
+}
+<section class="page-hero section">
+    <div class="blob accent-@Model.Accent"></div>
+    <div class="section-head reveal">
+        <p class="eyebrow">Program</p>
+        <h1>@Model.Title</h1>
+        <p>@Model.Description</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="detail-grid">
+        <article class="detail-card card-lift reveal accent-@Model.Accent">
+            <img class="detail-card__hero" src="@Model.Image" alt="@Model.Title" />
+            <div class="detail-card__body">
+                @{ ViewData["Icon"] = Model.Icon; }
+                <partial name="Partials/_Icons" />
+                <h2>What students experience</h2>
+                <p>@Model.Description Our mentors guide children with clear goals, playful practice, and room to shine. Families receive regular updates through the portal and school notices.</p>
+                <ul class="detail-meta">
+                    <li><strong>Focus</strong> @Model.Title</li>
+                    <li><strong>Campus</strong> Scuola Materna</li>
+                    <li><strong>Support</strong> Teachers · Activities · Events</li>
+                </ul>
+                <a class="btn-bsa btn-bsa-soft" asp-controller="Home" asp-action="Programs">All programs</a>
+                <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Contact">Enquire</a>
+            </div>
+        </article>
+        <aside class="detail-aside reveal">
+            <h3>Other programs</h3>
+            <div class="programs-mini">
+                @foreach (var p in store.Programs.Where(x => x.Title != Model.Title).Take(4))
+                {
+                    <a class="program-card card-lift accent-@p.Accent" asp-controller="Home" asp-action="Program" asp-route-name="@p.Title">
+                        <img src="@p.Image" alt="@p.Title" />
+                        <div class="program-card__body">
+                            <h4>@p.Title</h4>
+                            <p>@p.Description</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        </aside>
+    </div>
+</section>

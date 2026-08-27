@@ -1,0 +1,29 @@
+@{
+    var label = ViewData["Label"] as string ?? "Stat";
+    var value = ViewData["Value"] as string ?? "0";
+    var hint = ViewData["Hint"] as string;
+    var accent = ViewData["Accent"] as string ?? "sky";
+    var icon = ViewData["Icon"] as string ?? "star";
+    var target = ViewData["Target"] as string;
+}
+<div class="stat-chip accent-@accent card-lift reveal">
+    <span class="stat-chip__icon">
+        @{ ViewData["Icon"] = icon; }
+        <partial name="Partials/_Icons" />
+    </span>
+    <div class="stat-chip__body">
+        @if (!string.IsNullOrWhiteSpace(target))
+        {
+            <strong class="counter" data-target="@target" data-count="@target">0</strong>
+        }
+        else
+        {
+            <strong>@value</strong>
+        }
+        <span>@label</span>
+        @if (!string.IsNullOrWhiteSpace(hint))
+        {
+            <small>@hint</small>
+        }
+    </div>
+</div>
