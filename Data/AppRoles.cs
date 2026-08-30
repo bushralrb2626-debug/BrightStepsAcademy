@@ -7,4 +7,6 @@ public static class AppRoleNames
     public const string CustomAdmin = "CustomAdmin";
     public const string Staff = "Staff";
     public const string Student = "Student";
+    public const string Guardian = "Guardian";
+    public const string Teacher = "Teacher";
 }

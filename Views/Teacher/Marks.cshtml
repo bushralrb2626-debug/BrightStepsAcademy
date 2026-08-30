@@ -1,0 +1,27 @@
+@model AssessmentMarksFormVm
+@{ Layout = "_DashboardLayout"; var assignmentId = ViewBag.AssignmentId as Guid?; }
+<div class="dash-panel reveal">
+    <h3>@Model.AssessmentName · Enter marks</h3>
+    <form asp-action="Marks" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssessmentId" />
+        <input type="hidden" name="assignmentId" value="@assignmentId" />
+        <div asp-validation-summary="All"></div>
+        <table class="table table-sm">
+            <thead><tr><th>Student</th><th>Roll</th><th>Marks / @Model.TotalMarks</th><th>Notes</th></tr></thead>
+            <tbody>
+            @for (var i = 0; i < Model.Marks.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Marks[i].FullName<input type="hidden" asp-for="Marks[i].StudentId" /><input type="hidden" asp-for="Marks[i].FullName" /></td>
+                    <td>@Model.Marks[i].RollNumber<input type="hidden" asp-for="Marks[i].RollNumber" /></td>
+                    <td><input asp-for="Marks[i].ObtainedMarks" type="number" step="0.01" class="form-control form-control-sm" /></td>
+                    <td><input asp-for="Marks[i].Notes" class="form-control form-control-sm" /></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Save marks</button>
+        <a asp-action="GradeBook" asp-route-assignmentId="@assignmentId" class="btn-bsa btn-bsa-soft">Back</a>
+    </form>
+</div>

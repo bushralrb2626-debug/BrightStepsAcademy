@@ -1,0 +1,44 @@
+@model IReadOnlyList<ParentMaterialItemVm>
+@{
+    Layout = "_DashboardLayout";
+    var scope = (ParentStudentScopeVm?)ViewBag.Scope;
+}
+<div class="section-head reveal mb-2">
+    <h2>Course Material</h2>
+    @if (scope is not null)
+    {
+        <p>@scope.FullName · @scope.ClassDisplay</p>
+    }
+</div>
+
+@if (scope is not null)
+{
+    <partial name="Partials/_ParentChildPicker" model="scope" />
+}
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">No course materials yet.</p></div>
+}
+else
+{
+    <div class="dash-panel reveal">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>Title</th><th>Subject</th><th>Category</th><th>Date</th><th>File</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.SubjectName</td>
+                        <td>@item.Category</td>
+                        <td>@item.ContentDate.ToString("MMM d, yyyy")</td>
+                        <td>@(item.FileName ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

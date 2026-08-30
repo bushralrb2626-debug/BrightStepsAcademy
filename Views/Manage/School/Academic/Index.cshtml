@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Academic Setup";
+}
+<div class="manage-head">
+    <h1>Academic setup</h1>
+    <p class="text-muted">Classes, sections, subjects, and teacher assignments.</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Classes</h5>
+                <p class="display-6">@ViewBag.ClassCount</p>
+                <a asp-action="Classes" class="btn btn-primary btn-sm">Manage classes</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Subjects</h5>
+                <p class="display-6">@ViewBag.SubjectCount</p>
+                <a asp-action="Subjects" class="btn btn-primary btn-sm">Manage subjects</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Teacher assignments</h5>
+                <p class="display-6">@ViewBag.AssignmentCount</p>
+                <a asp-action="Assignments" class="btn btn-primary btn-sm">Manage assignments</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul class="mt-4">
+    <li><a asp-action="Sections">Sections</a></li>
+</ul>

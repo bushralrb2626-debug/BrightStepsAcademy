@@ -1,57 +1,52 @@
+@model IReadOnlyList<GuardianChildVm>
 @{
     Layout = "_DashboardLayout";
-    var store = (ISchoolData)ViewBag.Store;
     var profile = (DashboardProfile)ViewBag.Profile;
-    var children = store.Students.Where(s => s.ParentName.Contains("Amelia") || s.Name is "Emma Johnson" or "Zara Ahmed").ToList();
-    if (children.Count == 0) { children = store.Students.Take(2).ToList(); }
+}
+@if (ViewBag.MustChangePassword == true)
+{
+    <div class="alert-bsa alert-bsa-warn mb-2">
+        Please <a asp-action="ChangePassword">change your password</a> to continue using the guardian portal.
+    </div>
 }
 <div class="welcome-banner reveal">
     <h2>@profile.Greeting</h2>
-    <p>@profile.Subtitle</p>
+    <p>Welcome to your guardian portal. View published diary, attendance, marks, announcements, and materials for your linked @(Model.Count == 1 ? "child" : "children").</p>
 </div>
 
-<div class="grid-2 stagger mb-2">
-    @foreach (var child in children)
-    {
-        <article class="person-card card-lift accent-sky" style="text-align:left;display:flex;gap:1rem;align-items:center;">
-            <img src="@child.Photo" alt="@child.Name" style="margin:0;" />
-            <div>
-                <h3 class="mb-0">@child.Name</h3>
-                <p class="text-muted mb-0">@child.ClassName-@child.Section</p>
-                <span class="badge-soft mt-1">@child.Attendance% attendance</span>
-            </div>
-        </article>
-    }
-</div>
-
-<div class="grid-2">
+@if (Model.Count == 0)
+{
     <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Attendance</h3></div>
-        <div class="chart-wrap"><canvas data-chart-type="doughnut" data-chart='{"labels":["Present","Absent","Late"],"data":[94,3,3]}'></canvas></div>
+        <p>No students are linked to your guardian account yet. Contact your school administrator.</p>
     </div>
-    <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Homework</h3></div>
-        @foreach (var a in store.Assignments.Take(4))
+}
+else
+{
+    <div class="grid-2 stagger mb-2">
+        @foreach (var child in Model)
         {
-            <div class="info-row"><span>@a.Title</span><strong>@a.DueDate.ToString("MMM d")</strong></div>
+            <article class="person-card card-lift accent-sky" style="text-align:left;">
+                <h3 class="mb-0">@child.FullName</h3>
+                <p class="text-muted mb-1">@child.ClassDisplay</p>
+                <span class="badge-soft">@child.Relationship · @child.StudentCode</span>
+                <div class="d-flex gap-1 flex-wrap mt-2">
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Diary" asp-route-studentId="@child.Id">Diary</a>
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Attendance" asp-route-studentId="@child.Id">Attendance</a>
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Marks" asp-route-studentId="@child.Id">Marks</a>
+                </div>
+            </article>
         }
-        <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-1" asp-action="Homework">View homework</a>
     </div>
-</div>
+}
 
 <div class="grid-2">
     <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Results snapshot</h3></div>
-        @foreach (var r in store.Results.Take(4))
-        {
-            <div class="info-row"><span>@r.Subject</span><strong>@r.Grade · @r.Marks%</strong></div>
-        }
+        <div class="dash-panel__head"><h3>Quick links</h3></div>
+        <a class="btn-bsa btn-bsa-sm btn-bsa-soft me-1" asp-action="Announcements">Announcements</a>
+        <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Materials">Course material</a>
     </div>
     <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Upcoming events</h3></div>
-        @foreach (var e in store.Events.Take(4))
-        {
-            <div class="info-row"><span>@e.Title</span><strong>@e.Date.ToString("MMM d")</strong></div>
-        }
+        <div class="dash-panel__head"><h3>Account</h3></div>
+        <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="ChangePassword">Change password</a>
     </div>
 </div>

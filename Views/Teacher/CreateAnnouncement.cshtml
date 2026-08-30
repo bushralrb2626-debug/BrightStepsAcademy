@@ -1,0 +1,15 @@
+@model AnnouncementFormVm
+@{ Layout = "_DashboardLayout"; }
+<div class="dash-panel reveal">
+    <h3>New announcement</h3>
+    <form asp-action="CreateAnnouncement" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssignmentId" />
+        <div class="mb-2"><label>Title</label><input asp-for="Title" class="form-control" required /></div>
+        <div class="mb-2"><label>Date</label><input asp-for="ContentDate" type="date" class="form-control" /></div>
+        <div class="mb-2"><label>Message</label><textarea asp-for="Message" class="form-control" rows="4" required></textarea></div>
+        <div class="mb-2"><label>Attachments</label><input asp-for="Attachments" type="file" multiple class="form-control" /></div>
+        <div class="mb-2"><label>Status</label><select asp-for="Status" class="form-select"><option value="Draft">Draft</option><option value="Published">Publish</option></select></div>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Save</button>
+    </form>
+</div>

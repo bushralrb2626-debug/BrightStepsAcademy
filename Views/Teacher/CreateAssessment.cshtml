@@ -1,0 +1,18 @@
+@model AssessmentFormVm
+@{ Layout = "_DashboardLayout"; }
+<div class="dash-panel reveal">
+    <h3>New assessment</h3>
+    <form asp-action="CreateAssessment" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssignmentId" />
+        <div class="mb-2"><label>Name</label><input asp-for="Name" class="form-control" required /></div>
+        <div class="mb-2"><label>Type</label><select asp-for="AssessmentType" class="form-select"></select></div>
+        <div class="mb-2"><label>Date</label><input asp-for="AssessmentDate" type="date" class="form-control" /></div>
+        <div class="row g-2 mb-2">
+            <div class="col"><label>Total marks</label><input asp-for="TotalMarks" type="number" step="0.01" class="form-control" /></div>
+            <div class="col"><label>Passing marks</label><input asp-for="PassingMarks" type="number" step="0.01" class="form-control" /></div>
+        </div>
+        <div class="mb-2"><label>Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Create & enter marks</button>
+    </form>
+</div>

@@ -1,0 +1,15 @@
+@model ParentStudentScopeVm
+@if (Model.Children.Count > 1)
+{
+    <div class="dash-panel reveal mb-2">
+        <form method="get" class="d-flex gap-2 align-items-center flex-wrap">
+            <label class="mb-0 text-muted">Child</label>
+            <select name="studentId" class="form-select form-select-sm" style="max-width:320px" onchange="this.form.submit()">
+                @foreach (var child in Model.Children)
+                {
+                    <option value="@child.Value" selected="@child.Selected">@child.Text</option>
+                }
+            </select>
+        </form>
+    </div>
+}

@@ -14,6 +14,8 @@ public class StudentRecord : AuditableEntity, ISchoolScoped
     public DateOnly? AdmissionDate { get; set; }
     public string? ClassName { get; set; }
     public string? Section { get; set; }
+    public Guid? SchoolClassId { get; set; }
+    public Guid? SchoolSectionId { get; set; }
     public string? RollNumber { get; set; }
     public string? Address { get; set; }
     public string? EmergencyContact { get; set; }
@@ -21,4 +23,7 @@ public class StudentRecord : AuditableEntity, ISchoolScoped
     public string? UserId { get; set; }
 
     public School School { get; set; } = null!;
+    public SchoolClass? SchoolClass { get; set; }
+    public SchoolSection? SchoolSection { get; set; }
+    public StudentGuardianLink? GuardianLink { get; set; }
 }

@@ -1,0 +1,30 @@
+@model IReadOnlyList<CourseMaterialListItemVm>
+@{ Layout = "_DashboardLayout"; var assignmentId = ViewBag.SelectedAssignmentId as Guid?; }
+<partial name="Partials/_TeacherAssignmentPicker" />
+<div class="dash-panel reveal">
+    <div class="dash-panel__head d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Course Materials</h3>
+        @if (assignmentId.HasValue) { <a class="btn-bsa btn-bsa-sm btn-bsa-primary" asp-action="CreateMaterial" asp-route-assignmentId="@assignmentId">Upload</a> }
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="info-row">
+            <div>
+                <strong>@item.Title</strong>
+                <div class="text-muted small">@item.Category · @item.ContentDate.ToString("MMM d") · @(item.FileName ?? "No file")</div>
+            </div>
+            <div class="text-end">
+                <span class="badge-soft">@item.Status</span>
+                @if (item.Status == BrightStepsAcademy.Domain.PublishStatus.Draft && assignmentId.HasValue)
+                {
+                    <form asp-action="PublishMaterial" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="hidden" name="assignmentId" value="@assignmentId" />
+                        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Publish</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>

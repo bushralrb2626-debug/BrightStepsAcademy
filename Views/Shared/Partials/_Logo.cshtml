@@ -1,7 +1,7 @@
 @{
     var compact = ViewData["Compact"] as bool? == true;
     var brand = ViewData["SchoolName"] as string ?? "Scuola Materna";
-    var tagline = ViewData["Tagline"] as string ?? "Impara. Esplora. Cresci.";
+    var tagline = ViewData["Tagline"] as string ?? "Learn. Explore. Grow.";
     var logo = ViewData["LogoPath"] as string;
 }
 <a class="brand-logo @(compact ? "is-compact" : "")" asp-controller="Home" asp-action="Index" aria-label="@brand home">

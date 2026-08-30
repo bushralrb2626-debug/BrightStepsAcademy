@@ -1,0 +1,25 @@
+@model DiaryEntryFormVm
+@{ Layout = "_DashboardLayout"; }
+<div class="dash-panel reveal">
+    <h3>New diary entry</h3>
+    <form asp-action="CreateDiary" method="post" enctype="multipart/form-data" class="mt-2">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssignmentId" />
+        <div asp-validation-summary="All"></div>
+        <div class="mb-2"><label>Title</label><input asp-for="Title" class="form-control" required /></div>
+        <div class="mb-2"><label>Date</label><input asp-for="ContentDate" type="date" class="form-control" /></div>
+        <div class="mb-2"><label>Topic</label><input asp-for="Topic" class="form-control" /></div>
+        <div class="mb-2"><label>Homework</label><textarea asp-for="Homework" class="form-control" rows="2"></textarea></div>
+        <div class="mb-2"><label>Instructions</label><textarea asp-for="Instructions" class="form-control" rows="3"></textarea></div>
+        <div class="mb-2"><label>Attachments</label><input asp-for="Attachments" type="file" multiple class="form-control" /></div>
+        <div class="mb-2">
+            <label>Status</label>
+            <select asp-for="Status" class="form-select">
+                <option value="Draft">Save as draft</option>
+                <option value="Published">Publish now</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Save</button>
+        <a asp-action="Diary" asp-route-assignmentId="@Model.AssignmentId" class="btn-bsa btn-bsa-soft">Cancel</a>
+    </form>
+</div>

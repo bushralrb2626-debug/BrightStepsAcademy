@@ -39,6 +39,13 @@ public class School
     public ICollection<StaffCategory> StaffCategories { get; set; } = new List<StaffCategory>();
     public ICollection<StaffMember> StaffMembers { get; set; } = new List<StaffMember>();
     public ICollection<StudentRecord> Students { get; set; } = new List<StudentRecord>();
+    public ICollection<GuardianProfile> Guardians { get; set; } = new List<GuardianProfile>();
+    public ICollection<StudentGuardianLink> StudentGuardianLinks { get; set; } = new List<StudentGuardianLink>();
+    public ICollection<SchoolClass> SchoolClasses { get; set; } = new List<SchoolClass>();
+    public ICollection<SchoolSection> SchoolSections { get; set; } = new List<SchoolSection>();
+    public ICollection<Subject> Subjects { get; set; } = new List<Subject>();
+    public ICollection<TeacherAssignment> TeacherAssignments { get; set; } = new List<TeacherAssignment>();
+    public ICollection<GradingRule> GradingRules { get; set; } = new List<GradingRule>();
     public ICollection<SchoolAdminProfile> AdminProfiles { get; set; } = new List<SchoolAdminProfile>();
     public ICollection<UserPermissionGrant> PermissionGrants { get; set; } = new List<UserPermissionGrant>();
     public WebsiteSettings? WebsiteSettings { get; set; }

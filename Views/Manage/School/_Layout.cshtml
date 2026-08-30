@@ -94,6 +94,7 @@
                 @if (CanNav(PermissionCodes.StudentsView) || CanNav(PermissionCodes.StudentsManage))
                 {
                     <a href="/Manage/School/Students" class="@(IsActive("/Students") ? "active" : null)">Students</a>
+                    <a href="/Manage/School/Academic" class="@(IsActive("/Academic") ? "active" : null)">Academic setup</a>
                 }
                 @if (CanNav(PermissionCodes.StaffView) || CanNav(PermissionCodes.StaffManage))
                 {

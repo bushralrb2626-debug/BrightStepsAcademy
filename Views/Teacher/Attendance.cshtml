@@ -1,0 +1,29 @@
+@model AttendanceSessionFormVm
+@{ Layout = "_DashboardLayout"; }
+<partial name="Partials/_TeacherAssignmentPicker" />
+<div class="dash-panel reveal">
+    <h3>Attendance · @Model.SessionDate.ToString("MMM d, yyyy")</h3>
+    <form asp-action="Attendance" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssignmentId" />
+        <div class="row g-2 mb-2">
+            <div class="col-md-4"><label>Date</label><input asp-for="SessionDate" type="date" class="form-control" /></div>
+            <div class="col-md-4"><label>Period</label><input asp-for="PeriodLabel" class="form-control" placeholder="Morning" /></div>
+        </div>
+        <table class="table table-sm">
+            <thead><tr><th>Student</th><th>Roll</th><th>Status</th><th>Notes</th></tr></thead>
+            <tbody>
+            @for (var i = 0; i < Model.Students.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Students[i].FullName<input type="hidden" asp-for="Students[i].StudentId" /><input type="hidden" asp-for="Students[i].FullName" /></td>
+                    <td>@Model.Students[i].RollNumber<input type="hidden" asp-for="Students[i].RollNumber" /></td>
+                    <td><select asp-for="Students[i].Status" class="form-select form-select-sm"></select></td>
+                    <td><input asp-for="Students[i].Notes" class="form-control form-control-sm" /></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Save attendance</button>
+    </form>
+</div>

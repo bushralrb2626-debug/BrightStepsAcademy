@@ -1,0 +1,28 @@
+@using BrightStepsAcademy.Models
+@{
+    var assignments = ViewBag.TeacherAssignments as IReadOnlyList<TeacherAssignmentOptionVm> ?? Array.Empty<TeacherAssignmentOptionVm>();
+    var selectedId = ViewBag.SelectedAssignmentId as Guid?;
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+@if (assignments.Count > 0)
+{
+    <div class="dash-panel reveal mb-2">
+        <form method="get" class="d-flex gap-2 align-items-center flex-wrap">
+            <label class="mb-0 text-muted">Class assignment</label>
+            <select name="assignmentId" class="form-select form-select-sm" style="max-width:420px" onchange="this.form.submit()">
+                @foreach (var a in assignments)
+                {
+                    <option value="@a.Id" selected="@(selectedId == a.Id)">@a.Label (@a.StudentCount students)</option>
+                }
+            </select>
+            @foreach (var key in Context.Request.Query.Where(q => q.Key != "assignmentId"))
+            {
+                <input type="hidden" name="@key" value="@key.Value" />
+            }
+        </form>
+    </div>
+}
+else if (action != "Index" && action != "Security" && action != "Profile")
+{
+    <div class="alert-bsa alert-bsa-warn mb-2">No class assignments are linked to your account yet. Contact your school administrator.</div>
+}

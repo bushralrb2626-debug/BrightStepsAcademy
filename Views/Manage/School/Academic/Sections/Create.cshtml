@@ -1,0 +1,17 @@
+@model BrightStepsAcademy.Models.Manage.SchoolSectionFormVm
+@{
+    ViewData["Title"] = "Add Section";
+}
+<h1>Add section</h1>
+<form asp-action="CreateSection" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="SchoolClassId" class="form-label">Class</label>
+        <select asp-for="SchoolClassId" asp-items="ViewBag.Classes" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

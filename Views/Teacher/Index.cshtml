@@ -1,68 +1,35 @@
+@model TeacherDashboardVm
 @{
     Layout = "_DashboardLayout";
-    var store = (ISchoolData)ViewBag.Store;
-    var profile = (DashboardProfile)ViewBag.Profile;
-    var myClasses = store.Classes.Where(c => c.Teacher.Contains("Sarah")).ToList();
-    if (myClasses.Count == 0) { myClasses = store.Classes.Take(3).ToList(); }
+}
+@if (ViewBag.MustChangePassword == true)
+{
+    <div class="alert-bsa alert-bsa-warn mb-2">Please <a asp-action="Security">change your password</a> to continue.</div>
 }
 <div class="welcome-banner reveal">
-    <h2>@profile.Greeting</h2>
-    <p>@profile.Subtitle</p>
+    <h2>Teacher Dashboard</h2>
+    <p>Manage diary, attendance, marks, announcements, and course material for your assigned classes.</p>
 </div>
-
-<div class="kpi-grid stagger">
-    <div class="kpi-card accent-sky"><div class="kpi-label">My classes</div><strong class="counter" data-target="@myClasses.Count">0</strong></div>
-    <div class="kpi-card accent-mint"><div class="kpi-label">Assignments</div><strong class="counter" data-target="@store.Assignments.Count">0</strong></div>
-    <div class="kpi-card accent-orange"><div class="kpi-label">Pending reviews</div><strong class="counter" data-target="7">0</strong></div>
-    <div class="kpi-card accent-pink"><div class="kpi-label">Messages</div><strong class="counter" data-target="3">0</strong></div>
+<div class="kpi-grid stagger mb-2">
+    <div class="kpi-card accent-sky"><div class="kpi-label">Assignments</div><strong>@Model.AssignmentCount</strong></div>
+    <div class="kpi-card accent-mint"><div class="kpi-label">Students</div><strong>@Model.StudentCount</strong></div>
+    <div class="kpi-card accent-orange"><div class="kpi-label">Draft diary</div><strong>@Model.DraftDiaryCount</strong></div>
+    <div class="kpi-card accent-pink"><div class="kpi-label">Published diary</div><strong>@Model.PublishedDiaryCount</strong></div>
 </div>
-
-<div class="section-head reveal"><h3>My Classes</h3></div>
-<div class="grid-3 stagger mb-2">
-    @foreach (var c in myClasses)
-    {
-        <article class="class-card card-lift accent-sky">
-            <h3>@c.Name</h3>
-            <p class="text-muted">@c.Room · @c.Students students</p>
-            <p>@c.Schedule</p>
-        </article>
-    }
-</div>
-
-<div class="grid-2">
-    <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Schedule timeline</h3></div>
-        <div class="timeline">
-            @foreach (var t in store.TodaySchedule)
-            {
-                <div class="timeline-item accent-@t.Accent">
-                    <div class="time">@t.Time</div>
-                    <div><strong>@t.Title</strong><span>@t.Meta</span></div>
-                </div>
-            }
-        </div>
-    </div>
-    <div class="dash-panel reveal">
-        <div class="dash-panel__head"><h3>Assignment overview</h3></div>
-        <div class="info-row"><span>Submitted</span><strong>68%</strong></div>
-        <div class="progress-bsa grass mb-2"><span style="width:68%"></span></div>
-        <div class="info-row"><span>Pending</span><strong>18%</strong></div>
-        <div class="progress-bsa sun mb-2"><span style="width:18%"></span></div>
-        <div class="info-row"><span>Late</span><strong>14%</strong></div>
-        <div class="progress-bsa coral"><span style="width:14%"></span></div>
-    </div>
-</div>
-
-<div class="dash-panel reveal">
-    <div class="dash-panel__head"><h3>Recent students</h3></div>
-    <div class="grid-4">
-        @foreach (var s in store.Students.Where(x => x.ClassName.Contains("5") || x.ClassName.Contains("4") || x.ClassName.Contains("3")).Take(8))
+@if (Model.Assignments.Count == 0)
+{
+    <div class="dash-panel reveal"><p>No teaching assignments yet. Ask your school admin to set up classes and assign you.</p></div>
+}
+else
+{
+    <div class="grid-3 stagger">
+        @foreach (var a in Model.Assignments)
         {
-            <div class="person-card">
-                <img src="@s.Photo" alt="" />
-                <strong>@s.Name</strong>
-                <p class="text-muted mb-0">@s.ClassName-@s.Section</p>
-            </div>
+            <article class="class-card card-lift accent-sky">
+                <h3>@a.Label</h3>
+                <p class="text-muted mb-1">@a.StudentCount students</p>
+                <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Diary" asp-route-assignmentId="@a.Id">Open diary</a>
+            </article>
         }
     </div>
-</div>
+}

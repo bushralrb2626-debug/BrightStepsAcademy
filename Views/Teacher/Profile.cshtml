@@ -1,0 +1,14 @@
+@{ Layout = "_DashboardLayout"; var staff = ViewBag.Staff as BrightStepsAcademy.Domain.StaffMember; var user = ViewBag.User as BrightStepsAcademy.Data.ApplicationUser; }
+<div class="dash-panel reveal">
+    <h3>Profile</h3>
+    @if (user is not null)
+    {
+        <div class="info-row"><span>Name</span><strong>@user.FullName</strong></div>
+        <div class="info-row"><span>Email</span><strong>@user.Email</strong></div>
+    }
+    @if (staff is not null)
+    {
+        <div class="info-row"><span>Staff code</span><strong>@staff.StaffCode</strong></div>
+        <div class="info-row"><span>Designation</span><strong>@staff.Designation</strong></div>
+    }
+</div>

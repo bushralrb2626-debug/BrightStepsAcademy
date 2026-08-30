@@ -1,0 +1,13 @@
+@model TeacherChangePasswordVm
+@{ Layout = "_DashboardLayout"; }
+<div class="dash-panel reveal" style="max-width:480px">
+    <h3>Change password</h3>
+    <form asp-action="Security" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All"></div>
+        <div class="mb-2"><label>Current password</label><input asp-for="CurrentPassword" type="password" class="form-control" required /></div>
+        <div class="mb-2"><label>New password</label><input asp-for="NewPassword" type="password" class="form-control" required /></div>
+        <div class="mb-2"><label>Confirm password</label><input asp-for="ConfirmPassword" type="password" class="form-control" required /></div>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Update password</button>
+    </form>
+</div>

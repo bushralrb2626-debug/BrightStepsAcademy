@@ -1,22 +1,22 @@
-@{
-    Layout = "_DashboardLayout";
-    var store = (ISchoolData)ViewBag.Store;
-    var students = store.Students.Where(s =>
-        s.ClassName.Contains("3") || s.ClassName.Contains("4") || s.ClassName.Contains("5")).ToList();
-}
-<div class="section-head reveal mb-2">
-    <h2>Students</h2>
-    <p>Learners across your BrightSteps classes.</p>
-</div>
-
-<div class="grid-4 stagger">
-    @foreach (var s in students)
+@model IReadOnlyList<BrightStepsAcademy.Domain.StudentRecord>
+@{ Layout = "_DashboardLayout"; }
+<partial name="Partials/_TeacherAssignmentPicker" />
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Students</h3></div>
+    @if (Model.Count == 0)
     {
-        <article class="person-card card-lift">
-            <img src="@s.Photo" alt="@s.Name" />
-            <h3 style="font-size:1rem;">@s.Name</h3>
-            <p class="text-muted">@s.ClassName-@s.Section</p>
-            <span class="badge-soft">@s.Attendance% attendance</span>
-        </article>
+        <p class="text-muted mb-0">No students in this class section.</p>
+    }
+    else
+    {
+        <table class="table table-sm">
+            <thead><tr><th>Roll</th><th>Name</th><th>Code</th></tr></thead>
+            <tbody>
+            @foreach (var s in Model)
+            {
+                <tr><td>@s.RollNumber</td><td>@s.FullName</td><td>@s.StudentCode</td></tr>
+            }
+            </tbody>
+        </table>
     }
 </div>

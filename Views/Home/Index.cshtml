@@ -10,7 +10,7 @@
     var facilities = site?.Facilities?.ToList() ?? new List<PublicFacilityDto>();
     var gallery = site?.Gallery?.ToList() ?? new List<PublicGalleryDto>();
     var highlights = site?.Highlights?.ToList() ?? new List<PublicHighlightDto>();
-    var heroHeading = site?.Hero?.Heading ?? "DOVE LE PICCOLE MENTI DIVENTANO GRANDI SOGNI";
+    var heroHeading = site?.Hero?.Heading ?? "WHERE LITTLE MINDS GROW INTO BIG DREAMS";
     var heroParts = heroHeading.Split(' ', 4);
     var heroLead = heroParts.Length >= 4
         ? string.Join(' ', heroParts.Take(3))
@@ -38,18 +38,18 @@
     </div>
     <div class="hero-fancy__grid">
         <div class="hero-fancy__copy reveal">
-            <p class="eyebrow">@(site?.Hero?.Eyebrow ?? $"Benvenuti alla {displayName}")</p>
+            <p class="eyebrow">@(site?.Hero?.Eyebrow ?? $"Welcome to {displayName}")</p>
             <h1>@heroLead @if (!string.IsNullOrEmpty(heroSpan)) { <span>@heroSpan</span> }</h1>
-            <p class="hero-fancy__lead">@(site?.Hero?.Description ?? "Un campus colorato dove fiorisce la curiosità, brilla la creatività e ogni bambino può imparare, esplorare e sognare — ogni giorno.")</p>
+            <p class="hero-fancy__lead">@(site?.Hero?.Description ?? "A colorful campus where curiosity blooms, creativity shines, and every child gets to learn, explore and dream — every single day.")</p>
             <div class="hero__actions">
-                <a class="btn-bsa btn-hero btn-hero-yellow" href="@(site?.Hero?.CtaLink ?? "#about")">@(site?.Hero?.CtaText ?? "Esplora la nostra scuola") <span class="btn-ico" aria-hidden="true">→</span></a>
-                <a class="btn-bsa btn-hero btn-hero-outline" asp-controller="Portal" asp-action="Login">Portale studenti <span class="btn-ico" aria-hidden="true">🚀</span></a>
+                <a class="btn-bsa btn-hero btn-hero-yellow" href="@(site?.Hero?.CtaLink ?? "#about")">@(site?.Hero?.CtaText ?? "Explore Our School") <span class="btn-ico" aria-hidden="true">→</span></a>
+                <a class="btn-bsa btn-hero btn-hero-outline" asp-controller="Portal" asp-action="Login">Student Portal <span class="btn-ico" aria-hidden="true">🚀</span></a>
             </div>
         </div>
         <div class="hero-stage reveal">
             <div class="hero-stage__back" role="img" aria-label="Campus @displayName"></div>
             <div class="hero-stage__mid">
-                <img src="@(site?.Hero?.ImagePath ?? Images.KidsRead)" alt="Bambini che imparano con i libri" loading="eager" />
+                <img src="@(site?.Hero?.ImagePath ?? Images.KidsRead)" alt="Children learning with books" loading="eager" />
             </div>
             <span class="hero-float hero-float--star" aria-hidden="true">
                 <svg width="48" height="48" viewBox="0 0 48 48"><polygon points="24,2 29,18 46,18 32,28 37,44 24,34 11,44 16,28 2,18 19,18" fill="#F5C518"/></svg>
@@ -81,9 +81,9 @@
     <div class="bg-shape bg-shape--b" aria-hidden="true"></div>
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Il nostro mondo di apprendimento</p>
-            <h2>@(site?.About?.Heading ?? "Una storia di inizi luminosi")</h2>
-            <p>@(site?.About?.Description ?? "Non solo un campus — un viaggio colorato che le famiglie amano condividere.")</p>
+            <p class="eyebrow">Our Learning World</p>
+            <h2>@(site?.About?.Heading ?? "A story of bright beginnings")</h2>
+            <p>@(site?.About?.Description ?? "Not just a campus — a colorful journey families love to join.")</p>
         </div>
         <div class="story-rail">
             @if (highlights.Count > 0)
@@ -104,38 +104,38 @@
                 <div class="story-step reveal">
                     <div class="story-step__marker" aria-hidden="true">🏫</div>
                     <div class="story-step__card">
-                        <h3>Dove inizia l'apprendimento</h3>
-                        <p>Aule illuminate dal sole, domande curiose e insegnanti che conoscono ogni bambino per nome — questo è lo stile @displayName.</p>
+                        <h3>Where learning begins</h3>
+                        <p>Sunlit classrooms, curious questions, and teachers who know every child by name — that's the @displayName way.</p>
                     </div>
                 </div>
                 <div class="story-step reveal">
                     <div class="story-step__marker" aria-hidden="true">🎯</div>
                     <div class="story-step__card">
-                        <h3>La nostra missione</h3>
-                        <p>Coltivare allievi curiosi, gentili e sicuri di sé attraverso un insegnamento gioioso e esperienze significative.</p>
+                        <h3>Our mission</h3>
+                        <p>To nurture curious, kind and confident learners through joyful teaching and meaningful experiences.</p>
                     </div>
                 </div>
                 <div class="story-step reveal">
                     <div class="story-step__marker" aria-hidden="true">🌈</div>
                     <div class="story-step__card">
-                        <h3>La nostra visione</h3>
-                        <p>Un mondo in cui ogni bambino si sente visto, stimolato e ispirato a crescere — un passo luminoso alla volta.</p>
+                        <h3>Our vision</h3>
+                        <p>A world where every child feels seen, challenged and inspired to grow — one bright step at a time.</p>
                     </div>
                 </div>
                 <div class="story-step reveal">
                     <div class="story-step__marker" aria-hidden="true">💛</div>
                     <div class="story-step__card">
-                        <h3>Perché le famiglie ci scelgono</h3>
-                        <p>Spazi sicuri, apprendimento creativo, solidi risultati scolastici e un portale che tiene i genitori vicini a ogni traguardo.</p>
+                        <h3>Why families choose us</h3>
+                        <p>Safe spaces, creative learning, strong academics, and a portal that keeps parents close to every milestone.</p>
                     </div>
                 </div>
             }
         </div>
         <div class="story-mosaic reveal">
-            <img class="story-mosaic__tall" src="@(site?.About?.ImagePath ?? Images.Classroom)" alt="Aula luminosa" loading="lazy" />
+            <img class="story-mosaic__tall" src="@(site?.About?.ImagePath ?? Images.Classroom)" alt="Bright classroom" loading="lazy" />
             <div class="story-mosaic__stack">
-                <img src="@Images.Play" alt="Bambini che giocano" loading="lazy" />
-                <img src="@Images.Library" alt="Biblioteca scolastica" loading="lazy" />
+                <img src="@Images.Play" alt="Children playing" loading="lazy" />
+                <img src="@Images.Library" alt="School library" loading="lazy" />
             </div>
         </div>
     </div>
@@ -149,33 +149,33 @@
                 <span class="stat-fun__emoji" aria-hidden="true">👧</span>
                 <div>
                     <strong class="counter" data-target="1250">0</strong><span>+</span>
-                    <span>ALUNNI FELICI</span>
+                    <span>HAPPY STUDENTS</span>
                 </div>
-                <small>✨ In crescita ogni anno</small>
+                <small>✨ Growing every year</small>
             </article>
             <article class="stat-fun reveal">
                 <span class="stat-fun__emoji" aria-hidden="true">👩‍🏫</span>
                 <div>
                     <strong class="counter" data-target="86">0</strong>
-                    <span>INSEGNANTI ATTENTI</span>
+                    <span>CARING TEACHERS</span>
                 </div>
-                <small>🎯 Esperti che ispirano</small>
+                <small>🎯 Experts who inspire</small>
             </article>
             <article class="stat-fun reveal">
                 <span class="stat-fun__emoji" aria-hidden="true">🏫</span>
                 <div>
                     <strong class="counter" data-target="42">0</strong>
-                    <span>CLASSI LUMINOSE</span>
+                    <span>BRIGHT CLASSROOMS</span>
                 </div>
-                <small>📚 Spazi pensati per meravigliarsi</small>
+                <small>📚 Spaces built for wonder</small>
             </article>
             <article class="stat-fun reveal">
                 <span class="stat-fun__emoji" aria-hidden="true">🏆</span>
                 <div>
                     <strong class="counter" data-target="15">0</strong><span>+</span>
-                    <span>ANNI DI GIOIA</span>
+                    <span>YEARS OF JOY</span>
                 </div>
-                <small>🎉 Eccellenza con il cuore</small>
+                <small>🎉 Excellence with heart</small>
             </article>
         </div>
     </div>
@@ -188,9 +188,9 @@
     <div class="bg-shape bg-shape--c" aria-hidden="true"></div>
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Programmi</p>
-            <h2>Scegli la tua avventura</h2>
-            <p>Ogni percorso è una tessera colorata di scoperta — non un elenco noioso da depliant.</p>
+            <p class="eyebrow">Programs</p>
+            <h2>Pick your adventure</h2>
+            <p>Every pathway is a colorful tile of discovery — not a boring brochure list.</p>
         </div>
         <div class="program-tiles stagger">
             @foreach (var p in programs)
@@ -203,7 +203,7 @@
                         <div class="program-tile__icon" aria-hidden="true">@emoji</div>
                         <h3>@p.Title</h3>
                         <p>@p.Description</p>
-                        <span class="program-tile__go">Esplora il percorso →</span>
+                        <span class="program-tile__go">Explore the pathway →</span>
                     </div>
                 </a>
             }
@@ -217,9 +217,9 @@
 <section class="band facilities-fancy" id="facilities">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Strutture</p>
-            <h2>Tutto ciò di cui hanno bisogno per imparare, giocare e crescere</h2>
-            <p>Un campus pensato come un parco giochi per l'immaginazione — con spazi di apprendimento seri al suo interno.</p>
+            <p class="eyebrow">Facilities</p>
+            <h2>Everything they need to learn, play and grow</h2>
+            <p>A campus designed like a playground for imagination — with serious learning spaces inside.</p>
         </div>
         <div class="facility-wall stagger">
             @for (var i = 0; i < facilities.Count; i++)
@@ -231,13 +231,13 @@
                     <div class="facility-poster__cap">
                         <h3>@f.Name</h3>
                         <p>@f.Description</p>
-                        <span class="go">Esplora la struttura →</span>
+                        <span class="go">Explore the space →</span>
                     </div>
                 </a>
             }
         </div>
         <div class="section-cta reveal" style="margin-top:1.5rem">
-            <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Facilities">Vedi tutti gli spazi</a>
+            <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Facilities">See all spaces</a>
         </div>
     </div>
 </section>
@@ -249,9 +249,9 @@
     <div class="bg-shape bg-shape--d" aria-hidden="true"></div>
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Insegnanti</p>
-            <h2>I volti che i bambini amano vedere</h2>
-            <p>Educatori calorosi con aule colorate e cuori ancora più grandi.</p>
+            <p class="eyebrow">Teachers</p>
+            <h2>The faces children love to see</h2>
+            <p>Warm educators with colorful classrooms and even bigger hearts.</p>
         </div>
         <div class="teacher-wall stagger">
             @foreach (var t in teachers)
@@ -261,7 +261,7 @@
                     <img class="teacher-poster__photo" src="@t.Photo" alt="@t.Name" loading="lazy" />
                     <div class="teacher-poster__info">
                         <h3>@t.Name</h3>
-                        <span>@t.Subject · @t.ExperienceYears anni</span>
+                        <span>@t.Subject · @t.ExperienceYears years</span>
                         <p>@(t.Bio.Length > 70 ? t.Bio[..70] + "…" : t.Bio)</p>
                     </div>
                 </a>
@@ -274,9 +274,9 @@
 <section class="band activities-fancy" id="activities">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Attività</p>
-            <h2>Oltre l'orario</h2>
-            <p>I momenti che i bambini ricordano per sempre — arte, scienza, sport e festa.</p>
+            <p class="eyebrow">Activities</p>
+            <h2>Beyond the bell</h2>
+            <p>The moments children remember forever — art, science, sports and celebration.</p>
         </div>
         <div class="activity-strip stagger">
             @foreach (var a in activities.Take(6))
@@ -299,9 +299,9 @@
 <section class="band events-fancy" id="events">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Prossimi eventi</p>
-            <h2>Segna il calendario — la gioia è in programma</h2>
-            <p>Manifesti colorati per i giorni di cui parla tutta la scuola.</p>
+            <p class="eyebrow">Upcoming events</p>
+            <h2>Mark the calendar — joy is on the schedule</h2>
+            <p>Colorful posters for the days the whole school talks about.</p>
         </div>
         <div class="event-posters stagger">
             @foreach (var e in events)
@@ -312,7 +312,7 @@
                         <span class="event-poster__date">@e.Date.ToString("MMM d").ToUpper()</span>
                         <h3>@e.Title</h3>
                         <p>@e.Description</p>
-                        <span class="go">Vedi evento →</span>
+                        <span class="go">View event →</span>
                     </div>
                 </a>
             }
@@ -326,40 +326,40 @@
 <section class="band achieve-fancy" id="achievements">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Traguardi</p>
-            <h2>Celebrazioni degne di un trofeo</h2>
-            <p>Vittorie grandi e piccole — sempre applaudite con entusiasmo.</p>
+            <p class="eyebrow">Achievements</p>
+            <h2>Celebrations worth a trophy</h2>
+            <p>Big wins and small ones — always cheered with enthusiasm.</p>
         </div>
         <div class="achieve-grid stagger">
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">🏆</span>
-                <h3>Eccellenza scolastica</h3>
-                <p><strong class="counter" data-target="95">0</strong>% di successo nelle materie principali.</p>
+                <h3>Academic excellence</h3>
+                <p><strong class="counter" data-target="95">0</strong>% success in core subjects.</p>
             </article>
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">🎖️</span>
-                <h3>Premi nelle gare</h3>
-                <p><strong class="counter" data-target="32">0</strong> medaglie in scienza, arte e dibattito.</p>
+                <h3>Competition awards</h3>
+                <p><strong class="counter" data-target="32">0</strong> medals in science, art and debate.</p>
             </article>
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">⭐</span>
-                <h3>Stelle della lettura</h3>
-                <p><strong class="counter" data-target="1000">0</strong>+ traguardi degli studenti celebrati.</p>
+                <h3>Reading stars</h3>
+                <p><strong class="counter" data-target="1000">0</strong>+ student milestones celebrated.</p>
             </article>
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">⚽</span>
-                <h3>Campioni dello sport</h3>
-                <p><strong class="counter" data-target="18">0</strong> trofei sportivi in questa stagione.</p>
+                <h3>Sports champions</h3>
+                <p><strong class="counter" data-target="18">0</strong> sports trophies this season.</p>
             </article>
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">🎨</span>
-                <h3>Vincitori d'arte</h3>
-                <p>Pareti della galleria piene di colori premiati.</p>
+                <h3>Art winners</h3>
+                <p>Gallery walls full of prize-winning color.</p>
             </article>
             <article class="achieve-card reveal">
                 <span class="trophy" aria-hidden="true">🎉</span>
-                <h3>Premi della comunità</h3>
-                <p>Gentilezza, servizio e spirito scolastico riconosciuti.</p>
+                <h3>Community awards</h3>
+                <p>Kindness, service and school spirit recognized.</p>
             </article>
         </div>
     </div>
@@ -371,14 +371,14 @@
 <section class="band gallery-fancy" id="gallery">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Galleria</p>
-            <h2>La vita a colori — un muro scrapbook</h2>
-            <p>Clicca su una foto per aprirla. Irregolare, editoriale, viva.</p>
+            <p class="eyebrow">Gallery</p>
+            <h2>Life in color — a scrapbook wall</h2>
+            <p>Click a photo to open it. Irregular, editorial, alive.</p>
         </div>
         <div class="scrapbook">
             @foreach (var g in gallery)
             {
-                var caption = g.Title ?? g.Description ?? g.Category ?? "Momento scolastico";
+                var caption = g.Title ?? g.Description ?? g.Category ?? "School moment";
                 <button type="button" class="scrap-item reveal" data-gallery data-src="@g.ImagePath" data-caption="@caption" aria-label="@caption">
                     <img src="@g.ImagePath" alt="@caption" loading="lazy" />
                     <span>@(g.Category ?? "Campus")</span>
@@ -392,38 +392,38 @@
 <section class="band testimonials-fancy" id="testimonials">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Famiglie</p>
-            <h2>Cosa dicono i genitori</h2>
-            <p>Voci reali dalla comunità BrightSteps.</p>
+            <p class="eyebrow">Families</p>
+            <h2>What parents say</h2>
+            <p>Real voices from the BrightSteps community.</p>
         </div>
         <div class="quote-wall stagger">
             <article class="quote-bubble reveal">
-                <p>Ogni mattina mio figlio è entusiasta di andare a scuola — questo dice tutto.</p>
+                <p>Every morning my child is excited to go to school — that says it all.</p>
                 <div class="quote-who">
                     <img src="@Images.Parents[0]" alt="Amelia Johnson" loading="lazy" />
                     <div>
                         <strong>Amelia Johnson</strong>
-                        <small>Genitore · Classe 4</small>
+                        <small>Parent · Grade 4</small>
                     </div>
                 </div>
             </article>
             <article class="quote-bubble reveal">
-                <p>Gli insegnanti conoscono i punti di forza di mio figlio — e festeggiano anche le sue vittorie silenziose.</p>
+                <p>The teachers know my child's strengths — and celebrate their quiet wins too.</p>
                 <div class="quote-who">
                     <img src="@Images.Parents[1]" alt="Marcus Rivera" loading="lazy" />
                     <div>
                         <strong>Marcus Rivera</strong>
-                        <small>Genitore · Classe 5</small>
+                        <small>Parent · Grade 5</small>
                     </div>
                 </div>
             </article>
             <article class="quote-bubble reveal">
-                <p>Creativa, sicura e piena di colore. BrightSteps sembra una seconda casa.</p>
+                <p>Creative, confident and full of color. BrightSteps feels like a second home.</p>
                 <div class="quote-who">
                     <img src="@Images.Parents[2]" alt="Priya Patel" loading="lazy" />
                     <div>
                         <strong>Priya Patel</strong>
-                        <small>Genitore · Classe 3</small>
+                        <small>Parent · Grade 3</small>
                     </div>
                 </div>
             </article>
@@ -435,49 +435,49 @@
 <section class="band portal-fancy" id="portal">
     <div class="band__inner">
         <div class="section-head fancy reveal" style="text-align:center;margin-inline:auto">
-            <p class="eyebrow" style="color:#F5C518!important">Portale scolastico</p>
-            <h2>CHI È PRONTO A IMPARARE?</h2>
-            <p style="color:rgba(255,255,255,.92)">Scegli la tua porta — Insegnante, Genitore, Studente, Preside, Amministratore scolastico o Super Admin.</p>
+            <p class="eyebrow" style="color:#F5C518!important">School Portal</p>
+            <h2>WHO'S READY TO LEARN?</h2>
+            <p style="color:rgba(255,255,255,.92)">Choose your door — Teacher, Parent, Student, Headmaster, School Administrator or Super Admin.</p>
         </div>
         <div class="portal-doors stagger">
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="sarah.wilson@brightsteps.academy">
                 <span class="emoji" aria-hidden="true">👩‍🏫</span>
-                <h3>Insegnante</h3>
-                <p>Gestisci classi, studenti e attività di apprendimento.</p>
-                <span class="go">Entra nel portale insegnanti →</span>
+                <h3>Teacher</h3>
+                <p>Manage classes, students and learning activities.</p>
+                <span class="go">Enter teacher portal →</span>
             </a>
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="amelia.johnson@email.com">
                 <span class="emoji" aria-hidden="true">👨‍👩‍👧</span>
-                <h3>Genitore</h3>
-                <p>Resta connesso con l'apprendimento di tuo figlio.</p>
-                <span class="go">Entra nel portale genitori →</span>
+                <h3>Parent</h3>
+                <p>Stay connected with your child's learning.</p>
+                <span class="go">Enter parent portal →</span>
             </a>
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="alex.rivera@student.brightsteps.academy">
                 <span class="emoji" aria-hidden="true">🧒</span>
-                <h3>Studente</h3>
-                <p>Impara, esplora e cresci.</p>
-                <span class="go">Entra nel portale studenti →</span>
+                <h3>Student</h3>
+                <p>Learn, explore and grow.</p>
+                <span class="go">Enter student portal →</span>
             </a>
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="grace.okonkwo@brightsteps.academy">
                 <span class="emoji" aria-hidden="true">🎓</span>
-                <h3>Preside</h3>
-                <p>Monitora e gestisci la scuola.</p>
-                <span class="go">Entra nel portale preside →</span>
+                <h3>Headmaster</h3>
+                <p>Monitor and manage the school.</p>
+                <span class="go">Enter headmaster portal →</span>
             </a>
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="admin@brightfuture.academy">
                 <span class="emoji" aria-hidden="true">🏫</span>
-                <h3>Amministratore scolastico</h3>
-                <p>Gestisci edifici, personale, studenti e sito web.</p>
-                <span class="go">Entra come amministratore →</span>
+                <h3>School Administrator</h3>
+                <p>Manage buildings, staff, students and website.</p>
+                <span class="go">Enter as administrator →</span>
             </a>
             <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="superadmin@platform.com">
                 <span class="emoji" aria-hidden="true">🛡️</span>
                 <h3>Super Admin</h3>
-                <p>Proprietario della piattaforma — attiva scuole e amministratori.</p>
-                <span class="go">Entra come Super Admin →</span>
+                <p>Platform owner — activate schools and administrators.</p>
+                <span class="go">Enter as Super Admin →</span>
             </a>
         </div>
-        <p class="portal-staff reveal">Hai già un account? <a asp-controller="Portal" asp-action="Login">Accedi</a></p>
+        <p class="portal-staff reveal">Already have an account? <a asp-controller="Portal" asp-action="Login">Sign in</a></p>
     </div>
 </section>
 
@@ -488,12 +488,12 @@
     <span class="cta-deco cta-deco--3" aria-hidden="true"><svg width="44" height="36" viewBox="0 0 52 42"><rect x="4" y="6" width="20" height="30" rx="3" fill="#E94B6A"/><rect x="24" y="6" width="20" height="30" rx="3" fill="#21A65A"/></svg></span>
     <span class="cta-deco cta-deco--4" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#FF7A1A"/></svg></span>
     <div class="reveal">
-        <p class="eyebrow" style="color:#F5C518!important">Iscrizioni</p>
-        <h2>PRONTI A INIZIARE <span>L'AVVENTURA?</span></h2>
-        <p>Unisciti a una scuola dove imparare è una scoperta — e ogni corridoio racconta una nuova storia.</p>
+        <p class="eyebrow" style="color:#F5C518!important">Enrollments</p>
+        <h2>READY TO START <span>THE ADVENTURE?</span></h2>
+        <p>Join a school where learning is a discovery — and every corridor tells a new story.</p>
         <div class="cta-scene__actions">
-            <a class="btn-bsa btn-hero btn-hero-yellow" asp-controller="Home" asp-action="Contact">Unisciti alla nostra scuola <span class="btn-ico">→</span></a>
-            <a class="btn-bsa btn-hero btn-hero-outline" href="#programs">Esplora di più</a>
+            <a class="btn-bsa btn-hero btn-hero-yellow" asp-controller="Home" asp-action="Contact">Join our school <span class="btn-ico">→</span></a>
+            <a class="btn-bsa btn-hero btn-hero-outline" href="#programs">Explore more</a>
         </div>
     </div>
 </section>
@@ -504,28 +504,28 @@
 <section class="band contact-fancy" id="contact" style="background:#FFF9F0">
     <div class="band__inner">
         <div class="section-head fancy reveal">
-            <p class="eyebrow">Vieni a trovarci</p>
-            <h2>Vieni a salutarci</h2>
-            <p>Ci piace conoscere nuove famiglie su Maple Grove.</p>
+            <p class="eyebrow">Visit Us</p>
+            <h2>Come say hello</h2>
+            <p>We love meeting new families on Maple Grove.</p>
         </div>
         <div class="contact-grid">
             <form id="contactForm" class="form-bsa card-lift reveal" method="post" action="#">
-                <label>Nome <input type="text" name="name" required placeholder="Il tuo nome" /></label>
+                <label>Name <input type="text" name="name" required placeholder="Your name" /></label>
                 <label>Email <input type="email" name="email" required placeholder="you@email.com" /></label>
-                <label>Oggetto <input type="text" name="subject" required placeholder="Iscrizioni, visit, or question" /></label>
-                <label>Messaggio <textarea name="message" rows="5" required placeholder="Come possiamo aiutarti?"></textarea></label>
-                <button type="submit" class="btn-bsa btn-bsa-primary">Invia messaggio <span class="btn-ico">✈️</span></button>
+                <label>Subject <input type="text" name="subject" required placeholder="Enrollments, visit, or question" /></label>
+                <label>Message <textarea name="message" rows="5" required placeholder="How can we help?"></textarea></label>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Send message <span class="btn-ico">✈️</span></button>
             </form>
             <div class="contact-side reveal">
                 <div class="contact-card" style="border:4px solid #FF7A1A;border-radius:1.4rem">
                     <h3>@(site?.Name ?? displayName)</h3>
-                    <p><strong>Indirizzo:</strong> @(site?.Contact?.Address ?? "42 Maple Grove Avenue, Riverside")</p>
-                    <p><strong>Telefono:</strong> @(site?.Contact?.Phone ?? "+1 (555) 214-8800")</p>
+                    <p><strong>Address:</strong> @(site?.Contact?.Address ?? "42 Maple Grove Avenue, Riverside")</p>
+                    <p><strong>Phone:</strong> @(site?.Contact?.Phone ?? "+1 (555) 214-8800")</p>
                     <p><strong>Email:</strong> @(site?.Contact?.Email ?? "hello@brightfuture.academy")</p>
-                    <p><strong>Orari di ufficio:</strong> @(site?.Contact?.OfficeHours ?? "Lun–Ven · 8:00 – 16:00")</p>
+                    <p><strong>Office hours:</strong> @(site?.Contact?.OfficeHours ?? "Mon–Fri · 8:00 AM – 4:00 PM")</p>
                 </div>
-                <div class="map-placeholder" role="img" aria-label="Segnaposto mappa">
-                    <span>📍 Segnaposto mappa</span>
+                <div class="map-placeholder" role="img" aria-label="Map placeholder">
+                    <span>📍 Map placeholder</span>
                     <small>@(site?.Contact?.Address ?? "42 Maple Grove, Riverside")</small>
                 </div>
             </div>

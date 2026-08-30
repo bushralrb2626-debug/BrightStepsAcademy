@@ -181,17 +181,47 @@ public class StudentFormVm
     public string StudentCode { get; set; } = "";
     public string FullName { get; set; } = "";
     public string? Email { get; set; }
-    public string? ParentName { get; set; }
-    public string? ParentEmail { get; set; }
-    public string? ParentPhone { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public string? Gender { get; set; }
     public DateOnly? AdmissionDate { get; set; }
     public string? ClassName { get; set; }
     public string? Section { get; set; }
+    public Guid? SchoolClassId { get; set; }
+    public Guid? SchoolSectionId { get; set; }
+    public List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ClassOptions { get; set; } = new();
+    public List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> SectionOptions { get; set; } = new();
     public string? RollNumber { get; set; }
     public string? Address { get; set; }
     public string? EmergencyContact { get; set; }
+
+    // Guardian information (always required)
+    public string GuardianName { get; set; } = "";
+    public string GuardianRelationship { get; set; } = "";
+    public string? GuardianEmail { get; set; }
+    public string? GuardianPhone { get; set; }
+
+    /// <summary>new | existing</summary>
+    public string GuardianMode { get; set; } = "new";
+    public Guid? ExistingGuardianId { get; set; }
+    public bool EnableGuardianPortal { get; set; }
+    public string? GuardianLoginId { get; set; }
+    public string? GuardianPassword { get; set; }
+    public string? GuardianConfirmPassword { get; set; }
+
+    // Edit-only
+    public bool ChangeGuardian { get; set; }
+    public bool HasGuardianLink { get; set; }
+    public bool PortalWasEnabled { get; set; }
+    public Guid? CurrentGuardianProfileId { get; set; }
+    public bool ResetGuardianPassword { get; set; }
+    public string? NewGuardianPassword { get; set; }
+    public string? NewGuardianConfirmPassword { get; set; }
+    public List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ExistingGuardians { get; set; } = new();
+
+    // Legacy fields kept for reports compatibility
+    public string? ParentName { get; set; }
+    public string? ParentEmail { get; set; }
+    public string? ParentPhone { get; set; }
 }
 
 public class WebsiteHubVm

@@ -1,0 +1,50 @@
+@model BrightStepsAcademy.Models.Manage.TeacherAssignmentFormVm
+@{
+    ViewData["Title"] = "Add Teacher Assignment";
+}
+<h1>Add teacher assignment</h1>
+<form asp-action="CreateAssignment" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="StaffMemberId" class="form-label">Teacher</label>
+        <select asp-for="StaffMemberId" asp-items="ViewBag.Staff" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SchoolClassId" class="form-label">Class</label>
+        <select asp-for="SchoolClassId" asp-items="ViewBag.Classes" class="form-select" id="classSelect"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SchoolSectionId" class="form-label">Section</label>
+        <select asp-for="SchoolSectionId" asp-items="ViewBag.Sections" class="form-select" id="sectionSelect"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="SubjectId" class="form-label">Subject</label>
+        <select asp-for="SubjectId" asp-items="ViewBag.Subjects" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ScheduleNotes" class="form-label"></label>
+        <input asp-for="ScheduleNotes" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+<script>
+    const sections = @Html.Raw(ViewBag.SectionsJson ?? "[]");
+    const classSelect = document.getElementById('classSelect');
+    const sectionSelect = document.getElementById('sectionSelect');
+    function filterSections() {
+        const classId = classSelect.value;
+        sectionSelect.innerHTML = '';
+        sections.filter(s => !classId || s.schoolClassId === classId).forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            sectionSelect.appendChild(opt);
+        });
+    }
+    classSelect?.addEventListener('change', filterSections);
+    filterSections();
+</script>
+}

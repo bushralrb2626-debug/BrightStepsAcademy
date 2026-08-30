@@ -1,0 +1,38 @@
+@model IReadOnlyList<BrightStepsAcademy.Domain.CourseMaterial>
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2">
+    <h2>Course Material</h2>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">No materials yet.</p></div>
+}
+else
+{
+    <div class="dash-panel reveal">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td>@m.Title</td>
+                        <td>@m.Category</td>
+                        <td>@m.ContentDate.ToString("MMM d, yyyy")</td>
+                        <td>@m.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

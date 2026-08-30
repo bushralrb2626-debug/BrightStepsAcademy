@@ -13,7 +13,7 @@
     <div class="footer-bsa__inner">
         <div class="footer-bsa__brand">
             <partial name="Partials/_Logo" />
-            <p>Un luogo gioioso dove i bambini imparano, esplorano e crescono — ogni giorno.</p>
+            <p>A joyful place where children learn, explore, and grow — every single day.</p>
             <div class="footer-social" aria-label="Link social">
                 <a href="#" aria-label="Facebook">f</a>
                 <a href="#" aria-label="Instagram">ig</a>
@@ -21,29 +21,29 @@
             </div>
         </div>
         <div class="footer-bsa__col">
-            <h4>Esplora</h4>
-            <a asp-controller="Home" asp-action="About">Chi siamo</a>
-            <a asp-controller="Home" asp-action="Programs">Programmi</a>
-            <a asp-controller="Home" asp-action="Facilities">Strutture</a>
-            <a asp-controller="Home" asp-action="Teachers">Insegnanti</a>
+            <h4>Explore</h4>
+            <a asp-controller="Home" asp-action="About">About</a>
+            <a asp-controller="Home" asp-action="Programs">Programs</a>
+            <a asp-controller="Home" asp-action="Facilities">Facilities</a>
+            <a asp-controller="Home" asp-action="Teachers">Teachers</a>
         </div>
         <div class="footer-bsa__col">
-            <h4>Vita scolastica</h4>
-            <a asp-controller="Home" asp-action="Activities">Attività</a>
-            <a asp-controller="Home" asp-action="Events">Eventi</a>
-            <a asp-controller="Home" asp-action="Gallery">Galleria</a>
-            <a asp-controller="Home" asp-action="Contact">Contatti</a>
+            <h4>School Life</h4>
+            <a asp-controller="Home" asp-action="Activities">Activities</a>
+            <a asp-controller="Home" asp-action="Events">Events</a>
+            <a asp-controller="Home" asp-action="Gallery">Gallery</a>
+            <a asp-controller="Home" asp-action="Contact">Contact</a>
         </div>
         <div class="footer-bsa__col">
-            <h4>Visita</h4>
+            <h4>Visit</h4>
             <p>@(school?.Address ?? "42 Maple Grove, Riverside")</p>
             <p>@(school?.Phone ?? "+1 (555) 214-8800")</p>
             <p>@(school?.Email ?? "hello@brightsteps.academy")</p>
-            <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">🔐 Accedi</a>
+            <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">🔐 Login</a>
         </div>
     </div>
     <div class="footer-bsa__bar">
-        <span>&copy; @DateTime.Now.Year @(ViewData["SchoolName"] ?? school?.Name ?? "Scuola Materna") · @(ViewData["Tagline"] ?? "Impara. Esplora. Cresci.")</span>
-        <a asp-controller="Home" asp-action="Contact">Scrivici</a>
+        <span>&copy; @DateTime.Now.Year @(ViewData["SchoolName"] ?? school?.Name ?? "Scuola Materna") · @(ViewData["Tagline"] ?? "Learn. Explore. Grow.")</span>
+        <a asp-controller="Home" asp-action="Contact">Get in touch</a>
     </div>
 </footer>

@@ -145,6 +145,10 @@ public class PortalController : Controller
                 if (await _userManager.IsInRoleAsync(user, AppRoleNames.SchoolAdmin)
                     || await _userManager.IsInRoleAsync(user, AppRoleNames.CustomAdmin))
                     return Redirect("/Manage/School/Security");
+                if (await _userManager.IsInRoleAsync(user, AppRoleNames.Guardian))
+                    return Redirect("/Parent/ChangePassword");
+                if (await _userManager.IsInRoleAsync(user, AppRoleNames.Teacher))
+                    return Redirect("/Teacher/Security");
             }
 
             var destination = await ResolveRedirectAsync(user);
@@ -177,6 +181,12 @@ public class PortalController : Controller
 
         if (returnUrl.StartsWith("/Manage/School", StringComparison.OrdinalIgnoreCase))
             return roleHome.StartsWith("/Manage/School", StringComparison.OrdinalIgnoreCase);
+
+        if (returnUrl.StartsWith("/Parent", StringComparison.OrdinalIgnoreCase))
+            return roleHome.StartsWith("/Parent", StringComparison.OrdinalIgnoreCase);
+
+        if (returnUrl.StartsWith("/Teacher", StringComparison.OrdinalIgnoreCase))
+            return roleHome.StartsWith("/Teacher", StringComparison.OrdinalIgnoreCase);
 
         return true;
     }
@@ -228,8 +238,14 @@ public class PortalController : Controller
         if (await _userManager.IsInRoleAsync(user, AppRoleNames.Staff))
             return "/StaffPortal";
 
+        if (await _userManager.IsInRoleAsync(user, AppRoleNames.Teacher))
+            return "/Teacher";
+
         if (await _userManager.IsInRoleAsync(user, AppRoleNames.Student))
             return "/StudentPortal";
+
+        if (await _userManager.IsInRoleAsync(user, AppRoleNames.Guardian))
+            return "/Parent";
 
         return "/";
     }

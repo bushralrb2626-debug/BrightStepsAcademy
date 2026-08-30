@@ -1,0 +1,24 @@
+@model IEnumerable<BrightStepsAcademy.Models.Manage.TeacherAssignmentListVm>
+@{
+    ViewData["Title"] = "Teacher Assignments";
+}
+<div class="manage-head d-flex justify-content-between align-items-center">
+    <h1>Teacher assignments</h1>
+    <a asp-action="CreateAssignment" class="btn btn-primary">Add assignment</a>
+</div>
+
+<table class="table">
+    <thead><tr><th>Teacher</th><th>Class</th><th>Section</th><th>Subject</th><th>Schedule</th></tr></thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Teacher</td>
+            <td>@item.Class</td>
+            <td>@item.Section</td>
+            <td>@item.Subject</td>
+            <td>@item.ScheduleNotes</td>
+        </tr>
+    }
+    </tbody>
+</table>

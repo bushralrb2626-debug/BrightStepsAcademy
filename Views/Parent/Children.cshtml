@@ -1,37 +1,35 @@
+@model IReadOnlyList<GuardianChildVm>
 @{
     Layout = "_DashboardLayout";
-    var store = (ISchoolData)ViewBag.Store;
-    var children = store.Students.Where(s => s.ParentName.Contains("Amelia") || s.Name is "Emma Johnson" or "Zara Ahmed").ToList();
-    if (children.Count == 0) { children = store.Students.Take(2).ToList(); }
 }
 <div class="section-head reveal mb-2">
-    <h2>My Children</h2>
-    <p>Emma and Zara — detail cards with attendance and class context.</p>
+    <h2>@(Model.Count == 1 ? "My Child" : "My Children")</h2>
+    <p>Students linked to your guardian account.</p>
 </div>
 
-<div class="grid-2 stagger">
-    @foreach (var child in children)
-    {
-        <article class="info-card card-lift">
-            <div class="flex-between" style="align-items:flex-start;">
-                <div class="cell-user">
-                    <img src="@child.Photo" alt="" style="width:64px;height:64px;" />
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal"><p>No linked students found.</p></div>
+}
+else
+{
+    <div class="grid-2 stagger">
+        @foreach (var child in Model)
+        {
+            <article class="info-card card-lift">
+                <div class="flex-between" style="align-items:flex-start;">
                     <div>
-                        <h3 class="mb-0">@child.Name</h3>
-                        <p class="text-muted mb-0">@child.StudentId</p>
+                        <h3 class="mb-0">@child.FullName</h3>
+                        <p class="text-muted mb-0">@child.StudentCode</p>
                     </div>
+                    <span class="badge-soft badge-present">@child.Relationship</span>
                 </div>
-                <span class="badge-soft badge-present">@child.Status</span>
-            </div>
-            <div class="info-row mt-2"><span>Class</span><strong>@child.ClassName-@child.Section</strong></div>
-            <div class="info-row"><span>Attendance</span><strong>@child.Attendance%</strong></div>
-            <div class="progress-bsa mb-2"><span style="width:@child.Attendance%"></span></div>
-            <div class="info-row"><span>Age</span><strong>@child.Age</strong></div>
-            <div class="info-row"><span>Email</span><strong>@child.Email</strong></div>
-            <div class="quick-actions mt-1">
-                <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Attendance">Attendance</a>
-                <a class="btn-bsa btn-bsa-sm btn-bsa-ghost" asp-action="Results">Results</a>
-            </div>
-        </article>
-    }
-</div>
+                <div class="info-row mt-2"><span>Class</span><strong>@child.ClassDisplay</strong></div>
+                <div class="quick-actions mt-1">
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Attendance">Attendance</a>
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-ghost" asp-action="Results">Results</a>
+                </div>
+            </article>
+        }
+    </div>
+}

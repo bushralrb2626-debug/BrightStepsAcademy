@@ -8,22 +8,28 @@
 <form method="post" class="mg-form wide">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All"></div>
-    <div class="mg-grid-2">
-        <div class="mg-field"><label>Student code</label><input asp-for="StudentCode" required /></div>
-        <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /></div>
-        <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /></div>
-        <div class="mg-field"><label>Gender</label><input asp-for="Gender" /></div>
-        <div class="mg-field"><label>Date of birth</label><input asp-for="DateOfBirth" type="date" /></div>
-        <div class="mg-field"><label>Admission date</label><input asp-for="AdmissionDate" type="date" /></div>
-        <div class="mg-field"><label>Class</label><input asp-for="ClassName" /></div>
-        <div class="mg-field"><label>Section</label><input asp-for="Section" /></div>
-        <div class="mg-field"><label>Roll number</label><input asp-for="RollNumber" /></div>
-        <div class="mg-field"><label>Parent name</label><input asp-for="ParentName" /></div>
-        <div class="mg-field"><label>Parent email</label><input asp-for="ParentEmail" type="email" /></div>
-        <div class="mg-field"><label>Parent phone</label><input asp-for="ParentPhone" /></div>
-        <div class="mg-field"><label>Emergency contact</label><input asp-for="EmergencyContact" /></div>
-    </div>
-    <div class="mg-field"><label>Address</label><textarea asp-for="Address"></textarea></div>
-    <button type="submit" class="mg-btn mg-btn-primary">Save</button>
+
+    <section class="mg-form-section">
+        <h2 class="mg-form-section__title">Student information</h2>
+        <div class="mg-grid-2">
+            <div class="mg-field"><label>Student code</label><input asp-for="StudentCode" required /></div>
+            <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /></div>
+            <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /></div>
+            <div class="mg-field"><label>Gender</label><input asp-for="Gender" /></div>
+            <div class="mg-field"><label>Date of birth</label><input asp-for="DateOfBirth" type="date" /></div>
+            <div class="mg-field"><label>Admission date</label><input asp-for="AdmissionDate" type="date" /></div>
+            <div class="mg-field"><label>Class</label><select asp-for="SchoolClassId" asp-items="Model.ClassOptions"></select></div>
+            <div class="mg-field"><label>Section</label><select asp-for="SchoolSectionId" asp-items="Model.SectionOptions"></select></div>
+            <div class="mg-field"><label>Class (legacy text)</label><input asp-for="ClassName" /></div>
+            <div class="mg-field"><label>Section (legacy text)</label><input asp-for="Section" /></div>
+            <div class="mg-field"><label>Roll number</label><input asp-for="RollNumber" /></div>
+            <div class="mg-field"><label>Emergency contact</label><input asp-for="EmergencyContact" /></div>
+        </div>
+        <div class="mg-field"><label>Address</label><textarea asp-for="Address"></textarea></div>
+    </section>
+
+    <partial name="_GuardianFields" model="Model" />
+
+    <button type="submit" class="mg-btn mg-btn-primary">Save changes</button>
 </form>
 </div>

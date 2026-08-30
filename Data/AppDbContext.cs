@@ -19,6 +19,22 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<StaffCategory> StaffCategories => Set<StaffCategory>();
     public DbSet<StaffMember> StaffMembers => Set<StaffMember>();
     public DbSet<StudentRecord> StudentRecords => Set<StudentRecord>();
+    public DbSet<GuardianProfile> GuardianProfiles => Set<GuardianProfile>();
+    public DbSet<StudentGuardianLink> StudentGuardianLinks => Set<StudentGuardianLink>();
+    public DbSet<SchoolClass> SchoolClasses => Set<SchoolClass>();
+    public DbSet<SchoolSection> SchoolSections => Set<SchoolSection>();
+    public DbSet<Subject> Subjects => Set<Subject>();
+    public DbSet<TeacherAssignment> TeacherAssignments => Set<TeacherAssignment>();
+    public DbSet<GradingRule> GradingRules => Set<GradingRule>();
+    public DbSet<DailyDiaryEntry> DailyDiaryEntries => Set<DailyDiaryEntry>();
+    public DbSet<ImportantInformationItem> ImportantInformationItems => Set<ImportantInformationItem>();
+    public DbSet<ClassAnnouncement> ClassAnnouncements => Set<ClassAnnouncement>();
+    public DbSet<CourseMaterial> CourseMaterials => Set<CourseMaterial>();
+    public DbSet<AcademicAttachment> AcademicAttachments => Set<AcademicAttachment>();
+    public DbSet<AttendanceSession> AttendanceSessions => Set<AttendanceSession>();
+    public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
+    public DbSet<Assessment> Assessments => Set<Assessment>();
+    public DbSet<AssessmentMark> AssessmentMarks => Set<AssessmentMark>();
     public DbSet<AppPermission> AppPermissions => Set<AppPermission>();
     public DbSet<SchoolAdminProfile> SchoolAdminProfiles => Set<SchoolAdminProfile>();
     public DbSet<UserPermissionGrant> UserPermissionGrants => Set<UserPermissionGrant>();
@@ -42,6 +58,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         ConfigureSchool(builder);
         ConfigureBuildingsAndRooms(builder);
         ConfigureStaffAndStudents(builder);
+        ConfigureAcademic(builder);
         ConfigurePermissions(builder);
         ConfigureWebsite(builder);
         ConfigureAuditAndNotifications(builder);
@@ -258,11 +275,222 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.HasIndex(x => new { x.SchoolId, x.StudentCode }).IsUnique();
             e.HasIndex(x => x.UserId);
 
+            e.HasOne(x => x.SchoolClass)
+                .WithMany()
+                .HasForeignKey(x => x.SchoolClassId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(x => x.SchoolSection)
+                .WithMany()
+                .HasForeignKey(x => x.SchoolSectionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             e.HasOne(x => x.School)
                 .WithMany(s => s.Students)
                 .HasForeignKey(x => x.SchoolId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+
+        builder.Entity<GuardianProfile>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.FullName).HasMaxLength(256).IsRequired();
+            e.Property(x => x.Email).HasMaxLength(256).IsRequired();
+            e.Property(x => x.Phone).HasMaxLength(64);
+            e.Property(x => x.LoginId).HasMaxLength(128);
+            e.Property(x => x.UserId).HasMaxLength(450);
+            e.HasIndex(x => x.UserId);
+            e.HasIndex(x => new { x.SchoolId, x.Email });
+
+            e.HasOne(x => x.School)
+                .WithMany(s => s.Guardians)
+                .HasForeignKey(x => x.SchoolId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<StudentGuardianLink>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Relationship).HasMaxLength(64).IsRequired();
+            e.HasIndex(x => x.StudentId).IsUnique();
+            e.HasIndex(x => x.GuardianProfileId);
+
+            e.HasOne(x => x.School)
+                .WithMany(s => s.StudentGuardianLinks)
+                .HasForeignKey(x => x.SchoolId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(x => x.Student)
+                .WithOne(s => s.GuardianLink)
+                .HasForeignKey<StudentGuardianLink>(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(x => x.Guardian)
+                .WithMany(g => g.StudentLinks)
+                .HasForeignKey(x => x.GuardianProfileId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigureAcademic(ModelBuilder builder)
+    {
+        builder.Entity<SchoolClass>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            e.Property(x => x.GradeLevel).HasMaxLength(64);
+            e.HasIndex(x => new { x.SchoolId, x.Name }).IsUnique();
+            e.HasOne(x => x.School).WithMany(s => s.SchoolClasses).HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<SchoolSection>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(64).IsRequired();
+            e.HasIndex(x => new { x.SchoolClassId, x.Name }).IsUnique();
+            e.HasOne(x => x.School).WithMany(s => s.SchoolSections).HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany(c => c.Sections).HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Subject>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            e.Property(x => x.Code).HasMaxLength(32);
+            e.HasIndex(x => new { x.SchoolId, x.Name }).IsUnique();
+            e.HasOne(x => x.School).WithMany(s => s.Subjects).HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<TeacherAssignment>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.ScheduleNotes).HasMaxLength(512);
+            e.HasIndex(x => new { x.StaffMemberId, x.SchoolClassId, x.SchoolSectionId, x.SubjectId }).IsUnique();
+            e.HasOne(x => x.School).WithMany(s => s.TeacherAssignments).HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StaffMember).WithMany().HasForeignKey(x => x.StaffMemberId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolSection).WithMany().HasForeignKey(x => x.SchoolSectionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<GradingRule>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.GradeLabel).HasMaxLength(16).IsRequired();
+            e.Property(x => x.MinPercentage).HasPrecision(5, 2);
+            e.Property(x => x.MaxPercentage).HasPrecision(5, 2);
+            e.Property(x => x.GradePoint).HasPrecision(4, 2);
+            e.HasIndex(x => new { x.SchoolId, x.GradeLabel }).IsUnique();
+            e.HasOne(x => x.School).WithMany(s => s.GradingRules).HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        ConfigureClassScopedContent<DailyDiaryEntry>(builder, "DailyDiaryEntries");
+        ConfigureClassScopedContent<ImportantInformationItem>(builder, "ImportantInformationItems");
+        ConfigureClassScopedContent<ClassAnnouncement>(builder, "ClassAnnouncements");
+        builder.Entity<ClassAnnouncement>().Property(x => x.Message).HasMaxLength(4000).IsRequired();
+
+        builder.Entity<CourseMaterial>(e =>
+        {
+            ConfigureClassScopedContentCore(e);
+            e.ToTable("CourseMaterials");
+            e.Property(x => x.FilePath).HasMaxLength(512);
+            e.Property(x => x.FileName).HasMaxLength(256);
+            e.Property(x => x.FileContentType).HasMaxLength(128);
+        });
+
+        builder.Entity<AcademicAttachment>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.FileName).HasMaxLength(256).IsRequired();
+            e.Property(x => x.StoredPath).HasMaxLength(512).IsRequired();
+            e.Property(x => x.ContentType).HasMaxLength(128).IsRequired();
+            e.HasIndex(x => new { x.OwnerType, x.OwnerId });
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.UploadedByStaffMember).WithMany().HasForeignKey(x => x.UploadedByStaffMemberId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AttendanceSession>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.PeriodLabel).HasMaxLength(64);
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.HasIndex(x => new { x.SchoolClassId, x.SchoolSectionId, x.SubjectId, x.SessionDate, x.PeriodLabel }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StaffMember).WithMany().HasForeignKey(x => x.StaffMemberId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolSection).WithMany().HasForeignKey(x => x.SchoolSectionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.TeacherAssignment).WithMany().HasForeignKey(x => x.TeacherAssignmentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AttendanceRecord>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Notes).HasMaxLength(512);
+            e.HasIndex(x => new { x.AttendanceSessionId, x.StudentId }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.AttendanceSession).WithMany(s => s.Records).HasForeignKey(x => x.AttendanceSessionId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Assessment>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(256).IsRequired();
+            e.Property(x => x.Description).HasMaxLength(2000);
+            e.Property(x => x.TotalMarks).HasPrecision(8, 2);
+            e.Property(x => x.PassingMarks).HasPrecision(8, 2);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StaffMember).WithMany().HasForeignKey(x => x.StaffMemberId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolSection).WithMany().HasForeignKey(x => x.SchoolSectionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.TeacherAssignment).WithMany().HasForeignKey(x => x.TeacherAssignmentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AssessmentMark>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.ObtainedMarks).HasPrecision(8, 2);
+            e.Property(x => x.Percentage).HasPrecision(5, 2);
+            e.Property(x => x.GradeLabel).HasMaxLength(16);
+            e.HasIndex(x => new { x.AssessmentId, x.StudentId }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Assessment).WithMany(a => a.Marks).HasForeignKey(x => x.AssessmentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<DailyDiaryEntry>(e =>
+        {
+            e.Property(x => x.Topic).HasMaxLength(256);
+            e.Property(x => x.Homework).HasMaxLength(2000);
+            e.Property(x => x.Instructions).HasMaxLength(2000);
+        });
+    }
+
+    private static void ConfigureClassScopedContent<T>(ModelBuilder builder, string tableName)
+        where T : ClassScopedAcademicContent
+    {
+        builder.Entity<T>(e =>
+        {
+            ConfigureClassScopedContentCore(e);
+            e.ToTable(tableName);
+        });
+    }
+
+    private static void ConfigureClassScopedContentCore<T>(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<T> e)
+        where T : ClassScopedAcademicContent
+    {
+        e.HasKey(x => x.Id);
+        e.Property(x => x.Title).HasMaxLength(256).IsRequired();
+        e.Property(x => x.Description).HasMaxLength(4000);
+        e.HasIndex(x => new { x.SchoolClassId, x.SchoolSectionId, x.SubjectId, x.ContentDate });
+        e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+        e.HasOne(x => x.StaffMember).WithMany().HasForeignKey(x => x.StaffMemberId).OnDelete(DeleteBehavior.Restrict);
+        e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+        e.HasOne(x => x.SchoolSection).WithMany().HasForeignKey(x => x.SchoolSectionId).OnDelete(DeleteBehavior.Restrict);
+        e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+        e.HasOne(x => x.TeacherAssignment).WithMany().HasForeignKey(x => x.TeacherAssignmentId).OnDelete(DeleteBehavior.Restrict);
     }
 
     private static void ConfigurePermissions(ModelBuilder builder)

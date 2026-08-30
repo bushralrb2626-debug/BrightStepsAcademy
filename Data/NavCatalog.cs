@@ -59,37 +59,33 @@ public static class NavCatalog
                 I("Reports", "chart", "Headmaster", "Reports"),
                 I("Settings", "cog", "Headmaster", "Settings"))
         ],
-        "Teacher" =>
+        "TeacherPortal" or "Teacher" =>
         [
             G("Main", I("Dashboard", "grid", "Teacher", "Index")),
-            G("Academic",
+            G("Teaching",
                 I("My Classes", "board", "Teacher", "Classes"),
                 I("Students", "backpack", "Teacher", "Students"),
+                I("Daily Diary", "book", "Teacher", "Diary"),
                 I("Attendance", "check", "Teacher", "Attendance"),
-                I("Assignments", "book", "Teacher", "Assignments"),
-                I("Results", "star", "Teacher", "Results"),
-                I("Timetable", "clock", "Teacher", "Timetable")),
-            G("Communication",
-                I("Notices", "bell", "Teacher", "Notices"),
-                I("Activities", "palette", "Teacher", "Activities"),
-                I("Messages", "chat", "Teacher", "Messages")),
-            G("System", I("Settings", "cog", "Teacher", "Settings"))
+                I("Grade Book", "star", "Teacher", "GradeBook")),
+            G("Content",
+                I("Announcements", "bell", "Teacher", "Announcements"),
+                I("Course Material", "folder", "Teacher", "Materials")),
+            G("Account",
+                I("Profile", "user", "Teacher", "Profile"),
+                I("Security", "lock", "Teacher", "Security"))
         ],
-        "Parent" =>
+        "ParentPortal" or "Parent" =>
         [
             G("Main", I("Dashboard", "grid", "Parent", "Index")),
             G("Children",
                 I("My Children", "family", "Parent", "Children"),
+                I("Daily Diary", "book", "Parent", "Diary"),
                 I("Attendance", "check", "Parent", "Attendance"),
-                I("Homework", "pencil", "Parent", "Homework"),
-                I("Assignments", "book", "Parent", "Assignments"),
-                I("Results", "star", "Parent", "Results"),
-                I("Timetable", "clock", "Parent", "Timetable")),
-            G("Communication",
-                I("Notices", "bell", "Parent", "Notices"),
-                I("Events", "cal", "Parent", "Events"),
-                I("Messages", "chat", "Parent", "Messages")),
-            G("System", I("Settings", "cog", "Parent", "Settings"))
+                I("Marks", "star", "Parent", "Marks"),
+                I("Announcements", "bell", "Parent", "Announcements"),
+                I("Course Material", "folder", "Parent", "Materials")),
+            G("Account", I("Change Password", "lock", "Parent", "ChangePassword"))
         ],
         _ =>
         [

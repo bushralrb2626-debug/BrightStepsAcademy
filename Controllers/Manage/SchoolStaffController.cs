@@ -122,7 +122,7 @@ public class SchoolStaffController : SchoolManageControllerBase
                 await LoadCategoriesAsync(ct);
                 return SchoolView("Staff/Create", model);
             }
-            await UserManager.AddToRoleAsync(user, AppRoleNames.Staff);
+            await AssignStaffPortalRolesAsync(user, model.StaffCategoryId, ct);
             await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("school_id", SchoolId.ToString()));
             staff.UserId = user.Id;
         }
@@ -243,7 +243,7 @@ public class SchoolStaffController : SchoolManageControllerBase
                 await LoadCategoriesAsync(ct, model.StaffCategoryId);
                 return SchoolView("Staff/Edit", model);
             }
-            await UserManager.AddToRoleAsync(user, AppRoleNames.Staff);
+            await AssignStaffPortalRolesAsync(user, model.StaffCategoryId, ct);
             await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("school_id", SchoolId.ToString()));
             item.UserId = user.Id;
             item.HasLoginAccess = true;
@@ -401,5 +401,16 @@ public class SchoolStaffController : SchoolManageControllerBase
                 .Select(c => new { c.Id, c.Name })
                 .ToListAsync(ct),
             "Id", "Name", selectedId);
+    }
+
+    private async Task AssignStaffPortalRolesAsync(ApplicationUser user, Guid staffCategoryId, CancellationToken ct)
+    {
+        var category = await Db.StaffCategories.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == staffCategoryId && c.SchoolId == SchoolId, ct);
+        var isTeacher = category?.Name.Contains("teacher", StringComparison.OrdinalIgnoreCase) == true;
+        if (isTeacher)
+            await UserManager.AddToRoleAsync(user, AppRoleNames.Teacher);
+        else
+            await UserManager.AddToRoleAsync(user, AppRoleNames.Staff);
     }
 }

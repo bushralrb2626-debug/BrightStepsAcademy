@@ -1,11 +1,11 @@
 /**
  * Scuola Materna — EN / IT language switcher
- * Default: Italian. Choice saved in localStorage.
+ * Default: English. Choice saved in localStorage.
  */
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "scuola-materna-lang";
+  var STORAGE_KEY = "bsa-site-lang";
 
   // [English, Italian] — longer phrases first
   var PAIRS = [
@@ -174,11 +174,11 @@
       var saved = localStorage.getItem(STORAGE_KEY);
       if (saved === "en" || saved === "it") return saved;
     } catch (e) {}
-    return "it";
+    return "en";
   }
 
   function setLang(lang) {
-    if (lang !== "en" && lang !== "it") lang = "it";
+    if (lang !== "en" && lang !== "it") lang = "en";
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch (e) {}

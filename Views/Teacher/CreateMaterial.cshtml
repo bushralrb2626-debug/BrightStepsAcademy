@@ -1,0 +1,18 @@
+@model CourseMaterialFormVm
+@{ Layout = "_DashboardLayout"; }
+<div class="dash-panel reveal">
+    <h3>Upload course material</h3>
+    <form asp-action="CreateMaterial" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AssignmentId" />
+        <div asp-validation-summary="All"></div>
+        <div class="mb-2"><label>Title</label><input asp-for="Title" class="form-control" required /></div>
+        <div class="mb-2"><label>Category</label><select asp-for="Category" class="form-select"></select></div>
+        <div class="mb-2"><label>Date</label><input asp-for="ContentDate" type="date" class="form-control" /></div>
+        <div class="mb-2"><label>Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+        <div class="mb-2"><label>File</label><input asp-for="File" type="file" class="form-control" required /></div>
+        <div class="mb-2 form-check"><input asp-for="VisibleToParents" class="form-check-input" /><label class="form-check-label">Visible to parents when published</label></div>
+        <div class="mb-2"><label>Status</label><select asp-for="Status" class="form-select"><option value="Draft">Draft</option><option value="Published">Publish</option></select></div>
+        <button type="submit" class="btn-bsa btn-bsa-primary">Upload</button>
+    </form>
+</div>

@@ -23,7 +23,9 @@ public static class DbSeeder
         await EnsureUsersAsync(userManager, db, school.Id);
         await EnsureBuildingsAsync(db, school.Id);
         await EnsureStaffCategoriesAsync(db, school.Id);
+        await EnsureAcademicStructureAsync(db, school.Id);
         await EnsureWebsiteContentAsync(db, school);
+        await ApplyEnglishWebsiteDefaultsAsync(db, school.Id);
     }
 
     private static async Task EnsureDemoSubscriptionAndSettingsAsync(AppDbContext db, School school)
@@ -91,7 +93,9 @@ public static class DbSeeder
             AppRoleNames.SchoolAdmin,
             AppRoleNames.CustomAdmin,
             AppRoleNames.Staff,
-            AppRoleNames.Student
+            AppRoleNames.Student,
+            AppRoleNames.Guardian,
+            AppRoleNames.Teacher
         ];
 
         foreach (var role in roles)
@@ -145,10 +149,10 @@ public static class DbSeeder
         {
             school.Name = "Scuola Materna";
             school.ShortName = "Scuola Materna";
-            school.Tagline = "Impara. Esplora. Cresci.";
-            school.SchoolType = "Primaria e media";
+            school.Tagline = "Learn. Explore. Grow.";
+            school.SchoolType = "Primary & Middle";
             school.Description =
-                "La Scuola Materna è nata da un’idea semplice: l’infanzia deve essere colorata, sicura e piena di scoperte. Oggi accogliamo più di mille allievi in aule luminose, laboratori creativi e campi vivaci.";
+                "Scuola Materna began with a simple idea: childhood should be colourful, safe, and full of discovery. Today we welcome more than a thousand learners across bright classrooms, creative studios, and lively fields.";
             school.UpdatedAt = DateTimeOffset.UtcNow;
             await db.SaveChangesAsync();
             return school;
@@ -159,7 +163,7 @@ public static class DbSeeder
             SchoolCode = "BFA-001",
             Name = "Scuola Materna",
             ShortName = "Scuola Materna",
-            Tagline = "Impara. Esplora. Cresci.",
+            Tagline = "Learn. Explore. Grow.",
             RegistrationNumber = "REG-BFA-2011",
             Email = "hello@brightfuture.academy",
             Phone = "+1 (555) 214-8800",
@@ -169,9 +173,9 @@ public static class DbSeeder
             Country = "USA",
             PrincipalName = "Grace Okonkwo",
             EstablishedYear = 2011,
-            SchoolType = "Primaria e media",
+            SchoolType = "Primary & Middle",
             Description =
-                "La Scuola Materna è nata da un’idea semplice: l’infanzia deve essere colorata, sicura e piena di scoperte. Oggi accogliamo più di mille allievi in aule luminose, laboratori creativi e campi vivaci.",
+                "Scuola Materna began with a simple idea: childhood should be colourful, safe, and full of discovery. Today we welcome more than a thousand learners across bright classrooms, creative studios, and lively fields.",
             EmergencyContact = "+1 (555) 214-8899",
             LogoPath = Images.School,
             FaviconPath = Images.School,
@@ -415,11 +419,11 @@ public static class DbSeeder
             db.HeroContents.Add(new HeroContent
             {
                 SchoolId = schoolId,
-                Heading = "DOVE LE PICCOLE MENTI CRESCONO IN GRANDI SOGNI",
+                Heading = "WHERE LITTLE MINDS GROW INTO BIG DREAMS",
                 Description =
-                    "Un campus colorato dove fiorisce la curiosità, brilla la creatività e ogni bambino può imparare, esplorare e sognare — ogni singolo giorno.",
+                    "A colorful campus where curiosity blooms, creativity shines, and every child gets to learn, explore and dream — every single day.",
                 ImagePath = Images.KidsRead,
-                CtaText = "Esplora la nostra scuola",
+                CtaText = "Explore Our School",
                 CtaLink = "#about"
             });
         }
@@ -429,9 +433,9 @@ public static class DbSeeder
             db.AboutContents.Add(new AboutContent
             {
                 SchoolId = schoolId,
-                Heading = "Una storia di inizi luminosi",
+                Heading = "A story of bright beginnings",
                 Description =
-                    "Non solo un campus — un percorso colorato che le famiglie amano condividere. Aule illuminate, domande curiose e insegnanti che conoscono ogni bambino per nome.",
+                    "Not just a campus — a colorful journey families love to join. Sunlit classrooms, curious questions, and teachers who know every child by name.",
                 ImagePath = Images.Classroom
             });
         }
@@ -444,7 +448,7 @@ public static class DbSeeder
                 Address = school.Address,
                 Phone = school.Phone,
                 Email = school.Email,
-                OfficeHours = "Lun–Ven 8:00 – 16:00"
+                OfficeHours = "Mon–Fri 8:00 AM – 4:00 PM"
             });
         }
 
@@ -454,36 +458,36 @@ public static class DbSeeder
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Dove inizia l’apprendimento",
+                    Title = "Where learning begins",
                     Description =
-                        "Aule illuminate, domande curiose e insegnanti che conoscono ogni bambino per nome — questo è lo stile Scuola Materna.",
+                        "Sunlit classrooms, curious questions, and teachers who know every child by name — that's the Scuola Materna way.",
                     ImageOrIcon = Images.Classroom,
                     DisplayOrder = 1
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "La nostra missione",
+                    Title = "Our mission",
                     Description =
-                        "Coltivare apprendisti curiosi, gentili e sicuri di sé attraverso un insegnamento gioioso ed esperienze significative.",
+                        "To nurture curious, kind and confident learners through joyful teaching and meaningful experiences.",
                     ImageOrIcon = Images.KidsRead,
                     DisplayOrder = 2
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "La nostra visione",
+                    Title = "Our vision",
                     Description =
-                        "Un mondo in cui ogni bambino si sente visto, stimolato e ispirato a crescere — un passo luminoso alla volta.",
+                        "A world where every child feels seen, challenged and inspired to grow — one bright step at a time.",
                     ImageOrIcon = Images.Campus,
                     DisplayOrder = 3
                 },
                 new HighlightItem
                 {
                     SchoolId = schoolId,
-                    Title = "Perché le famiglie ci scelgono",
+                    Title = "Why families choose us",
                     Description =
-                        "Spazi sicuri, apprendimento creativo, solida didattica e un portale che tiene i genitori vicini a ogni traguardo.",
+                        "Safe spaces, creative learning, strong academics, and a portal that keeps parents close to every milestone.",
                     ImageOrIcon = Images.Play,
                     DisplayOrder = 4
                 });
@@ -495,48 +499,48 @@ public static class DbSeeder
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Biblioteca moderna",
-                    Description = "Libri, spazi di lettura e risorse didattiche.",
+                    Name = "Modern Library",
+                    Description = "Books, reading spaces and learning resources.",
                     ImagePath = Images.Library,
                     DisplayOrder = 1
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Laboratorio di scienze",
-                    Description = "Esperimenti pratici e scoperta.",
+                    Name = "Science Laboratory",
+                    Description = "Hands-on experiments and discovery.",
                     ImagePath = Images.Science,
                     DisplayOrder = 2
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Laboratorio di informatica",
-                    Description = "Tecnologia e apprendimento digitale.",
+                    Name = "Computer Lab",
+                    Description = "Technology and digital learning.",
                     ImagePath = Images.Computers,
                     DisplayOrder = 3
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Campo sportivo",
-                    Description = "Sport all’aperto e attività motorie.",
+                    Name = "Sports Ground",
+                    Description = "Outdoor sports and physical activities.",
                     ImagePath = Images.Sports,
                     DisplayOrder = 4
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Sala arte e creatività",
-                    Description = "Pittura, laboratori e espressione creativa.",
+                    Name = "Art & Creativity Room",
+                    Description = "Painting, crafts and creative expression.",
                     ImagePath = Images.Art,
                     DisplayOrder = 5
                 },
                 new FacilityItem
                 {
                     SchoolId = schoolId,
-                    Name = "Sala musica",
-                    Description = "Musica, strumenti e performance.",
+                    Name = "Music Room",
+                    Description = "Music, instruments and performance.",
                     ImagePath = Images.Music,
                     DisplayOrder = 6
                 });
@@ -546,18 +550,18 @@ public static class DbSeeder
         {
             var gallery = new (string Path, string Title, string Category)[]
             {
-                (Images.Classroom, "Momenti in aula", "Campus"),
-                (Images.KidsRead, "Ora della storia", "Apprendimento"),
-                (Images.Library, "Ore di silenzio in biblioteca", "Campus"),
-                (Images.Sports, "Giornata dello sport", "Eventi"),
-                (Images.Art, "Studio d’arte", "Creativo"),
-                (Images.Science, "Fiera della scienza", "Eventi"),
-                (Images.Campus, "Vista del campus", "Campus"),
-                (Images.Play, "Gioia nel cortile", "Campus"),
-                (Images.Annual, "Festa annuale", "Eventi"),
-                (Images.Music, "Lezione di musica", "Creativo"),
-                (Images.FieldTrip, "Gita scolastica", "Eventi"),
-                (Images.School, "Cancello di benvenuto", "Campus")
+                (Images.Classroom, "Classroom moments", "Campus"),
+                (Images.KidsRead, "Story time", "Learning"),
+                (Images.Library, "Library quiet hours", "Campus"),
+                (Images.Sports, "Sports Day", "Events"),
+                (Images.Art, "Art studio", "Creative"),
+                (Images.Science, "Science Fair", "Events"),
+                (Images.Campus, "Campus view", "Campus"),
+                (Images.Play, "Playground joy", "Campus"),
+                (Images.Annual, "Annual celebration", "Events"),
+                (Images.Music, "Music class", "Creative"),
+                (Images.FieldTrip, "Field trip", "Events"),
+                (Images.School, "Welcome gate", "Campus")
             };
 
             for (var i = 0; i < gallery.Length; i++)
@@ -575,5 +579,157 @@ public static class DbSeeder
         }
 
         await db.SaveChangesAsync();
+    }
+
+    private static async Task ApplyEnglishWebsiteDefaultsAsync(AppDbContext db, Guid schoolId)
+    {
+        var hero = await db.HeroContents.FirstOrDefaultAsync(h => h.SchoolId == schoolId);
+        if (hero is not null)
+        {
+            hero.Heading = "WHERE LITTLE MINDS GROW INTO BIG DREAMS";
+            hero.Description =
+                "A colorful campus where curiosity blooms, creativity shines, and every child gets to learn, explore and dream — every single day.";
+            hero.CtaText = "Explore Our School";
+        }
+
+        var about = await db.AboutContents.FirstOrDefaultAsync(a => a.SchoolId == schoolId);
+        if (about is not null)
+        {
+            about.Heading = "A story of bright beginnings";
+            about.Description =
+                "Not just a campus — a colorful journey families love to join. Sunlit classrooms, curious questions, and teachers who know every child by name.";
+        }
+
+        var contact = await db.ContactContents.FirstOrDefaultAsync(c => c.SchoolId == schoolId);
+        if (contact is not null)
+            contact.OfficeHours = "Mon–Fri 8:00 AM – 4:00 PM";
+
+        var highlightDefaults = new (int Order, string Title, string Description)[]
+        {
+            (1, "Where learning begins",
+                "Sunlit classrooms, curious questions, and teachers who know every child by name — that's the Scuola Materna way."),
+            (2, "Our mission",
+                "To nurture curious, kind and confident learners through joyful teaching and meaningful experiences."),
+            (3, "Our vision",
+                "A world where every child feels seen, challenged and inspired to grow — one bright step at a time."),
+            (4, "Why families choose us",
+                "Safe spaces, creative learning, strong academics, and a portal that keeps parents close to every milestone.")
+        };
+
+        var highlights = await db.HighlightItems.Where(h => h.SchoolId == schoolId).ToListAsync();
+        foreach (var item in highlights)
+        {
+            var match = highlightDefaults.FirstOrDefault(h => h.Order == item.DisplayOrder);
+            if (match.Title is null) continue;
+            item.Title = match.Title;
+            item.Description = match.Description;
+        }
+
+        var facilityDefaults = new (int Order, string Name, string Description)[]
+        {
+            (1, "Modern Library", "Books, reading spaces and learning resources."),
+            (2, "Science Laboratory", "Hands-on experiments and discovery."),
+            (3, "Computer Lab", "Technology and digital learning."),
+            (4, "Sports Ground", "Outdoor sports and physical activities."),
+            (5, "Art & Creativity Room", "Painting, crafts and creative expression."),
+            (6, "Music Room", "Music, instruments and performance.")
+        };
+
+        var facilities = await db.FacilityItems.Where(f => f.SchoolId == schoolId).ToListAsync();
+        foreach (var item in facilities)
+        {
+            var match = facilityDefaults.FirstOrDefault(f => f.Order == item.DisplayOrder);
+            if (match.Name is null) continue;
+            item.Name = match.Name;
+            item.Description = match.Description;
+        }
+
+        var galleryDefaults = new (int Order, string Title, string Category)[]
+        {
+            (1, "Classroom moments", "Campus"),
+            (2, "Story time", "Learning"),
+            (3, "Library quiet hours", "Campus"),
+            (4, "Sports Day", "Events"),
+            (5, "Art studio", "Creative"),
+            (6, "Science Fair", "Events"),
+            (7, "Campus view", "Campus"),
+            (8, "Playground joy", "Campus"),
+            (9, "Annual celebration", "Events"),
+            (10, "Music class", "Creative"),
+            (11, "Field trip", "Events"),
+            (12, "Welcome gate", "Campus")
+        };
+
+        var gallery = await db.GalleryItems.Where(g => g.SchoolId == schoolId).ToListAsync();
+        foreach (var item in gallery)
+        {
+            var match = galleryDefaults.FirstOrDefault(g => g.Order == item.DisplayOrder);
+            if (match.Title is null) continue;
+            item.Title = match.Title;
+            item.Category = match.Category;
+        }
+
+        var school = await db.Schools.FirstOrDefaultAsync(s => s.Id == schoolId);
+        if (school is not null)
+        {
+            school.Tagline = "Learn. Explore. Grow.";
+            school.Description =
+                "Scuola Materna began with a simple idea: childhood should be colourful, safe, and full of discovery. Today we welcome more than a thousand learners across bright classrooms, creative studios, and lively fields.";
+            school.SchoolType = "Primary & Middle";
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureAcademicStructureAsync(AppDbContext db, Guid schoolId)
+    {
+        if (await db.SchoolClasses.AnyAsync(c => c.SchoolId == schoolId))
+            return;
+
+        var grade1 = new SchoolClass { SchoolId = schoolId, Name = "Grade 1", GradeLevel = "1", DisplayOrder = 1, IsActive = true };
+        var grade2 = new SchoolClass { SchoolId = schoolId, Name = "Grade 2", GradeLevel = "2", DisplayOrder = 2, IsActive = true };
+        db.SchoolClasses.AddRange(grade1, grade2);
+        await db.SaveChangesAsync();
+
+        var secA = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade1.Id, Name = "A", IsActive = true };
+        var secB = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade1.Id, Name = "B", IsActive = true };
+        var sec2A = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade2.Id, Name = "A", IsActive = true };
+        db.SchoolSections.AddRange(secA, secB, sec2A);
+        await db.SaveChangesAsync();
+
+        db.Subjects.AddRange(
+            new Subject { SchoolId = schoolId, Name = "English", Code = "ENG", IsActive = true },
+            new Subject { SchoolId = schoolId, Name = "Mathematics", Code = "MATH", IsActive = true },
+            new Subject { SchoolId = schoolId, Name = "Science", Code = "SCI", IsActive = true });
+        await db.SaveChangesAsync();
+
+        if (!await db.GradingRules.AnyAsync(r => r.SchoolId == schoolId))
+        {
+            var defaults = new (string Grade, decimal Min, decimal Max, decimal Point)[]
+            {
+                ("A+", 90, 100, 4.0m),
+                ("A", 80, 89.99m, 3.7m),
+                ("B+", 70, 79.99m, 3.3m),
+                ("B", 60, 69.99m, 3.0m),
+                ("C", 50, 59.99m, 2.0m),
+                ("D", 40, 49.99m, 1.0m),
+                ("F", 0, 39.99m, 0m)
+            };
+            for (var i = 0; i < defaults.Length; i++)
+            {
+                var d = defaults[i];
+                db.GradingRules.Add(new GradingRule
+                {
+                    SchoolId = schoolId,
+                    GradeLabel = d.Grade,
+                    MinPercentage = d.Min,
+                    MaxPercentage = d.Max,
+                    GradePoint = d.Point,
+                    DisplayOrder = i,
+                    IsActive = true
+                });
+            }
+            await db.SaveChangesAsync();
+        }
     }
 }

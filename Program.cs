@@ -65,6 +65,11 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IWebsiteContentService, WebsiteContentService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IGuardianService, GuardianService>();
+builder.Services.AddScoped<ITeacherAccessService, TeacherAccessService>();
+builder.Services.AddScoped<IParentAcademicService, ParentAcademicService>();
+builder.Services.AddScoped<IGradingService, GradingService>();
+builder.Services.AddScoped<IAcademicContentService, AcademicContentService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ISchoolData, MockSchoolData>();

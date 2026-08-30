@@ -1,0 +1,17 @@
+@model BrightStepsAcademy.Models.Manage.SubjectFormVm
+@{
+    ViewData["Title"] = "Add Subject";
+}
+<h1>Add subject</h1>
+<form asp-action="CreateSubject" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

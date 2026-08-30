@@ -164,6 +164,68 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.ToTable("AboutContents");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AcademicAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("OwnerType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StoredPath")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UploadedByStaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("UploadedByStaffMemberId");
+
+                    b.HasIndex("OwnerType", "OwnerId");
+
+                    b.ToTable("AcademicAttachments");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.AppNotification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -232,6 +294,266 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("AppPermissions");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.Assessment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("AssessmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("AssessmentType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<decimal>("PassingMarks")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalMarks")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolClassId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.ToTable("Assessments");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AssessmentMark", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssessmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GradeLabel")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ObtainedMarks")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal?>("Percentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("AssessmentId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("AssessmentMarks");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AttendanceRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AttendanceSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("AttendanceSessionId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("AttendanceRecords");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AttendanceSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("PeriodLabel")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("SessionDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.HasIndex("SchoolClassId", "SchoolSectionId", "SubjectId", "SessionDate", "PeriodLabel")
+                        .IsUnique()
+                        .HasFilter("[PeriodLabel] IS NOT NULL");
+
+                    b.ToTable("AttendanceSessions");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.AuditLog", b =>
@@ -329,6 +651,85 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.ToTable("Buildings");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.ClassAnnouncement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("ContentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.HasIndex("SchoolClassId", "SchoolSectionId", "SubjectId", "ContentDate");
+
+                    b.ToTable("ClassAnnouncements", (string)null);
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.ContactContent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -377,6 +778,190 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ContactContents");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.CourseMaterial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ContentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("FileContentType")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FilePath")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<long?>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("VisibleToParents")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.HasIndex("SchoolClassId", "SchoolSectionId", "SubjectId", "ContentDate");
+
+                    b.ToTable("CourseMaterials", (string)null);
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.DailyDiaryEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("ContentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Homework")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Topic")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.HasIndex("SchoolClassId", "SchoolSectionId", "SubjectId", "ContentDate");
+
+                    b.ToTable("DailyDiaryEntries", (string)null);
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.FacilityItem", b =>
@@ -584,6 +1169,116 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.ToTable("GalleryItems");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.GradingRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GradeLabel")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<decimal?>("GradePoint")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MaxPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("MinPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "GradeLabel")
+                        .IsUnique();
+
+                    b.ToTable("GradingRules");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.GuardianProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LoginId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("PortalEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("SchoolId", "Email");
+
+                    b.ToTable("GuardianProfiles");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.HeroContent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -680,6 +1375,80 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.HasIndex("SchoolId", "DisplayOrder");
 
                     b.ToTable("HighlightItems");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.ImportantInformationItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("ContentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TeacherAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("StaffMemberId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherAssignmentId");
+
+                    b.HasIndex("SchoolClassId", "SchoolSectionId", "SubjectId", "ContentDate");
+
+                    b.ToTable("ImportantInformationItems", (string)null);
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.PlatformSettings", b =>
@@ -953,6 +1722,92 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.ToTable("SchoolAdminProfiles");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolClass", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GradeLevel")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("SchoolClasses");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolClassId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("SchoolSections");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolSubscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1136,6 +1991,53 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.ToTable("StaffMembers");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.StudentGuardianLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GuardianProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuardianProfileId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("StudentGuardianLinks");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.StudentRecord", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1201,7 +2103,13 @@ namespace BrightStepsAcademy.Data.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<Guid?>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SchoolSectionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Section")
@@ -1225,12 +2133,57 @@ namespace BrightStepsAcademy.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SchoolClassId");
+
+                    b.HasIndex("SchoolSectionId");
+
                     b.HasIndex("UserId");
 
                     b.HasIndex("SchoolId", "StudentCode")
                         .IsUnique();
 
                     b.ToTable("StudentRecords");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.Subject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.SubscriptionChangeLog", b =>
@@ -1269,6 +2222,62 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.HasIndex("SchoolSubscriptionId");
 
                     b.ToTable("SubscriptionChangeLogs");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.TeacherAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ScheduleNotes")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SchoolSectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StaffMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolClassId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("SchoolSectionId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("StaffMemberId", "SchoolClassId", "SchoolSectionId", "SubjectId")
+                        .IsUnique();
+
+                    b.ToTable("TeacherAssignments");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.UserPermissionGrant", b =>
@@ -1505,6 +2514,25 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AcademicAttachment", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "UploadedByStaffMember")
+                        .WithMany()
+                        .HasForeignKey("UploadedByStaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("UploadedByStaffMember");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.AppNotification", b =>
                 {
                     b.HasOne("BrightStepsAcademy.Domain.School", "School")
@@ -1513,6 +2541,160 @@ namespace BrightStepsAcademy.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.Assessment", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AssessmentMark", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.Assessment", "Assessment")
+                        .WithMany("Marks")
+                        .HasForeignKey("AssessmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StudentRecord", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Assessment");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AttendanceRecord", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.AttendanceSession", "AttendanceSession")
+                        .WithMany("Records")
+                        .HasForeignKey("AttendanceSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StudentRecord", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AttendanceSession");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AttendanceSession", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.AuditLog", b =>
@@ -1536,6 +2718,56 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.ClassAnnouncement", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.ContactContent", b =>
                 {
                     b.HasOne("BrightStepsAcademy.Domain.School", "School")
@@ -1545,6 +2777,106 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.CourseMaterial", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.DailyDiaryEntry", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.FacilityItem", b =>
@@ -1607,6 +2939,28 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.GradingRule", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("GradingRules")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.GuardianProfile", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("Guardians")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.HeroContent", b =>
                 {
                     b.HasOne("BrightStepsAcademy.Domain.School", "School")
@@ -1627,6 +2981,56 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.ImportantInformationItem", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.TeacherAssignment", "TeacherAssignment")
+                        .WithMany()
+                        .HasForeignKey("TeacherAssignmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("TeacherAssignment");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.Room", b =>
@@ -1665,6 +3069,36 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolClass", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("SchoolClasses")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolSection", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany("Sections")
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("SchoolSections")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolSubscription", b =>
@@ -1708,10 +3142,62 @@ namespace BrightStepsAcademy.Data.Migrations
                     b.Navigation("StaffCategory");
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.StudentGuardianLink", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.GuardianProfile", "Guardian")
+                        .WithMany("StudentLinks")
+                        .HasForeignKey("GuardianProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("StudentGuardianLinks")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StudentRecord", "Student")
+                        .WithOne("GuardianLink")
+                        .HasForeignKey("BrightStepsAcademy.Domain.StudentGuardianLink", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Guardian");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.StudentRecord", b =>
                 {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BrightStepsAcademy.Domain.School", "School")
                         .WithMany("Students")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.Subject", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("Subjects")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1728,6 +3214,49 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Subscription");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.TeacherAssignment", b =>
+                {
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolClass", "SchoolClass")
+                        .WithMany()
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.School", "School")
+                        .WithMany("TeacherAssignments")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.SchoolSection", "SchoolSection")
+                        .WithMany()
+                        .HasForeignKey("SchoolSectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.StaffMember", "StaffMember")
+                        .WithMany()
+                        .HasForeignKey("StaffMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrightStepsAcademy.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("SchoolClass");
+
+                    b.Navigation("SchoolSection");
+
+                    b.Navigation("StaffMember");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.UserPermissionGrant", b =>
@@ -1803,6 +3332,16 @@ namespace BrightStepsAcademy.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BrightStepsAcademy.Domain.Assessment", b =>
+                {
+                    b.Navigation("Marks");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.AttendanceSession", b =>
+                {
+                    b.Navigation("Records");
+                });
+
             modelBuilder.Entity("BrightStepsAcademy.Domain.Building", b =>
                 {
                     b.Navigation("Floors");
@@ -1813,6 +3352,11 @@ namespace BrightStepsAcademy.Data.Migrations
             modelBuilder.Entity("BrightStepsAcademy.Domain.Floor", b =>
                 {
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.GuardianProfile", b =>
+                {
+                    b.Navigation("StudentLinks");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.Room", b =>
@@ -1838,6 +3382,10 @@ namespace BrightStepsAcademy.Data.Migrations
 
                     b.Navigation("GalleryItems");
 
+                    b.Navigation("GradingRules");
+
+                    b.Navigation("Guardians");
+
                     b.Navigation("HeroContent");
 
                     b.Navigation("HighlightItems");
@@ -1846,15 +3394,30 @@ namespace BrightStepsAcademy.Data.Migrations
 
                     b.Navigation("Rooms");
 
+                    b.Navigation("SchoolClasses");
+
+                    b.Navigation("SchoolSections");
+
                     b.Navigation("StaffCategories");
 
                     b.Navigation("StaffMembers");
 
+                    b.Navigation("StudentGuardianLinks");
+
                     b.Navigation("Students");
+
+                    b.Navigation("Subjects");
 
                     b.Navigation("Subscription");
 
+                    b.Navigation("TeacherAssignments");
+
                     b.Navigation("WebsiteSettings");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolClass", b =>
+                {
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("BrightStepsAcademy.Domain.SchoolSubscription", b =>
@@ -1865,6 +3428,11 @@ namespace BrightStepsAcademy.Data.Migrations
             modelBuilder.Entity("BrightStepsAcademy.Domain.StaffCategory", b =>
                 {
                     b.Navigation("StaffMembers");
+                });
+
+            modelBuilder.Entity("BrightStepsAcademy.Domain.StudentRecord", b =>
+                {
+                    b.Navigation("GuardianLink");
                 });
 #pragma warning restore 612, 618
         }

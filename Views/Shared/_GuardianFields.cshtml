@@ -1,0 +1,136 @@
+@model StudentFormVm
+@{
+    var isEdit = Model.Id != Guid.Empty;
+}
+
+<section class="mg-form-section">
+    <h2 class="mg-form-section__title">Guardian information</h2>
+    <p class="mg-page-sub">Each student has exactly one guardian. Portal access is optional.</p>
+
+    @if (isEdit && Model.HasGuardianLink)
+    {
+        <div class="mg-field">
+            <label class="mg-check">
+                <input type="checkbox" asp-for="ChangeGuardian" id="changeGuardian" />
+                Change guardian (replaces the current guardian portal for this student)
+            </label>
+        </div>
+    }
+
+    <div id="guardianFields">
+        <div class="mg-field" id="guardianModeRow" style="@(isEdit && Model.HasGuardianLink && !Model.ChangeGuardian ? "display:none;" : "")">
+            <label>Guardian assignment</label>
+            <div class="mg-inline-radios">
+                <label class="mg-check"><input type="radio" asp-for="GuardianMode" value="new" checked="@(Model.GuardianMode != "existing")" /> Create new guardian</label>
+                <label class="mg-check"><input type="radio" asp-for="GuardianMode" value="existing" checked="@(Model.GuardianMode == "existing")" /> Link existing guardian</label>
+            </div>
+        </div>
+
+        <div id="existingGuardianRow" style="@(Model.GuardianMode == "existing" ? "" : "display:none;")">
+            <div class="mg-field">
+                <label asp-for="ExistingGuardianId">Existing guardian</label>
+                <select asp-for="ExistingGuardianId" asp-items="Model.ExistingGuardians"></select>
+            </div>
+        </div>
+
+        <div class="mg-field">
+            <label asp-for="GuardianRelationship">Relationship to student</label>
+            <input asp-for="GuardianRelationship" placeholder="e.g. Father, Mother" />
+        </div>
+
+        <div id="newGuardianRow" style="@(Model.GuardianMode == "existing" ? "display:none;" : "")">
+            <div class="mg-grid-2">
+                <div class="mg-field"><label asp-for="GuardianName">Guardian name</label><input asp-for="GuardianName" /></div>
+                <div class="mg-field"><label asp-for="GuardianEmail">Email</label><input asp-for="GuardianEmail" type="email" /></div>
+                <div class="mg-field"><label asp-for="GuardianPhone">Phone</label><input asp-for="GuardianPhone" /></div>
+            </div>
+        </div>
+
+        <div class="mg-field">
+            <label class="mg-check">
+                <input type="checkbox" asp-for="EnableGuardianPortal" id="enablePortal" />
+                Enable Guardian Portal
+            </label>
+        </div>
+
+        <div id="portalFields" style="@(Model.EnableGuardianPortal ? "" : "display:none;")">
+            <input type="hidden" asp-for="PortalWasEnabled" />
+            <div class="mg-grid-2">
+                <div class="mg-field"><label asp-for="GuardianLoginId">Login ID</label><input asp-for="GuardianLoginId" placeholder="e.g. AHM-G102" /></div>
+                @{
+                    var showInitialPassword = !isEdit || Model.ChangeGuardian || !Model.HasGuardianLink || !Model.PortalWasEnabled;
+                }
+                @if (showInitialPassword)
+                {
+                    <div class="mg-field"><label asp-for="GuardianPassword">Initial password</label><input asp-for="GuardianPassword" type="password" autocomplete="new-password" /></div>
+                    <div class="mg-field"><label asp-for="GuardianConfirmPassword">Confirm password</label><input asp-for="GuardianConfirmPassword" type="password" autocomplete="new-password" /></div>
+                }
+            </div>
+        </div>
+
+        @if (isEdit && Model.HasGuardianLink && Model.EnableGuardianPortal && !Model.ChangeGuardian)
+        {
+            <div class="mg-field">
+                <label class="mg-check">
+                    <input type="checkbox" asp-for="ResetGuardianPassword" id="resetPassword" />
+                    Reset guardian password
+                </label>
+            </div>
+            <div id="resetPasswordFields" style="@(Model.ResetGuardianPassword ? "" : "display:none;")">
+                <div class="mg-grid-2">
+                    <div class="mg-field"><label asp-for="NewGuardianPassword">New temporary password</label><input asp-for="NewGuardianPassword" type="password" autocomplete="new-password" /></div>
+                    <div class="mg-field"><label asp-for="NewGuardianConfirmPassword">Confirm password</label><input asp-for="NewGuardianConfirmPassword" type="password" autocomplete="new-password" /></div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<script>
+(function () {
+    const changeGuardian = document.getElementById('changeGuardian');
+    const guardianModeRow = document.getElementById('guardianModeRow');
+    const modeInputs = document.querySelectorAll('input[name="GuardianMode"]');
+    const existingRow = document.getElementById('existingGuardianRow');
+    const newRow = document.getElementById('newGuardianRow');
+    const enablePortal = document.getElementById('enablePortal');
+    const portalFields = document.getElementById('portalFields');
+    const resetPassword = document.getElementById('resetPassword');
+    const resetPasswordFields = document.getElementById('resetPasswordFields');
+
+    function selectedMode() {
+        for (const input of modeInputs) {
+            if (input.checked) return input.value;
+        }
+        return 'new';
+    }
+
+    function syncMode() {
+        const mode = selectedMode();
+        if (existingRow) existingRow.style.display = mode === 'existing' ? '' : 'none';
+        if (newRow) newRow.style.display = mode === 'existing' ? 'none' : '';
+    }
+
+    function syncPortal() {
+        if (portalFields && enablePortal) {
+            portalFields.style.display = enablePortal.checked ? '' : 'none';
+        }
+    }
+
+    function syncChangeGuardian() {
+        if (!changeGuardian || !guardianModeRow) return;
+        guardianModeRow.style.display = changeGuardian.checked ? '' : 'none';
+    }
+
+    function syncReset() {
+        if (resetPasswordFields && resetPassword) {
+            resetPasswordFields.style.display = resetPassword.checked ? '' : 'none';
+        }
+    }
+
+    modeInputs.forEach(i => i.addEventListener('change', syncMode));
+    if (enablePortal) enablePortal.addEventListener('change', syncPortal);
+    if (changeGuardian) changeGuardian.addEventListener('change', syncChangeGuardian);
+    if (resetPassword) resetPassword.addEventListener('change', syncReset);
+})();
+</script>
