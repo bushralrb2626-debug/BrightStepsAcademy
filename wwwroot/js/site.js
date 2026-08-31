@@ -396,6 +396,7 @@
      -------------------------------------------------------------------------- */
   function initAttendance() {
     document.querySelectorAll(".attendance-toggle").forEach(function (group) {
+      if (group.closest("#attendanceForm")) return;
       group.querySelectorAll("button[data-status]").forEach(function (btn) {
         btn.addEventListener("click", function () {
           group.querySelectorAll("button").forEach(function (b) {

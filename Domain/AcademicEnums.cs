@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace BrightStepsAcademy.Domain;
 
 public enum PublishStatus
@@ -18,15 +20,26 @@ public enum AttendanceStatus
 public enum AssessmentType
 {
     Quiz = 0,
+
+    [Display(Name = "Class Test")]
     Test = 1,
+
     Assignment = 2,
+
+    [Display(Name = "Mid Term")]
     Midterm = 3,
+
+    [Display(Name = "Final Term")]
     FinalExam = 4,
-    Project = 5,
-    Presentation = 6,
-    Practical = 7,
-    Classwork = 8,
-    Other = 9
+
+    [Display(Name = "Bi-Monthly")]
+    BiMonthly = 5,
+
+    Project = 6,
+    Presentation = 7,
+    Practical = 8,
+    Classwork = 9,
+    Other = 10
 }
 
 public enum CourseMaterialCategory

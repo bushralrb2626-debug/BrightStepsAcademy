@@ -287,6 +287,7 @@ public class SuperAdminSchoolsController : SuperAdminControllerBase
             });
         }
 
+        await SchoolBootstrap.EnsureStaffCategoriesAsync(Db, school.Id, ct);
         await Db.SaveChangesAsync(ct);
         TempData.Remove(WizardTempKey);
         TempData["Success"] = $"School '{school.Name}' was created.";

@@ -1,0 +1,58 @@
+@using BrightStepsAcademy.Data
+@using BrightStepsAcademy.Models.Manage
+@model PermissionPickerVm
+@{
+    var selected = Model.SelectedCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+}
+<div class="mg-perm-sections">
+    @foreach (var group in PermissionCatalog.ByModule())
+    {
+        var moduleId = group.Key.Replace(" ", "-").Replace("/", "-").ToLowerInvariant();
+        <section class="mg-perm-section" data-module="@moduleId">
+            <div class="mg-perm-section__head">
+                <h3>@group.Key</h3>
+                <label class="mg-check mg-check-inline">
+                    <input type="checkbox" class="perm-module-toggle" data-module="@moduleId" />
+                    <span>Select all</span>
+                </label>
+            </div>
+            <div class="mg-perm-grid">
+                @foreach (var p in group.OrderBy(x => x.SortOrder))
+                {
+                    var isOn = selected.Contains(p.Code);
+                    <label class="mg-check">
+                        <input type="checkbox"
+                               name="@Model.FieldName"
+                               value="@p.Code"
+                               class="perm-item"
+                               data-module="@moduleId"
+                               @(isOn ? "checked" : null) />
+                        <span>
+                            @p.Name
+                            <small class="mg-muted">@p.Description</small>
+                        </span>
+                    </label>
+                }
+            </div>
+        </section>
+    }
+</div>
+
+<script>
+(() => {
+  document.querySelectorAll('.perm-module-toggle').forEach(toggle => {
+    const module = toggle.dataset.module;
+    const syncModuleToggle = () => {
+      const items = document.querySelectorAll(`.perm-item[data-module="${module}"]`);
+      const checked = [...items].filter(i => i.checked).length;
+      toggle.checked = checked > 0 && checked === items.length;
+      toggle.indeterminate = checked > 0 && checked < items.length;
+    };
+    toggle.addEventListener('change', () => {
+      document.querySelectorAll(`.perm-item[data-module="${module}"]`).forEach(i => { i.checked = toggle.checked; });
+    });
+    document.querySelectorAll(`.perm-item[data-module="${module}"]`).forEach(i => i.addEventListener('change', syncModuleToggle));
+    syncModuleToggle();
+  });
+})();
+</script>

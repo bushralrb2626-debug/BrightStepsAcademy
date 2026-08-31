@@ -25,8 +25,10 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesView, PermissionCodes.StudentsView) is { } deny)
             return deny;
+
+        await SchoolBootstrap.EnsureSchoolBootstrappedAsync(Db, SchoolId, ct);
 
         ViewBag.ClassCount = await Db.SchoolClasses.CountAsync(c => c.SchoolId == SchoolId && c.IsActive, ct);
         ViewBag.SubjectCount = await Db.Subjects.CountAsync(s => s.SchoolId == SchoolId && s.IsActive, ct);
@@ -37,7 +39,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Classes")]
     public async Task<IActionResult> Classes(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesView, PermissionCodes.StudentsView) is { } deny)
             return deny;
         var items = await Db.SchoolClasses.AsNoTracking()
             .Where(c => c.SchoolId == SchoolId && c.IsActive)
@@ -49,7 +51,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Classes/Create")]
     public async Task<IActionResult> CreateClass(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         return SchoolView("Academic/Classes/Create", new SchoolClassFormVm());
     }
@@ -58,7 +60,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateClass(SchoolClassFormVm model, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         if (string.IsNullOrWhiteSpace(model.Name))
             ModelState.AddModelError(nameof(model.Name), "Name is required.");
@@ -82,7 +84,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Classes/Edit/{id:guid}")]
     public async Task<IActionResult> EditClass(Guid id, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         var item = await Db.SchoolClasses.FirstOrDefaultAsync(c => c.Id == id && c.SchoolId == SchoolId, ct);
         if (item is null) return NotFound();
@@ -99,7 +101,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditClass(Guid id, SchoolClassFormVm model, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         var item = await Db.SchoolClasses.FirstOrDefaultAsync(c => c.Id == id && c.SchoolId == SchoolId, ct);
         if (item is null) return NotFound();
@@ -119,7 +121,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Sections")]
     public async Task<IActionResult> Sections(Guid? classId, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesView, PermissionCodes.StudentsView) is { } deny)
             return deny;
         await LoadClassOptionsAsync(classId, ct);
         var query = Db.SchoolSections.AsNoTracking()
@@ -133,7 +135,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Sections/Create")]
     public async Task<IActionResult> CreateSection(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.SectionsManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         await LoadClassOptionsAsync(null, ct);
         return SchoolView("Academic/Sections/Create", new SchoolSectionFormVm());
@@ -143,7 +145,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateSection(SchoolSectionFormVm model, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.SectionsManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         if (string.IsNullOrWhiteSpace(model.Name))
             ModelState.AddModelError(nameof(model.Name), "Name is required.");
@@ -170,7 +172,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Subjects")]
     public async Task<IActionResult> Subjects(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesView, PermissionCodes.StudentsView) is { } deny)
             return deny;
         var items = await Db.Subjects.AsNoTracking()
             .Where(s => s.SchoolId == SchoolId && s.IsActive)
@@ -182,7 +184,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Subjects/Create")]
     public async Task<IActionResult> CreateSubject(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         return SchoolView("Academic/Subjects/Create", new SubjectFormVm());
     }
@@ -191,7 +193,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateSubject(SubjectFormVm model, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ClassesManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         if (string.IsNullOrWhiteSpace(model.Name))
             ModelState.AddModelError(nameof(model.Name), "Name is required.");
@@ -213,7 +215,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Assignments")]
     public async Task<IActionResult> Assignments(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.TeacherAssignmentsManage, PermissionCodes.TeachersView, PermissionCodes.StudentsView) is { } deny)
             return deny;
         var items = await Db.TeacherAssignments.AsNoTracking()
             .Where(a => a.SchoolId == SchoolId && a.IsActive)
@@ -237,7 +239,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [HttpGet("Assignments/Create")]
     public async Task<IActionResult> CreateAssignment(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.TeacherAssignmentsManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         await LoadAssignmentFormAsync(new TeacherAssignmentFormVm(), ct);
         return SchoolView("Academic/Assignments/Create", new TeacherAssignmentFormVm());
@@ -247,7 +249,7 @@ public class SchoolAcademicController : SchoolManageControllerBase
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateAssignment(TeacherAssignmentFormVm model, CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.TeacherAssignmentsManage, PermissionCodes.StudentsManage) is { } deny)
             return deny;
         if (model.StaffMemberId == Guid.Empty)
             ModelState.AddModelError(nameof(model.StaffMemberId), "Teacher is required.");

@@ -1,29 +1,113 @@
+@using BrightStepsAcademy.Domain
 @model AttendanceSessionFormVm
 @{ Layout = "_DashboardLayout"; }
 <partial name="Partials/_TeacherAssignmentPicker" />
 <div class="dash-panel reveal">
     <h3>Attendance · @Model.SessionDate.ToString("MMM d, yyyy")</h3>
-    <form asp-action="Attendance" method="post">
+    <form asp-action="Attendance" method="post" id="attendanceForm">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="AssignmentId" />
-        <div class="row g-2 mb-2">
-            <div class="col-md-4"><label>Date</label><input asp-for="SessionDate" type="date" class="form-control" /></div>
-            <div class="col-md-4"><label>Period</label><input asp-for="PeriodLabel" class="form-control" placeholder="Morning" /></div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-4"><label class="form-label">Date</label><input asp-for="SessionDate" type="date" class="form-control" /></div>
+            <div class="col-md-4"><label class="form-label">Period</label><input asp-for="PeriodLabel" class="form-control" placeholder="Morning" /></div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" id="markAllPresent">Mark all present</button>
+            </div>
         </div>
-        <table class="table table-sm">
-            <thead><tr><th>Student</th><th>Roll</th><th>Status</th><th>Notes</th></tr></thead>
-            <tbody>
-            @for (var i = 0; i < Model.Students.Count; i++)
-            {
-                <tr>
-                    <td>@Model.Students[i].FullName<input type="hidden" asp-for="Students[i].StudentId" /><input type="hidden" asp-for="Students[i].FullName" /></td>
-                    <td>@Model.Students[i].RollNumber<input type="hidden" asp-for="Students[i].RollNumber" /></td>
-                    <td><select asp-for="Students[i].Status" class="form-select form-select-sm"></select></td>
-                    <td><input asp-for="Students[i].Notes" class="form-control form-control-sm" /></td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        @if (Model.Students.Count == 0)
+        {
+            <p class="text-muted">No students in this class section.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm align-middle attendance-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Roll</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for (var i = 0; i < Model.Students.Count; i++)
+                    {
+                        var current = Model.Students[i].Status;
+                        var statusKey = current.ToString().ToLowerInvariant();
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>
+                                @Model.Students[i].FullName
+                                <input type="hidden" asp-for="Students[i].StudentId" />
+                                <input type="hidden" asp-for="Students[i].FullName" />
+                            </td>
+                            <td>
+                                @(Model.Students[i].RollNumber ?? "—")
+                                <input type="hidden" asp-for="Students[i].RollNumber" />
+                            </td>
+                            <td>
+                                <input type="hidden"
+                                       asp-for="Students[i].Status"
+                                       class="attendance-status-value" />
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <span class="badge-soft js-attendance-badge badge-@statusKey">@current</span>
+                                    <div class="attendance-toggle" data-form-row="@i">
+                                        @foreach (AttendanceStatus status in Enum.GetValues(typeof(AttendanceStatus)))
+                                        {
+                                            var label = status == AttendanceStatus.Present ? "✓ Present" : status.ToString();
+                                            <button type="button"
+                                                    data-status="@status"
+                                                    data-value="@((int)status)"
+                                                    class="@(current == status ? "active" : "")">@label</button>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
         <button type="submit" class="btn-bsa btn-bsa-primary">Save attendance</button>
     </form>
 </div>
+
+@section Scripts {
+<script>
+    document.getElementById('markAllPresent')?.addEventListener('click', () => {
+        document.querySelectorAll('#attendanceForm tbody tr').forEach(row => {
+            setAttendanceRow(row, 'Present', 0);
+        });
+    });
+
+    document.querySelectorAll('#attendanceForm .attendance-toggle').forEach(group => {
+        group.querySelectorAll('button[data-status]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const row = group.closest('tr');
+                if (!row) return;
+                setAttendanceRow(row, btn.getAttribute('data-status'), btn.getAttribute('data-value'));
+            });
+        });
+    });
+
+    function setAttendanceRow(row, status, value) {
+        const hidden = row.querySelector('.attendance-status-value');
+        if (hidden) hidden.value = value;
+
+        const badge = row.querySelector('.js-attendance-badge');
+        if (badge) {
+            badge.textContent = status;
+            badge.className = 'badge-soft js-attendance-badge badge-' + status.toLowerCase();
+        }
+
+        const group = row.querySelector('.attendance-toggle');
+        if (group) {
+            group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            const active = group.querySelector('[data-status="' + status + '"]');
+            if (active) active.classList.add('active');
+        }
+    }
+</script>
+}

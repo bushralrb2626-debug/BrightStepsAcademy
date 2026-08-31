@@ -263,6 +263,8 @@ public class SchoolDashboardController : SchoolManageControllerBase
         }
 
         var selected = new HashSet<string>(permissionCodes ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+        var validCodes = PermissionCatalog.All.Select(p => p.Code).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        selected.IntersectWith(validCodes);
         var existing = await Db.UserPermissionGrants
             .Where(g => g.SchoolId == SchoolId && g.UserId == userId)
             .ToListAsync(ct);

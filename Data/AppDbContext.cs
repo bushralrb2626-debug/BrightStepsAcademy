@@ -438,6 +438,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.HasKey(x => x.Id);
             e.Property(x => x.Name).HasMaxLength(256).IsRequired();
             e.Property(x => x.Description).HasMaxLength(2000);
+            e.Property(x => x.ScoreColumnsJson).HasMaxLength(4000);
             e.Property(x => x.TotalMarks).HasPrecision(8, 2);
             e.Property(x => x.PassingMarks).HasPrecision(8, 2);
             e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
@@ -454,6 +455,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.Property(x => x.ObtainedMarks).HasPrecision(8, 2);
             e.Property(x => x.Percentage).HasPrecision(5, 2);
             e.Property(x => x.GradeLabel).HasMaxLength(16);
+            e.Property(x => x.ScoreBreakdownJson).HasMaxLength(4000);
             e.HasIndex(x => new { x.AssessmentId, x.StudentId }).IsUnique();
             e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.Assessment).WithMany(a => a.Marks).HasForeignKey(x => x.AssessmentId).OnDelete(DeleteBehavior.Cascade);

@@ -18,19 +18,22 @@ public class ParentController : Controller
     private readonly IParentAcademicService _academic;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly AppDbContext _db;
+    private readonly IReportCardService _reportCards;
 
     public ParentController(
         ISchoolData store,
         IGuardianService guardians,
         IParentAcademicService academic,
         UserManager<ApplicationUser> userManager,
-        AppDbContext db)
+        AppDbContext db,
+        IReportCardService reportCards)
     {
         _store = store;
         _guardians = guardians;
         _academic = academic;
         _userManager = userManager;
         _db = db;
+        _reportCards = reportCards;
     }
 
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -142,6 +145,19 @@ public class ParentController : Controller
         ViewBag.Scope = scope;
         ViewData["Title"] = "Marks";
         return View(items);
+    }
+
+    public async Task<IActionResult> ReportCard(Guid? studentId, CancellationToken ct)
+    {
+        var children = await LoadChildrenAsync(ct);
+        await HydrateAsync(children, ct);
+        var scope = await ResolveStudentScopeAsync(children, studentId, ct);
+        if (scope is null) return View((ReportCardVm?)null);
+
+        var card = await _reportCards.BuildAsync(scope.StudentId, ct);
+        ViewBag.Scope = scope;
+        ViewData["Title"] = "Report Card";
+        return View(card);
     }
 
     public async Task<IActionResult> Announcements(Guid? studentId, CancellationToken ct)

@@ -13,7 +13,7 @@
         <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /></div>
         <div class="mg-field">
             <label>Category</label>
-            <select asp-for="StaffCategoryId" asp-items="ViewBag.Categories" required>
+            <select asp-for="StaffCategoryId" asp-items="ViewBag.Categories as SelectList" required>
                 <option value="">Select category…</option>
             </select>
         </div>

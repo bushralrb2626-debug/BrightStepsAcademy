@@ -15,3 +15,6 @@ obj/
 *.db-*
 uploads/*
 !uploads/.gitkeep
+wwwroot/uploads/
+tmp-*.csx
+*.csx

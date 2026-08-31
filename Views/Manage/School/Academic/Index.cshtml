@@ -1,10 +1,19 @@
 @{
     ViewData["Title"] = "Academic Setup";
+    var needsAssignments = (int)ViewBag.AssignmentCount == 0;
 }
 <div class="manage-head">
     <h1>Academic setup</h1>
-    <p class="text-muted">Classes, sections, subjects, and teacher assignments.</p>
+    <p class="text-muted">Classes, sections, subjects, and teacher assignments. Teachers need an assignment before they can add diary notes, attendance, or grade book entries.</p>
 </div>
+
+@if (needsAssignments)
+{
+    <div class="alert alert-info">
+        <strong>Next step:</strong> Create a <a asp-action="Assignments">teacher assignment</a> linking each teacher to a class, section, and subject.
+        Default classes and subjects are created automatically when you open this page.
+    </div>
+}
 
 <div class="row g-3">
     <div class="col-md-4">
@@ -31,6 +40,10 @@
                 <h5>Teacher assignments</h5>
                 <p class="display-6">@ViewBag.AssignmentCount</p>
                 <a asp-action="Assignments" class="btn btn-primary btn-sm">Manage assignments</a>
+                @if (needsAssignments)
+                {
+                    <a asp-action="CreateAssignment" class="btn btn-outline-primary btn-sm ms-1">Add assignment</a>
+                }
             </div>
         </div>
     </div>

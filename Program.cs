@@ -68,6 +68,8 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IGuardianService, GuardianService>();
 builder.Services.AddScoped<ITeacherAccessService, TeacherAccessService>();
 builder.Services.AddScoped<IParentAcademicService, ParentAcademicService>();
+builder.Services.AddScoped<IStudentAcademicService, StudentAcademicService>();
+builder.Services.AddScoped<IReportCardService, ReportCardService>();
 builder.Services.AddScoped<IGradingService, GradingService>();
 builder.Services.AddScoped<IAcademicContentService, AcademicContentService>();
 

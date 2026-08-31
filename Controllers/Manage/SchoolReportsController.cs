@@ -77,7 +77,7 @@ public class SchoolReportsController : SchoolManageControllerBase
     [HttpGet("Students")]
     public async Task<IActionResult> Students(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.ReportsView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.ReportsStudents, PermissionCodes.ReportsView) is { } deny)
             return deny;
         var rows = await Db.StudentRecords.AsNoTracking()
             .Where(s => s.SchoolId == SchoolId)

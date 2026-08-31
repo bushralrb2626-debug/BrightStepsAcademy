@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BrightStepsAcademy.Domain;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BrightStepsAcademy.Models;
@@ -136,23 +137,47 @@ public class AssessmentFormVm
     public Guid? Id { get; set; }
     public Guid AssignmentId { get; set; }
 
-    [Required, MaxLength(256)]
-    public string Name { get; set; } = "";
+    [ValidateNever]
+    [MaxLength(256)]
+    public string? Name { get; set; }
 
-    public AssessmentType AssessmentType { get; set; } = AssessmentType.Quiz;
+    public AssessmentType AssessmentType { get; set; } = AssessmentType.Test;
     public DateOnly AssessmentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public decimal TotalMarks { get; set; } = 100;
     public decimal PassingMarks { get; set; } = 40;
-    public string? Description { get; set; }
+    public string? ImportantInfo { get; set; }
     public PublishStatus Status { get; set; } = PublishStatus.Draft;
+    public List<AssessmentScoreColumnVm> Columns { get; set; } = new();
+    public List<AssessmentMarkRowVm> Marks { get; set; } = new();
+}
+
+public class AssessmentScoreColumnVm
+{
+    public string Key { get; set; } = "";
+
+    public AssessmentType AssessmentType { get; set; } = AssessmentType.Test;
+
+    [ValidateNever]
+    public string? Name { get; set; }
+
+    public decimal MaxMarks { get; set; } = 100;
 }
 
 public class AssessmentMarksFormVm
 {
     public Guid AssessmentId { get; set; }
-    public string AssessmentName { get; set; } = "";
+
+    [ValidateNever]
+    [MaxLength(256)]
+    public string? Name { get; set; }
+
+    public AssessmentType AssessmentType { get; set; } = AssessmentType.Test;
+    public DateOnly AssessmentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public decimal TotalMarks { get; set; }
+    public decimal PassingMarks { get; set; } = 40;
+    public string? ImportantInfo { get; set; }
     public PublishStatus Status { get; set; }
+    public List<AssessmentScoreColumnVm> Columns { get; set; } = new();
     public List<AssessmentMarkRowVm> Marks { get; set; } = new();
 }
 
@@ -162,7 +187,18 @@ public class AssessmentMarkRowVm
     public string FullName { get; set; } = "";
     public string? RollNumber { get; set; }
     public decimal ObtainedMarks { get; set; }
+    public List<decimal> ColumnScores { get; set; } = new();
     public string? Notes { get; set; }
+}
+
+public class AssessmentMarksGridVm
+{
+    public string? ImportantInfo { get; set; }
+    public List<AssessmentScoreColumnVm> Columns { get; set; } = new();
+    public List<AssessmentMarkRowVm> Marks { get; set; } = new();
+    public string ColumnsFieldPrefix { get; set; } = "Columns";
+    public string MarksFieldPrefix { get; set; } = "Marks";
+    public bool AllowColumnEdit { get; set; } = true;
 }
 
 public class AssessmentListItemVm
@@ -170,6 +206,7 @@ public class AssessmentListItemVm
     public Guid Id { get; set; }
     public string Name { get; set; } = "";
     public AssessmentType AssessmentType { get; set; }
+    public string AssessmentTypeLabel { get; set; } = "";
     public DateOnly AssessmentDate { get; set; }
     public decimal TotalMarks { get; set; }
     public PublishStatus Status { get; set; }
@@ -241,4 +278,53 @@ public class ParentAttendanceItemVm
     public string? PeriodLabel { get; set; }
     public AttendanceStatus Status { get; set; }
     public string SubjectName { get; set; } = "";
+}
+
+public class ReportCardVm
+{
+    public Guid StudentId { get; set; }
+    public string StudentName { get; set; } = "";
+    public string StudentCode { get; set; } = "";
+    public string? RollNumber { get; set; }
+    public string ClassDisplay { get; set; } = "";
+    public string SchoolName { get; set; } = "";
+    public string SessionLabel { get; set; } = "";
+    public DateOnly GeneratedDate { get; set; }
+    public int AttendancePresent { get; set; }
+    public int AttendanceAbsent { get; set; }
+    public int AttendanceLate { get; set; }
+    public int AttendanceExcused { get; set; }
+    public int AttendanceTotal { get; set; }
+    public decimal AttendancePercentage { get; set; }
+    public List<ReportCardTypeColumnVm> AssessmentTypes { get; set; } = new();
+    public List<ReportCardSubjectRowVm> Subjects { get; set; } = new();
+    public decimal OverallObtained { get; set; }
+    public decimal OverallTotal { get; set; }
+    public decimal OverallPercentage { get; set; }
+    public string? OverallGrade { get; set; }
+    public bool HasMarks => Subjects.Any(s => s.TotalMarks > 0);
+}
+
+public class ReportCardTypeColumnVm
+{
+    public AssessmentType AssessmentType { get; set; }
+    public string Label { get; set; } = "";
+}
+
+public class ReportCardSubjectRowVm
+{
+    public string SubjectName { get; set; } = "";
+    public List<ReportCardMarkCellVm?> Cells { get; set; } = new();
+    public decimal ObtainedMarks { get; set; }
+    public decimal TotalMarks { get; set; }
+    public decimal? Percentage { get; set; }
+    public string? GradeLabel { get; set; }
+}
+
+public class ReportCardMarkCellVm
+{
+    public decimal ObtainedMarks { get; set; }
+    public decimal TotalMarks { get; set; }
+    public decimal? Percentage { get; set; }
+    public string? GradeLabel { get; set; }
 }

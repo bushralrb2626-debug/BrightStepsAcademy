@@ -1,0 +1,19 @@
+@model ReportCardVm?
+@{
+    Layout = "_DashboardLayout";
+    var scope = (ParentStudentScopeVm?)ViewBag.Scope;
+}
+<div class="section-head reveal mb-2">
+    <h2>Report Card</h2>
+    @if (scope is not null)
+    {
+        <p>@scope.FullName · @scope.ClassDisplay</p>
+    }
+</div>
+
+@if (scope is not null)
+{
+    <partial name="Partials/_ParentChildPicker" model="scope" />
+}
+
+<partial name="Partials/_ReportCard" model="Model" />

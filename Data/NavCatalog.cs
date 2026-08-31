@@ -82,10 +82,16 @@ public static class NavCatalog
                 I("My Children", "family", "Parent", "Children"),
                 I("Daily Diary", "book", "Parent", "Diary"),
                 I("Attendance", "check", "Parent", "Attendance"),
-                I("Marks", "star", "Parent", "Marks"),
+                I("Report Card", "star", "Parent", "ReportCard"),
+                I("Marks", "chart", "Parent", "Marks"),
                 I("Announcements", "bell", "Parent", "Announcements"),
                 I("Course Material", "folder", "Parent", "Materials")),
             G("Account", I("Change Password", "lock", "Parent", "ChangePassword"))
+        ],
+        "StudentPortal" =>
+        [
+            G("Main", I("Dashboard", "grid", "StudentPortal", "Index")),
+            G("Academic", I("Report Card", "star", "StudentPortal", "ReportCard"))
         ],
         _ =>
         [

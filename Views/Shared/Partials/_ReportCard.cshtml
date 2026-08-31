@@ -1,0 +1,168 @@
+@model ReportCardVm?
+@{
+    var scope = ViewBag.Scope as ParentStudentScopeVm;
+    var isParentView = scope is not null;
+}
+
+@if (Model is null)
+{
+    <div class="dash-panel reveal">
+        <p class="text-muted mb-0">Report card is not available yet. Contact your school if you believe this is an error.</p>
+    </div>
+}
+else if (!Model.HasMarks)
+{
+    <div class="dash-panel reveal">
+        <p class="text-muted mb-0">No published marks yet. Your report card will appear here once teachers publish assessments.</p>
+    </div>
+}
+else
+{
+    <div class="report-card reveal" id="reportCard">
+        <div class="report-card__header">
+            <div>
+                <p class="report-card__eyebrow">@Model.SchoolName</p>
+                <h2 class="report-card__title">Report Card</h2>
+                <p class="text-muted mb-0">Session @Model.SessionLabel · Generated @Model.GeneratedDate.ToString("MMM d, yyyy")</p>
+            </div>
+            <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft d-print-none" onclick="window.print()">Print</button>
+        </div>
+
+        <div class="report-card__student">
+            <div><span class="text-muted">Student</span><strong>@Model.StudentName</strong></div>
+            <div><span class="text-muted">Roll No.</span><strong>@(Model.RollNumber ?? "—")</strong></div>
+            <div><span class="text-muted">Student ID</span><strong>@Model.StudentCode</strong></div>
+            <div><span class="text-muted">Class</span><strong>@Model.ClassDisplay</strong></div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-sm report-card__table mb-0">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        @foreach (var col in Model.AssessmentTypes)
+                        {
+                            <th class="text-center">@col.Label</th>
+                        }
+                        <th class="text-center">Total</th>
+                        <th class="text-center">%</th>
+                        <th class="text-center">Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Subjects)
+                {
+                    <tr>
+                        <td><strong>@row.SubjectName</strong></td>
+                        @foreach (var cell in row.Cells)
+                        {
+                            <td class="text-center">
+                                @if (cell is null)
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                                else
+                                {
+                                    <span>@cell.ObtainedMarks.ToString("0.#") / @cell.TotalMarks.ToString("0.#")</span>
+                                }
+                            </td>
+                        }
+                        <td class="text-center"><strong>@row.ObtainedMarks.ToString("0.#") / @row.TotalMarks.ToString("0.#")</strong></td>
+                        <td class="text-center">@(row.Percentage.HasValue ? $"{row.Percentage:0.#}%" : "—")</td>
+                        <td class="text-center"><span class="badge-soft">@(row.GradeLabel ?? "—")</span></td>
+                    </tr>
+                }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Overall</th>
+                        @for (var i = 0; i < Model.AssessmentTypes.Count; i++)
+                        {
+                            <td></td>
+                        }
+                        <th class="text-center">@Model.OverallObtained.ToString("0.#") / @Model.OverallTotal.ToString("0.#")</th>
+                        <th class="text-center">@Model.OverallPercentage.ToString("0.#")%</th>
+                        <th class="text-center"><span class="badge-soft">@(Model.OverallGrade ?? "—")</span></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="report-card__summary">
+            <div class="report-card__stat">
+                <span class="text-muted">Attendance</span>
+                <strong>@Model.AttendancePercentage.ToString("0.#")%</strong>
+                <small class="text-muted">@Model.AttendancePresent present · @Model.AttendanceAbsent absent · @Model.AttendanceLate late</small>
+            </div>
+            <div class="report-card__stat">
+                <span class="text-muted">Overall grade</span>
+                <strong>@(Model.OverallGrade ?? "—")</strong>
+                <small class="text-muted">@Model.OverallPercentage.ToString("0.#")% average</small>
+            </div>
+        </div>
+
+        <p class="report-card__note text-muted small mb-0">Only published assessments are included. Contact the school for official transcripts.</p>
+    </div>
+}
+
+<style>
+    .report-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+    }
+    .report-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    .report-card__eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 0.25rem;
+    }
+    .report-card__title { margin-bottom: 0.25rem; }
+    .report-card__student {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.75rem 1rem;
+        padding: 1rem;
+        background: color-mix(in srgb, var(--sky) 8%, white);
+        border-radius: var(--radius-md);
+        margin-bottom: 1.25rem;
+    }
+    .report-card__student div { display: flex; flex-direction: column; gap: 0.15rem; }
+    .report-card__table th,
+    .report-card__table td { vertical-align: middle; }
+    .report-card__table thead th {
+        background: color-mix(in srgb, var(--mint) 12%, white);
+        font-size: 0.78rem;
+    }
+    .report-card__summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1.25rem;
+    }
+    .report-card__stat {
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+    .report-card__note { margin-top: 1rem; }
+    @@media print {
+        .dash-sidebar, .dash-topbar, .sidebar-backdrop, .d-print-none { display: none !important; }
+        .dash-main { margin: 0 !important; }
+        .dash-content { padding: 0 !important; }
+        .report-card { border: none; padding: 0; }
+    }
+</style>

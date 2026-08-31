@@ -1,11 +1,35 @@
+@using BrightStepsAcademy.Domain
 @{
-    Layout = "_Layout";
+    Layout = "_DashboardLayout";
+    var student = ViewBag.Student as StudentRecord;
 }
-<section class="band" style="padding:4rem 1.5rem;text-align:center">
-    <div class="band__inner">
-        <p class="eyebrow">Students</p>
-        <h1>Student Portal</h1>
-        <p>Your classes, notices, and learning tools will live here.</p>
-        <a class="btn-bsa btn-bsa-primary" asp-controller="Home" asp-action="Index">Back to Home</a>
+<div class="welcome-banner reveal">
+    <h2>Welcome@(student is not null ? $", {student.FullName.Split(' ').FirstOrDefault()}" : "")</h2>
+    <p>View your report card and academic progress from published school records.</p>
+</div>
+
+@if (student is null)
+{
+    <div class="dash-panel reveal">
+        <p class="text-muted mb-0">Your student profile is not linked to this account yet. Please contact your school administrator.</p>
     </div>
-</section>
+}
+else
+{
+    <div class="grid-2 stagger mb-2">
+        <article class="info-card card-lift accent-sky">
+            <h3 class="mb-0">@student.FullName</h3>
+            <p class="text-muted mb-1">@student.StudentCode · Roll @(student.RollNumber ?? "—")</p>
+            <div class="info-row">
+                <span>Class</span>
+                <strong>@(student.SchoolClass?.Name ?? student.ClassName ?? "—") · @(student.SchoolSection?.Name ?? student.Section ?? "—")</strong>
+            </div>
+            <a class="btn-bsa btn-bsa-sm btn-bsa-primary mt-2" asp-action="ReportCard">View report card</a>
+        </article>
+        <article class="info-card card-lift accent-mint">
+            <h3 class="mb-0">Report Card</h3>
+            <p class="text-muted">Subject-wise marks for class tests, bi-monthly, mid term, and final term — plus attendance summary.</p>
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="ReportCard">Open report card</a>
+        </article>
+    </div>
+}

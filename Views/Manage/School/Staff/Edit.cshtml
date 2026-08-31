@@ -14,7 +14,7 @@
         <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /><span asp-validation-for="FullName" class="field-error"></span></div>
         <div class="mg-field">
             <label>Category</label>
-            <select asp-for="StaffCategoryId" asp-items="ViewBag.Categories" required>
+            <select asp-for="StaffCategoryId" asp-items="ViewBag.Categories as SelectList" required>
                 <option value="">Select category…</option>
             </select>
             <span asp-validation-for="StaffCategoryId" class="field-error"></span>

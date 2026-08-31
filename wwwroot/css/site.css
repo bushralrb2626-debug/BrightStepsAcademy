@@ -2483,6 +2483,16 @@ body.modal-open { overflow: hidden; }
   color: #a85a18;
 }
 
+.attendance-toggle button.active[data-status="Excused"] {
+  background: color-mix(in srgb, var(--sky) 30%, white);
+  color: #2563a8;
+}
+
+.badge-excused {
+  background: color-mix(in srgb, var(--sky) 22%, white);
+  color: #2563a8;
+}
+
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

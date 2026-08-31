@@ -38,7 +38,7 @@ public class SchoolStaffController : SchoolManageControllerBase
     [HttpGet("Teachers")]
     public async Task<IActionResult> Teachers(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StaffView) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.TeachersView, PermissionCodes.StaffView) is { } deny)
             return deny;
 
         var items = await Db.StaffMembers.AsNoTracking()
@@ -314,8 +314,9 @@ public class SchoolStaffController : SchoolManageControllerBase
     [HttpGet("Categories")]
     public async Task<IActionResult> Categories(CancellationToken ct)
     {
-        if (await ForbidUnlessAsync(PermissionCodes.StaffManage) is { } deny)
+        if (await ForbidUnlessAnyAsync(PermissionCodes.StaffCategoriesView, PermissionCodes.StaffView, PermissionCodes.StaffManage) is { } deny)
             return deny;
+        await SchoolBootstrap.EnsureStaffCategoriesAsync(Db, SchoolId, ct);
         var items = await Db.StaffCategories.AsNoTracking()
             .Where(c => c.SchoolId == SchoolId)
             .OrderBy(c => c.Name)
@@ -394,6 +395,8 @@ public class SchoolStaffController : SchoolManageControllerBase
 
     private async Task LoadCategoriesAsync(CancellationToken ct, Guid? selectedId = null)
     {
+        await SchoolBootstrap.EnsureStaffCategoriesAsync(Db, SchoolId, ct);
+
         ViewBag.Categories = new SelectList(
             await Db.StaffCategories.AsNoTracking()
                 .Where(c => c.SchoolId == SchoolId && (c.IsActive || (selectedId.HasValue && c.Id == selectedId)))

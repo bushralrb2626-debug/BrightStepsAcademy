@@ -2,36 +2,47 @@
 @{ Layout = "_DashboardLayout"; var assignmentId = ViewBag.SelectedAssignmentId as Guid?; }
 <partial name="Partials/_TeacherAssignmentPicker" />
 <div class="dash-panel reveal">
-    <div class="dash-panel__head d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">Grade Book</h3>
+    <div class="dash-panel__head d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h3 class="mb-0">Grade Book</h3>
+            <p class="text-muted small mb-0">Class tests, bi-monthly, mid term, and final term marks</p>
+        </div>
         @if (assignmentId.HasValue)
         {
-            <a class="btn-bsa btn-bsa-sm btn-bsa-primary" asp-action="CreateAssessment" asp-route-assignmentId="@assignmentId">New assessment</a>
+            <a class="btn-bsa btn-bsa-sm btn-bsa-primary" asp-action="CreateAssessment" asp-route-assignmentId="@assignmentId">Add marks</a>
         }
     </div>
-    @foreach (var item in Model)
+
+    @if (Model.Count == 0)
     {
-        <div class="info-row">
-            <div>
-                <strong>@item.Name</strong>
-                <div class="text-muted small">@item.AssessmentDate.ToString("MMM d") · @item.AssessmentType · @item.TotalMarks marks</div>
-            </div>
-            <div class="text-end">
-                <span class="badge-soft">@item.Status</span>
-                @if (assignmentId.HasValue)
-                {
-                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Marks" asp-route-id="@item.Id" asp-route-assignmentId="@assignmentId">Marks</a>
-                    @if (item.Status == BrightStepsAcademy.Domain.PublishStatus.Draft)
+        <p class="text-muted mb-0">No assessments yet. Click <strong>Add marks</strong> to create a class test, bi-monthly, mid term, or final term entry.</p>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="info-row">
+                <div>
+                    <strong>@item.Name</strong>
+                    <div class="text-muted small">@item.AssessmentDate.ToString("MMM d, yyyy") · @(string.IsNullOrEmpty(item.AssessmentTypeLabel) ? item.AssessmentType.ToString() : item.AssessmentTypeLabel) · @item.TotalMarks marks</div>
+                </div>
+                <div class="text-end">
+                    <span class="badge-soft">@item.Status</span>
+                    @if (assignmentId.HasValue)
                     {
-                        <form asp-action="PublishAssessment" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <input type="hidden" name="assignmentId" value="@assignmentId" />
-                            <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Publish</button>
-                        </form>
+                        <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Marks" asp-route-id="@item.Id" asp-route-assignmentId="@assignmentId">Edit marks</a>
+                        @if (item.Status == BrightStepsAcademy.Domain.PublishStatus.Draft)
+                        {
+                            <form asp-action="PublishAssessment" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="assignmentId" value="@assignmentId" />
+                                <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Publish</button>
+                            </form>
+                        }
                     }
-                }
+                </div>
             </div>
-        </div>
+        }
     }
 </div>

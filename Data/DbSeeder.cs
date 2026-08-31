@@ -1,5 +1,6 @@
 using System.Reflection;
 using BrightStepsAcademy.Domain;
+using BrightStepsAcademy.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,9 +24,10 @@ public static class DbSeeder
         await EnsureUsersAsync(userManager, db, school.Id);
         await EnsureBuildingsAsync(db, school.Id);
         await EnsureStaffCategoriesAsync(db, school.Id);
-        await EnsureAcademicStructureAsync(db, school.Id);
+        await SchoolBootstrap.EnsureAcademicStructureAsync(db, school.Id);
         await EnsureWebsiteContentAsync(db, school);
         await ApplyEnglishWebsiteDefaultsAsync(db, school.Id);
+        await SchoolBootstrap.EnsureAllSchoolsBootstrappedAsync(db);
     }
 
     private static async Task EnsureDemoSubscriptionAndSettingsAsync(AppDbContext db, School school)
@@ -107,37 +109,31 @@ public static class DbSeeder
 
     private static async Task EnsurePermissionsAsync(AppDbContext db)
     {
-        var codes = typeof(PermissionCodes)
-            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(f => f.IsLiteral && !f.IsInitOnly && f.FieldType == typeof(string))
-            .Select(f => (string)f.GetRawConstantValue()!)
-            .ToList();
+        var existing = await db.AppPermissions.ToListAsync();
+        var byCode = existing.ToDictionary(p => p.Code, StringComparer.OrdinalIgnoreCase);
 
-        var existing = await db.AppPermissions.Select(p => p.Code).ToListAsync();
-        foreach (var code in codes)
+        foreach (var entry in PermissionCatalog.All)
         {
-            if (existing.Contains(code))
-                continue;
-
-            var parts = code.Split('.', 2);
-            var module = parts[0];
-            var action = parts.Length > 1 ? parts[1] : code;
-            db.AppPermissions.Add(new AppPermission
+            if (byCode.TryGetValue(entry.Code, out var perm))
             {
-                Code = code,
-                Name = $"{ToTitle(module)} {ToTitle(action)}",
-                Module = ToTitle(module),
-                Description = $"Allows {action} on {module}."
-            });
+                perm.Name = entry.Name;
+                perm.Module = entry.Module;
+                perm.Description = entry.Description;
+            }
+            else
+            {
+                db.AppPermissions.Add(new AppPermission
+                {
+                    Code = entry.Code,
+                    Name = entry.Name,
+                    Module = entry.Module,
+                    Description = entry.Description
+                });
+            }
         }
 
         await db.SaveChangesAsync();
     }
-
-    private static string ToTitle(string value) =>
-        string.IsNullOrEmpty(value)
-            ? value
-            : char.ToUpperInvariant(value[0]) + value[1..];
 
     private static async Task<School> EnsureDemoSchoolAsync(AppDbContext db)
     {
@@ -681,55 +677,4 @@ public static class DbSeeder
         await db.SaveChangesAsync();
     }
 
-    private static async Task EnsureAcademicStructureAsync(AppDbContext db, Guid schoolId)
-    {
-        if (await db.SchoolClasses.AnyAsync(c => c.SchoolId == schoolId))
-            return;
-
-        var grade1 = new SchoolClass { SchoolId = schoolId, Name = "Grade 1", GradeLevel = "1", DisplayOrder = 1, IsActive = true };
-        var grade2 = new SchoolClass { SchoolId = schoolId, Name = "Grade 2", GradeLevel = "2", DisplayOrder = 2, IsActive = true };
-        db.SchoolClasses.AddRange(grade1, grade2);
-        await db.SaveChangesAsync();
-
-        var secA = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade1.Id, Name = "A", IsActive = true };
-        var secB = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade1.Id, Name = "B", IsActive = true };
-        var sec2A = new SchoolSection { SchoolId = schoolId, SchoolClassId = grade2.Id, Name = "A", IsActive = true };
-        db.SchoolSections.AddRange(secA, secB, sec2A);
-        await db.SaveChangesAsync();
-
-        db.Subjects.AddRange(
-            new Subject { SchoolId = schoolId, Name = "English", Code = "ENG", IsActive = true },
-            new Subject { SchoolId = schoolId, Name = "Mathematics", Code = "MATH", IsActive = true },
-            new Subject { SchoolId = schoolId, Name = "Science", Code = "SCI", IsActive = true });
-        await db.SaveChangesAsync();
-
-        if (!await db.GradingRules.AnyAsync(r => r.SchoolId == schoolId))
-        {
-            var defaults = new (string Grade, decimal Min, decimal Max, decimal Point)[]
-            {
-                ("A+", 90, 100, 4.0m),
-                ("A", 80, 89.99m, 3.7m),
-                ("B+", 70, 79.99m, 3.3m),
-                ("B", 60, 69.99m, 3.0m),
-                ("C", 50, 59.99m, 2.0m),
-                ("D", 40, 49.99m, 1.0m),
-                ("F", 0, 39.99m, 0m)
-            };
-            for (var i = 0; i < defaults.Length; i++)
-            {
-                var d = defaults[i];
-                db.GradingRules.Add(new GradingRule
-                {
-                    SchoolId = schoolId,
-                    GradeLabel = d.Grade,
-                    MinPercentage = d.Min,
-                    MaxPercentage = d.Max,
-                    GradePoint = d.Point,
-                    DisplayOrder = i,
-                    IsActive = true
-                });
-            }
-            await db.SaveChangesAsync();
-        }
-    }
 }

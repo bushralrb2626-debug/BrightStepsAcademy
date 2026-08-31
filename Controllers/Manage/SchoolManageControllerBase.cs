@@ -84,6 +84,22 @@ public abstract class SchoolManageControllerBase : Controller
         return Forbid();
     }
 
+    protected async Task<IActionResult?> ForbidUnlessAnyAsync(params string[] permissionCodes)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return Forbid();
+        if (await PermissionService.HasAnyAsync(CurrentUserId, SchoolId, permissionCodes))
+            return null;
+        return Forbid();
+    }
+
+    protected async Task<IActionResult?> ForbidUnlessManageAsync(string viewCode, string manageCode)
+    {
+        if (await CanAsync(manageCode) || await CanAsync(viewCode))
+            return null;
+        return Forbid();
+    }
+
     protected void SetFlash(string message, string type = "success")
     {
         TempData["Flash"] = message;
@@ -92,28 +108,10 @@ public abstract class SchoolManageControllerBase : Controller
 
     private async Task<Dictionary<string, bool>> BuildNavPermissionsAsync()
     {
-        var codes = new[]
-        {
-            PermissionCodes.SchoolProfile,
-            PermissionCodes.WebsiteManage,
-            PermissionCodes.BuildingsView,
-            PermissionCodes.BuildingsManage,
-            PermissionCodes.FloorsManage,
-            PermissionCodes.RoomsView,
-            PermissionCodes.RoomsManage,
-            PermissionCodes.FurnitureManage,
-            PermissionCodes.StaffView,
-            PermissionCodes.StaffManage,
-            PermissionCodes.StudentsView,
-            PermissionCodes.StudentsManage,
-            PermissionCodes.AdminsManage,
-            PermissionCodes.PermissionsManage,
-            PermissionCodes.ReportsView
-        };
-
+        var granted = await PermissionService.GetGrantedCodesAsync(CurrentUserId, SchoolId);
         var map = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-        foreach (var code in codes)
-            map[code] = await CanAsync(code);
+        foreach (var entry in PermissionCatalog.All)
+            map[entry.Code] = granted.Contains(entry.Code);
         return map;
     }
 }

@@ -79,7 +79,14 @@ public abstract class TeacherPortalControllerBase : Controller
 
         if (Tenant.SchoolId.HasValue)
         {
-            var assignments = await TeacherAccess.GetAssignmentsAsync(CurrentUserId, Tenant.SchoolId.Value, ct);
+            var schoolId = Tenant.SchoolId.Value;
+            var assignments = await TeacherAccess.GetAssignmentsAsync(CurrentUserId, schoolId, ct);
+            if (assignments.Count == 0)
+            {
+                await SchoolBootstrap.EnsureSchoolBootstrappedAsync(Db, schoolId, ct);
+                assignments = await TeacherAccess.GetAssignmentsAsync(CurrentUserId, schoolId, ct);
+            }
+
             var options = assignments.Select(MapAssignment).ToList();
             ViewBag.TeacherAssignments = options;
             ViewBag.SelectedAssignmentId = selectedAssignmentId ?? options.FirstOrDefault()?.Id;

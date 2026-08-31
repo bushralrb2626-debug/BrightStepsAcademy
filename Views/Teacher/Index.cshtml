@@ -18,7 +18,7 @@
 </div>
 @if (Model.Assignments.Count == 0)
 {
-    <div class="dash-panel reveal"><p>No teaching assignments yet. Ask your school admin to set up classes and assign you.</p></div>
+    <partial name="Partials/_TeacherSetupRequired" />
 }
 else
 {

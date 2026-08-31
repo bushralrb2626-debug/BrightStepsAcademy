@@ -271,6 +271,32 @@ body.manage-body {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 0.5rem;
 }
+.mg-perm-sections { display: flex; flex-direction: column; gap: 1.25rem; }
+.mg-perm-section {
+  border: 1px solid var(--mg-line);
+  border-radius: 10px;
+  padding: 1rem;
+  background: #fff;
+}
+.mg-perm-section__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.mg-perm-section__head h3 {
+  margin: 0;
+  font-family: var(--mg-display);
+  font-size: 1rem;
+}
+.mg-check-inline { font-size: 0.85rem; }
+.mg-nav-soon {
+  display: block;
+  padding: 0.35rem 0.75rem;
+  color: var(--mg-muted);
+  font-size: 0.88rem;
+}
 .mg-thumb { max-height: 64px; border-radius: 6px; border: 1px solid var(--mg-line); }
 
 .mg-toolbar {

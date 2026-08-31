@@ -26,8 +26,8 @@ else
                 </div>
                 <div class="info-row mt-2"><span>Class</span><strong>@child.ClassDisplay</strong></div>
                 <div class="quick-actions mt-1">
-                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Attendance">Attendance</a>
-                    <a class="btn-bsa btn-bsa-sm btn-bsa-ghost" asp-action="Results">Results</a>
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="ReportCard" asp-route-studentId="@child.Id">Report Card</a>
+                    <a class="btn-bsa btn-bsa-sm btn-bsa-ghost" asp-action="Marks" asp-route-studentId="@child.Id">Marks</a>
                 </div>
             </article>
         }

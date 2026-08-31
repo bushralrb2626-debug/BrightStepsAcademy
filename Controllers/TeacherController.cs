@@ -203,8 +203,7 @@ public class TeacherController : TeacherPortalControllerBase
                     StudentId = s.Id,
                     FullName = s.FullName,
                     RollNumber = s.RollNumber,
-                    Status = record?.Status ?? AttendanceStatus.Present,
-                    Notes = record?.Notes
+                    Status = record?.Status ?? AttendanceStatus.Present
                 };
             }).ToList()
         };
@@ -267,7 +266,6 @@ public class TeacherController : TeacherPortalControllerBase
                     AttendanceSessionId = session.Id,
                     StudentId = row.StudentId,
                     Status = row.Status,
-                    Notes = row.Notes?.Trim(),
                     CreatedByUserId = CurrentUserId,
                     IsActive = true
                 });
@@ -275,7 +273,6 @@ public class TeacherController : TeacherPortalControllerBase
             else
             {
                 existing.Status = row.Status;
-                existing.Notes = row.Notes?.Trim();
                 existing.UpdatedAt = DateTimeOffset.UtcNow;
             }
         }
@@ -295,23 +292,24 @@ public class TeacherController : TeacherPortalControllerBase
         var assignment = await GetOwnedAssignmentAsync(schoolId, selected.Value, ct);
         if (assignment is null) return Forbid();
 
-        var items = await Db.Assessments.AsNoTracking()
+        var rows = await Db.Assessments.AsNoTracking()
             .Where(a => a.SchoolId == schoolId
                         && a.SchoolClassId == assignment.SchoolClassId
                         && a.SchoolSectionId == assignment.SchoolSectionId
                         && a.SubjectId == assignment.SubjectId)
             .OrderByDescending(a => a.AssessmentDate)
-            .Select(a => new AssessmentListItemVm
-            {
-                Id = a.Id,
-                Name = a.Name,
-                AssessmentType = a.AssessmentType,
-                AssessmentDate = a.AssessmentDate,
-                TotalMarks = a.TotalMarks,
-                Status = a.Status,
-                AssignmentLabel = assignment.DisplayLabel
-            })
             .ToListAsync(ct);
+        var items = rows.Select(a => new AssessmentListItemVm
+        {
+            Id = a.Id,
+            Name = a.Name,
+            AssessmentType = a.AssessmentType,
+            AssessmentTypeLabel = AssessmentTypeCatalog.Label(a.AssessmentType),
+            AssessmentDate = a.AssessmentDate,
+            TotalMarks = a.TotalMarks,
+            Status = a.Status,
+            AssignmentLabel = assignment.DisplayLabel
+        }).ToList();
         ViewData["Title"] = "Grade Book";
         return View(items);
     }
@@ -322,8 +320,29 @@ public class TeacherController : TeacherPortalControllerBase
         if (RequireSchool(out var schoolId) is { } deny) return deny;
         if (await GetOwnedAssignmentAsync(schoolId, assignmentId, ct) is null) return Forbid();
         await HydrateAsync(ct, assignmentId);
+
+        var students = await TeacherAccess.GetStudentsForAssignmentAsync(CurrentUserId, schoolId, assignmentId, ct);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var columns = AssessmentScoreColumns.Default();
+        var vm = new AssessmentFormVm
+        {
+            AssignmentId = assignmentId,
+            AssessmentType = AssessmentType.Test,
+            AssessmentDate = today,
+            Name = AssessmentTypeCatalog.DefaultName(AssessmentType.Test, today),
+            TotalMarks = AssessmentScoreColumns.TotalMax(columns),
+            Columns = columns,
+            Marks = students.Select(s => new AssessmentMarkRowVm
+            {
+                StudentId = s.Id,
+                FullName = s.FullName,
+                RollNumber = s.RollNumber,
+                ColumnScores = columns.Select(_ => 0m).ToList()
+            }).ToList()
+        };
+
         ViewData["Title"] = "New assessment";
-        return View(new AssessmentFormVm { AssignmentId = assignmentId });
+        return View(vm);
     }
 
     [HttpPost]
@@ -336,6 +355,11 @@ public class TeacherController : TeacherPortalControllerBase
         var assignment = await GetOwnedAssignmentAsync(schoolId, model.AssignmentId, ct);
         if (assignment is null || staff is null) return Forbid();
 
+        AssessmentScoreColumns.ApplyAssessmentDefaults(model);
+        ClearAutoFieldValidation();
+        PrepareAssessmentMarks(model.Columns, model.Marks, model.TotalMarks);
+        ValidateAssessmentMarks(model.Columns, model.Marks, ModelState);
+
         if (!ModelState.IsValid)
         {
             await HydrateAsync(ct, model.AssignmentId);
@@ -345,22 +369,28 @@ public class TeacherController : TeacherPortalControllerBase
 
         var assessment = new Assessment
         {
-            Name = model.Name.Trim(),
+            Name = (model.Name ?? AssessmentScoreColumns.TitleFromColumns(model.Columns, model.AssessmentDate)).Trim(),
             AssessmentType = model.AssessmentType,
             AssessmentDate = model.AssessmentDate,
-            TotalMarks = model.TotalMarks,
+            TotalMarks = AssessmentScoreColumns.TotalMax(model.Columns),
             PassingMarks = model.PassingMarks,
-            Description = model.Description?.Trim(),
+            Description = model.ImportantInfo?.Trim(),
             Status = model.Status,
             PublishedAt = model.Status == PublishStatus.Published ? DateTimeOffset.UtcNow : null,
+            ScoreColumnsJson = AssessmentScoreColumns.Serialize(model.Columns),
             CreatedByUserId = CurrentUserId,
             IsActive = true
         };
         ApplyAssignmentScope(assessment, assignment, schoolId, staff.Id);
         Db.Assessments.Add(assessment);
         await Db.SaveChangesAsync(ct);
-        TempData["Flash"] = "Assessment created.";
-        return RedirectToAction(nameof(Marks), new { id = assessment.Id, assignmentId = model.AssignmentId });
+
+        await SaveAssessmentMarksAsync(schoolId, assessment, model.Columns, model.Marks, ct);
+
+        TempData["Flash"] = model.Marks.Count > 0
+            ? "Assessment created and marks saved for the whole class."
+            : "Assessment created.";
+        return RedirectToAction(nameof(GradeBook), new { assignmentId = model.AssignmentId });
     }
 
     [HttpGet]
@@ -379,25 +409,36 @@ public class TeacherController : TeacherPortalControllerBase
             .Where(m => m.AssessmentId == id)
             .ToDictionaryAsync(m => m.StudentId, ct);
 
+        var columns = AssessmentScoreColumns.Deserialize(assessment.ScoreColumnsJson);
         var vm = new AssessmentMarksFormVm
         {
             AssessmentId = id,
-            AssessmentName = assessment.Name,
+            Name = assessment.Name,
+            AssessmentType = assessment.AssessmentType,
+            AssessmentDate = assessment.AssessmentDate,
             TotalMarks = assessment.TotalMarks,
+            PassingMarks = assessment.PassingMarks,
+            ImportantInfo = assessment.Description,
             Status = assessment.Status,
+            Columns = columns,
             Marks = students.Select(s =>
             {
                 marks.TryGetValue(s.Id, out var mark);
-                return new AssessmentMarkRowVm
+                var row = new AssessmentMarkRowVm
                 {
                     StudentId = s.Id,
                     FullName = s.FullName,
                     RollNumber = s.RollNumber,
                     ObtainedMarks = mark?.ObtainedMarks ?? 0,
-                    Notes = mark?.Notes
+                    Notes = mark?.Notes,
+                    ColumnScores = AssessmentScoreColumns.BreakdownToScores(mark?.ScoreBreakdownJson, columns)
                 };
+                if (row.ColumnScores.Sum() == 0 && row.ObtainedMarks > 0)
+                    row.ColumnScores[0] = row.ObtainedMarks;
+                return row;
             }).ToList()
         };
+        PrepareAssessmentMarks(vm.Columns, vm.Marks, vm.TotalMarks);
         ViewBag.AssignmentId = assignmentId;
         ViewData["Title"] = "Enter marks";
         return View(vm);
@@ -412,52 +453,141 @@ public class TeacherController : TeacherPortalControllerBase
         var assessment = await Db.Assessments.FirstOrDefaultAsync(a => a.Id == model.AssessmentId && a.SchoolId == schoolId, ct);
         if (assessment is null) return NotFound();
 
-        foreach (var row in model.Marks)
+        AssessmentScoreColumns.ApplyAssessmentDefaults(model, assessment);
+        ClearAutoFieldValidation();
+        PrepareAssessmentMarks(model.Columns, model.Marks, assessment.TotalMarks);
+        ValidateAssessmentMarks(model.Columns, model.Marks, ModelState);
+
+        if (!ModelState.IsValid)
         {
-            if (row.ObtainedMarks > assessment.TotalMarks)
-            {
-                ModelState.AddModelError(string.Empty, $"Marks for {row.FullName} exceed the total.");
-                await HydrateAsync(ct, assignmentId);
-                ViewBag.AssignmentId = assignmentId;
-                ViewData["Title"] = "Enter marks";
-                return View(model);
-            }
+            await HydrateAsync(ct, assignmentId);
+            ViewBag.AssignmentId = assignmentId;
+            ViewData["Title"] = "Enter marks";
+            return View(model);
         }
 
-        foreach (var row in model.Marks)
+        assessment.Name = (model.Name ?? AssessmentScoreColumns.TitleFromColumns(model.Columns, model.AssessmentDate)).Trim();
+        assessment.AssessmentType = model.AssessmentType;
+        assessment.AssessmentDate = model.AssessmentDate;
+        assessment.PassingMarks = model.PassingMarks;
+        assessment.Description = model.ImportantInfo?.Trim();
+        assessment.ScoreColumnsJson = AssessmentScoreColumns.Serialize(model.Columns);
+        assessment.TotalMarks = AssessmentScoreColumns.TotalMax(model.Columns);
+        assessment.UpdatedAt = DateTimeOffset.UtcNow;
+
+        await SaveAssessmentMarksAsync(schoolId, assessment, model.Columns, model.Marks, ct);
+
+        TempData["Flash"] = "Marks saved.";
+        return RedirectToAction(nameof(GradeBook), new { assignmentId });
+    }
+
+    private async Task SaveAssessmentMarksAsync(
+        Guid schoolId,
+        Assessment assessment,
+        IReadOnlyList<AssessmentScoreColumnVm> columns,
+        IReadOnlyList<AssessmentMarkRowVm> rows,
+        CancellationToken ct)
+    {
+        var cols = columns.Count > 0 ? columns.ToList() : AssessmentScoreColumns.Default(assessment.TotalMarks);
+        AssessmentScoreColumns.NormalizeKeys(cols);
+
+        foreach (var row in rows)
         {
-            var percentage = assessment.TotalMarks > 0 ? Math.Round(row.ObtainedMarks / assessment.TotalMarks * 100, 2) : 0;
+            AssessmentScoreColumns.EnsureRowScores(row, cols.Count);
+            var obtained = AssessmentScoreColumns.TotalObtained(row.ColumnScores);
+            var percentage = assessment.TotalMarks > 0
+                ? Math.Round(obtained / assessment.TotalMarks * 100, 2)
+                : 0;
             var grade = await _grading.CalculateGradeAsync(schoolId, percentage, ct);
-            var existing = await Db.AssessmentMarks.FirstOrDefaultAsync(m => m.AssessmentId == model.AssessmentId && m.StudentId == row.StudentId, ct);
+            var breakdown = AssessmentScoreColumns.ScoresToBreakdown(row.ColumnScores, cols);
+            var existing = await Db.AssessmentMarks.FirstOrDefaultAsync(
+                m => m.AssessmentId == assessment.Id && m.StudentId == row.StudentId, ct);
             if (existing is null)
             {
                 Db.AssessmentMarks.Add(new AssessmentMark
                 {
                     SchoolId = schoolId,
-                    AssessmentId = model.AssessmentId,
+                    AssessmentId = assessment.Id,
                     StudentId = row.StudentId,
-                    ObtainedMarks = row.ObtainedMarks,
+                    ObtainedMarks = obtained,
                     Percentage = percentage,
                     GradeLabel = grade,
                     Notes = row.Notes?.Trim(),
+                    ScoreBreakdownJson = breakdown,
                     CreatedByUserId = CurrentUserId,
                     IsActive = true
                 });
             }
             else
             {
-                existing.ObtainedMarks = row.ObtainedMarks;
+                existing.ObtainedMarks = obtained;
                 existing.Percentage = percentage;
                 existing.GradeLabel = grade;
                 existing.Notes = row.Notes?.Trim();
+                existing.ScoreBreakdownJson = breakdown;
                 existing.UpdatedAt = DateTimeOffset.UtcNow;
             }
         }
 
         await Db.SaveChangesAsync(ct);
-        TempData["Flash"] = "Marks saved.";
-        return RedirectToAction(nameof(GradeBook), new { assignmentId });
     }
+
+    private static void PrepareAssessmentMarks(
+        List<AssessmentScoreColumnVm> columns,
+        List<AssessmentMarkRowVm> marks,
+        decimal totalMarks)
+    {
+        if (columns.Count == 0)
+            columns.AddRange(AssessmentScoreColumns.Default(totalMarks));
+        AssessmentScoreColumns.NormalizeKeys(columns);
+
+        foreach (var row in marks)
+            AssessmentScoreColumns.EnsureRowScores(row, columns.Count);
+    }
+
+    private static void ValidateAssessmentMarks(
+        IReadOnlyList<AssessmentScoreColumnVm> columns,
+        IReadOnlyList<AssessmentMarkRowVm> marks,
+        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary modelState)
+    {
+        var maxTotal = AssessmentScoreColumns.TotalMax(columns);
+        foreach (var row in marks)
+        {
+            AssessmentScoreColumns.EnsureRowScores(row, columns.Count);
+            for (var i = 0; i < columns.Count; i++)
+            {
+                if (row.ColumnScores[i] > columns[i].MaxMarks)
+                {
+                    modelState.AddModelError(string.Empty,
+                        $"{row.FullName}: {AssessmentTypeCatalog.Label(columns[i].AssessmentType)} cannot exceed {columns[i].MaxMarks}.");
+                }
+            }
+
+            var obtained = AssessmentScoreColumns.TotalObtained(row.ColumnScores);
+            if (maxTotal > 0 && obtained > maxTotal)
+            {
+                modelState.AddModelError(string.Empty,
+                    $"Total marks for {row.FullName} cannot exceed {maxTotal}.");
+            }
+        }
+    }
+
+    private void ClearAutoFieldValidation()
+    {
+        foreach (var key in ModelState.Keys.ToList())
+        {
+            if (key == "Name" || key.EndsWith(".Name", StringComparison.Ordinal))
+                ModelState.Remove(key);
+        }
+    }
+
+    private static List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> BuildAssessmentTypeSelectList(AssessmentType selected)
+        => AssessmentTypeCatalog.GradeBookOptions
+            .Select(t => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(
+                AssessmentTypeCatalog.Label(t),
+                ((int)t).ToString(),
+                t == selected))
+            .ToList();
 
     [HttpPost]
     [ValidateAntiForgeryToken]

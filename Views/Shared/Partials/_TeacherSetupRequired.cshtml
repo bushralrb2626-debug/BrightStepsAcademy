@@ -1,0 +1,17 @@
+@{
+    var assignments = ViewBag.TeacherAssignments as IReadOnlyList<BrightStepsAcademy.Models.TeacherAssignmentOptionVm>
+        ?? Array.Empty<BrightStepsAcademy.Models.TeacherAssignmentOptionVm>();
+}
+@if (assignments.Count == 0)
+{
+    <div class="alert-bsa alert-bsa-warn mb-2 reveal">
+        <h4 class="mb-1">Teaching setup required</h4>
+        <p class="mb-2">Diary, attendance, and grade book need a class assignment linked to your teacher account.</p>
+        <ol class="mb-2 ps-3">
+            <li>School admin: open <strong>Academic setup</strong> and confirm classes, sections, and subjects exist.</li>
+            <li>Assign this teacher to a class, section, and subject under <strong>Teacher assignments</strong>.</li>
+            <li>Ensure students are placed in the matching class and section.</li>
+        </ol>
+        <p class="mb-0 text-muted small">If you are the school admin, go to Manage → Academic setup. Teachers should log in with their teacher account (not the school admin account) to add diary notes, attendance, and marks.</p>
+    </div>
+}

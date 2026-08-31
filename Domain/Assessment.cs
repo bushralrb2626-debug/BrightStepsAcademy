@@ -16,6 +16,7 @@ public class Assessment : AuditableEntity, ISchoolScoped
     public string? Description { get; set; }
     public PublishStatus Status { get; set; } = PublishStatus.Draft;
     public DateTimeOffset? PublishedAt { get; set; }
+    public string? ScoreColumnsJson { get; set; }
 
     public School School { get; set; } = null!;
     public StaffMember StaffMember { get; set; } = null!;
@@ -35,6 +36,7 @@ public class AssessmentMark : AuditableEntity, ISchoolScoped
     public decimal? Percentage { get; set; }
     public string? GradeLabel { get; set; }
     public string? Notes { get; set; }
+    public string? ScoreBreakdownJson { get; set; }
 
     public School School { get; set; } = null!;
     public Assessment Assessment { get; set; } = null!;

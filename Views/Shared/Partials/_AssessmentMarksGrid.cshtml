@@ -1,0 +1,322 @@
+@using BrightStepsAcademy.Domain
+@model BrightStepsAcademy.Models.AssessmentMarksGridVm
+@{
+    var columns = Model.Columns ?? [];
+    var marks = Model.Marks ?? [];
+    var colPrefix = Model.ColumnsFieldPrefix;
+    var marksPrefix = Model.MarksFieldPrefix;
+    var typeOptions = AssessmentTypeCatalog.GradeBookOptions;
+}
+
+<div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <h4 class="h6 mb-0">Mark breakdown</h4>
+        @if (Model.AllowColumnEdit)
+        {
+            <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" id="addMarkColumnBtn">+ Add column</button>
+        }
+    </div>
+    <p class="text-muted small mb-2">Add one row per component (e.g. Class Test, Mid Term) with max marks for each.</p>
+    <div id="markColumnConfig" class="d-flex flex-column gap-2">
+        @for (var c = 0; c < columns.Count; c++)
+        {
+            <div class="mark-column-row d-flex flex-wrap gap-2 align-items-end" data-col-index="@c">
+                <input type="hidden" name="@($"{colPrefix}[{c}].Key")" value="@columns[c].Key" class="col-key" />
+                <input type="hidden" name="@($"{colPrefix}[{c}].Name")" value="@columns[c].Name" class="col-name" />
+                <div>
+                    <label class="form-label small mb-0">Assessment type</label>
+                    <select name="@($"{colPrefix}[{c}].AssessmentType")" class="form-select form-select-sm col-type" style="min-width:180px">
+                        @foreach (var type in typeOptions)
+                        {
+                            <option value="@((int)type)" selected="@(columns[c].AssessmentType == type)">@AssessmentTypeCatalog.Label(type)</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label small mb-0">Max marks</label>
+                    <input name="@($"{colPrefix}[{c}].MaxMarks")" value="@columns[c].MaxMarks" type="number" step="0.01" min="0" class="form-control form-control-sm col-max" style="width:110px" />
+                </div>
+                @if (Model.AllowColumnEdit && columns.Count > 1)
+                {
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-col-btn">Remove</button>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Important info</label>
+    <textarea name="ImportantInfo" class="form-control" rows="3" placeholder="Instructions, syllabus covered, remarks for parents…">@Model.ImportantInfo</textarea>
+</div>
+
+<h4 class="h6 mb-2">Class students · enter marks</h4>
+@if (marks.Count == 0)
+{
+    <p class="text-muted">No students are enrolled in this class section yet.</p>
+}
+else
+{
+    <div class="table-responsive mb-3">
+        <table class="table table-sm align-middle" id="marksEntryTable">
+            <thead>
+                <tr id="marksHeaderRow">
+                    <th>#</th>
+                    <th>Student name</th>
+                    <th>Roll no.</th>
+                    @for (var c = 0; c < columns.Count; c++)
+                    {
+                        <th class="mark-col-header" data-col-index="@c" style="min-width:120px">
+                            <span class="header-label">@AssessmentTypeCatalog.Label(columns[c].AssessmentType)</span>
+                            <span class="text-muted small">/ <span class="header-max">@columns[c].MaxMarks</span></span>
+                        </th>
+                    }
+                    <th style="min-width:110px">Total</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody id="marksBody">
+            @for (var i = 0; i < marks.Count; i++)
+            {
+                <tr class="mark-student-row" data-row-index="@i">
+                    <td>@(i + 1)</td>
+                    <td>
+                        @marks[i].FullName
+                        <input type="hidden" name="@($"{marksPrefix}[{i}].StudentId")" value="@marks[i].StudentId" />
+                        <input type="hidden" name="@($"{marksPrefix}[{i}].FullName")" value="@marks[i].FullName" />
+                    </td>
+                    <td>
+                        @(marks[i].RollNumber ?? "—")
+                        <input type="hidden" name="@($"{marksPrefix}[{i}].RollNumber")" value="@marks[i].RollNumber" />
+                    </td>
+                    @for (var c = 0; c < columns.Count; c++)
+                    {
+                        var score = c < marks[i].ColumnScores.Count ? marks[i].ColumnScores[c] : 0m;
+                        <td class="mark-score-cell" data-col-index="@c">
+                            <input name="@($"{marksPrefix}[{i}].ColumnScores[{c}]")" value="@score" type="number" step="0.01" min="0" class="form-control form-control-sm score-input" />
+                        </td>
+                    }
+                    <td class="row-total fw-semibold">0</td>
+                    <td><input name="@($"{marksPrefix}[{i}].Notes")" value="@marks[i].Notes" class="form-control form-control-sm" placeholder="Optional" /></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<template id="markColumnRowTemplate">
+    <div class="mark-column-row d-flex flex-wrap gap-2 align-items-end" data-col-index="">
+        <input type="hidden" class="col-key" />
+        <input type="hidden" class="col-name" />
+        <div>
+            <label class="form-label small mb-0">Assessment type</label>
+            <select class="form-select form-select-sm col-type" style="min-width:180px"></select>
+        </div>
+        <div>
+            <label class="form-label small mb-0">Max marks</label>
+            <input type="number" step="0.01" min="0" value="20" class="form-control form-control-sm col-max" style="width:110px" />
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger remove-col-btn">Remove</button>
+    </div>
+</template>
+
+<script>
+    (function () {
+        const colPrefix = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(colPrefix));
+        const marksPrefix = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(marksPrefix));
+        const typeLabels = {
+            @foreach (var type in typeOptions)
+            {
+                <text>@((int)type): "@AssessmentTypeCatalog.Label(type)",</text>
+            }
+        };
+        const config = document.getElementById('markColumnConfig');
+        const headerRow = document.getElementById('marksHeaderRow');
+        const body = document.getElementById('marksBody');
+        const addBtn = document.getElementById('addMarkColumnBtn');
+        const template = document.getElementById('markColumnRowTemplate');
+
+        function newKey() {
+            return 'col' + Math.random().toString(36).slice(2, 10);
+        }
+
+        function columnCount() {
+            return config?.querySelectorAll('.mark-column-row').length ?? 0;
+        }
+
+        function labelForType(value) {
+            return typeLabels[value] || 'Assessment';
+        }
+
+        function syncColumnName(row) {
+            const typeEl = row.querySelector('.col-type');
+            const nameEl = row.querySelector('.col-name');
+            if (typeEl && nameEl) nameEl.value = labelForType(typeEl.value);
+        }
+
+        function buildTypeSelect(selectedValue) {
+            const select = document.createElement('select');
+            select.className = 'form-select form-select-sm col-type';
+            select.style.minWidth = '180px';
+            Object.entries(typeLabels).forEach(([value, label]) => {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = label;
+                if (value === String(selectedValue ?? '1')) opt.selected = true;
+                select.appendChild(opt);
+            });
+            return select;
+        }
+
+        function syncTotalMarksField() {
+            // Total marks are calculated on the server from column max marks.
+        }
+
+        function updateRowTotal(row) {
+            let sum = 0;
+            row.querySelectorAll('.score-input').forEach(el => sum += parseFloat(el.value) || 0);
+            const totalCell = row.querySelector('.row-total');
+            if (totalCell) totalCell.textContent = sum ? sum.toString() : '0';
+        }
+
+        function rebuildMarkHeaders() {
+            if (!headerRow) return;
+            headerRow.querySelectorAll('.mark-col-header').forEach(el => el.remove());
+            const totalTh = headerRow.querySelector('th:nth-last-child(2)');
+            config.querySelectorAll('.mark-column-row').forEach((cfgRow, c) => {
+                syncColumnName(cfgRow);
+                const th = document.createElement('th');
+                th.className = 'mark-col-header';
+                th.dataset.colIndex = c;
+                th.style.minWidth = '120px';
+                const label = labelForType(cfgRow.querySelector('.col-type')?.value);
+                const max = cfgRow.querySelector('.col-max')?.value || '0';
+                th.innerHTML = `<span class="header-label">${label}</span> <span class="text-muted small">/ <span class="header-max">${max}</span></span>`;
+                headerRow.insertBefore(th, totalTh);
+            });
+        }
+
+        function rebuildStudentScoreCells(savedValues) {
+            const colCount = columnCount();
+            body?.querySelectorAll('.mark-student-row').forEach((studentRow, i) => {
+                const existing = savedValues?.[i]
+                    ?? Array.from(studentRow.querySelectorAll('.score-input')).map(el => el.value);
+                studentRow.querySelectorAll('.mark-score-cell').forEach(el => el.remove());
+                const totalTd = studentRow.querySelector('.row-total');
+                for (let c = 0; c < colCount; c++) {
+                    const td = document.createElement('td');
+                    td.className = 'mark-score-cell';
+                    td.dataset.colIndex = c;
+                    const value = c < existing.length ? existing[c] : '0';
+                    td.innerHTML = `<input type="number" step="0.01" min="0" value="${value}" class="form-control form-control-sm score-input" name="${marksPrefix}[${i}].ColumnScores[${c}]" />`;
+                    studentRow.insertBefore(td, totalTd);
+                    td.querySelector('.score-input').addEventListener('input', () => updateRowTotal(studentRow));
+                }
+                updateRowTotal(studentRow);
+            });
+        }
+
+        function reindexColumns() {
+            const rows = config.querySelectorAll('.mark-column-row');
+            rows.forEach((row, c) => {
+                row.dataset.colIndex = c;
+                syncColumnName(row);
+                const keyInput = row.querySelector('.col-key');
+                const nameInput = row.querySelector('.col-name');
+                const typeInput = row.querySelector('.col-type');
+                const maxInput = row.querySelector('.col-max');
+                if (keyInput) {
+                    keyInput.name = `${colPrefix}[${c}].Key`;
+                    if (!keyInput.value) keyInput.value = newKey();
+                }
+                if (nameInput) nameInput.name = `${colPrefix}[${c}].Name`;
+                if (typeInput) typeInput.name = `${colPrefix}[${c}].AssessmentType`;
+                if (maxInput) maxInput.name = `${colPrefix}[${c}].MaxMarks`;
+
+                const removeBtn = row.querySelector('.remove-col-btn');
+                if (removeBtn) removeBtn.style.display = rows.length > 1 ? '' : 'none';
+            });
+
+            rebuildMarkHeaders();
+
+            body?.querySelectorAll('.mark-student-row').forEach((studentRow, i) => {
+                studentRow.dataset.rowIndex = i;
+                studentRow.querySelectorAll('.mark-score-cell').forEach((cell, c) => {
+                    cell.dataset.colIndex = c;
+                    const input = cell.querySelector('.score-input');
+                    if (input) input.name = `${marksPrefix}[${i}].ColumnScores[${c}]`;
+                });
+            });
+
+            syncTotalMarksField();
+        }
+
+        function addScoreColumn(typeValue, maxMarks) {
+            const frag = template.content.cloneNode(true);
+            config.appendChild(frag);
+            const row = config.lastElementChild;
+            row.querySelector('.col-key').value = newKey();
+            const oldSelect = row.querySelector('.col-type');
+            const newSelect = buildTypeSelect(typeValue ?? 1);
+            oldSelect.replaceWith(newSelect);
+            row.querySelector('.col-max').value = maxMarks ?? 20;
+            syncColumnName(row);
+
+            body?.querySelectorAll('.mark-student-row').forEach((studentRow, i) => {
+                const c = columnCount() - 1;
+                const td = document.createElement('td');
+                td.className = 'mark-score-cell';
+                td.dataset.colIndex = c;
+                td.innerHTML = `<input type="number" step="0.01" min="0" value="0" class="form-control form-control-sm score-input" name="${marksPrefix}[${i}].ColumnScores[${c}]" />`;
+                const totalTd = studentRow.querySelector('.row-total');
+                studentRow.insertBefore(td, totalTd);
+                td.querySelector('.score-input').addEventListener('input', () => updateRowTotal(studentRow));
+            });
+
+            reindexColumns();
+        }
+
+        function removeColumn(index) {
+            if (columnCount() <= 1) return;
+            const saved = [];
+            body?.querySelectorAll('.mark-student-row').forEach(studentRow => {
+                const vals = Array.from(studentRow.querySelectorAll('.score-input')).map(el => el.value);
+                vals.splice(index, 1);
+                saved.push(vals);
+            });
+            config.querySelector(`.mark-column-row[data-col-index="${index}"]`)?.remove();
+            rebuildStudentScoreCells(saved);
+            reindexColumns();
+        }
+
+        config?.addEventListener('change', e => {
+            if (e.target.classList.contains('col-type')) {
+                syncColumnName(e.target.closest('.mark-column-row'));
+                reindexColumns();
+            }
+        });
+
+        config?.addEventListener('input', e => {
+            if (e.target.classList.contains('col-max')) reindexColumns();
+        });
+
+        config?.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-col-btn')) {
+                const row = e.target.closest('.mark-column-row');
+                if (row) removeColumn(row.dataset.colIndex);
+            }
+        });
+
+        addBtn?.addEventListener('click', () => addScoreColumn(1, 20));
+
+        body?.addEventListener('input', e => {
+            if (e.target.classList.contains('score-input')) {
+                updateRowTotal(e.target.closest('.mark-student-row'));
+            }
+        });
+
+        body?.querySelectorAll('.mark-student-row').forEach(updateRowTotal);
+        reindexColumns();
+    })();
+</script>

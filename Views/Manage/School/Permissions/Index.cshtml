@@ -3,7 +3,7 @@
     ViewData["Title"] = "Permissions";
 }
 <h1 class="mg-page-title">Permissions</h1>
-<p class="mg-page-sub">Assign grants to custom admins</p>
+<p class="mg-page-sub">Assign module access for additional administrators</p>
 
 <div class="mg-card" style="margin-bottom:1rem;">
     <form method="get" class="mg-form" style="max-width:420px;">
@@ -21,14 +21,14 @@
 
 @if (string.IsNullOrEmpty(Model.SelectedUserId))
 {
-    <div class="mg-card"><div class="mg-empty"><h3>No admins</h3><p>Create a custom admin first.</p></div></div>
+    <div class="mg-card"><div class="mg-empty"><h3>No admins</h3><p>Create an additional admin first.</p></div></div>
 }
 else
 {
     var selected = Model.Admins.FirstOrDefault(a => a.UserId == Model.SelectedUserId);
     if (selected?.IsPrimary == true)
     {
-        <div class="mg-card"><p>Primary school admin automatically has all permissions.</p></div>
+        <div class="mg-card"><p>The primary school admin always has full access to every module.</p></div>
     }
     else
     {
@@ -36,17 +36,8 @@ else
             <form method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="userId" value="@Model.SelectedUserId" />
-                <div class="mg-perm-grid">
-                    @foreach (var p in Model.Permissions)
-                    {
-                        var isOn = Model.GrantedCodes.Contains(p.Code);
-                        <label class="mg-check">
-                            <input type="checkbox" name="permissionCodes" value="@p.Code" @(isOn ? "checked" : null) />
-                            <span>@p.Name <small style="color:var(--mg-muted);">@p.Code</small></span>
-                        </label>
-                    }
-                </div>
-                <button type="submit" class="mg-btn mg-btn-primary" style="margin-top:1rem;">Save permissions</button>
+                <partial name="Partials/_PermissionPicker" model="@(new PermissionPickerVm { FieldName = "permissionCodes", SelectedCodes = Model.GrantedCodes })" />
+                <button type="submit" class="mg-btn mg-btn-primary" style="margin-top:1.5rem;">Save permissions</button>
             </form>
         </div>
     }

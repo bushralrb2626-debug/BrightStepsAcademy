@@ -4,7 +4,8 @@
 @using BrightStepsAcademy.Services
 @{
     var perms = ViewBag.NavPermissions as Dictionary<string, bool> ?? new Dictionary<string, bool>();
-    bool CanNav(string code) => perms.TryGetValue(code, out var v) ? v : true;
+    bool CanNav(string code) => perms.TryGetValue(code, out var v) && v;
+    bool CanNavAny(params string[] codes) => codes.Any(CanNav);
     var path = Context.Request.Path.Value ?? "";
     bool IsActive(string segment) => path.Contains(segment, StringComparison.OrdinalIgnoreCase);
     var isDashboard = path.Equals("/Manage/School", StringComparison.OrdinalIgnoreCase)
@@ -91,15 +92,24 @@
 
             <div class="mg-nav-group">
                 <div class="mg-nav-label">People</div>
-                @if (CanNav(PermissionCodes.StudentsView) || CanNav(PermissionCodes.StudentsManage))
+                @if (CanNavAny(PermissionCodes.StudentsView, PermissionCodes.ClassesView, PermissionCodes.StudentAllocationView))
                 {
                     <a href="/Manage/School/Students" class="@(IsActive("/Students") ? "active" : null)">Students</a>
+                }
+                @if (CanNavAny(PermissionCodes.ClassesView, PermissionCodes.SectionsManage, PermissionCodes.TeacherAssignmentsManage))
+                {
                     <a href="/Manage/School/Academic" class="@(IsActive("/Academic") ? "active" : null)">Academic setup</a>
                 }
-                @if (CanNav(PermissionCodes.StaffView) || CanNav(PermissionCodes.StaffManage))
+                @if (CanNavAny(PermissionCodes.StaffView, PermissionCodes.StaffManage))
                 {
                     <a href="/Manage/School/Staff" class="@(IsActive("/Staff") && !IsActive("/Teachers") && !IsActive("/Categories") ? "active" : null)">Staff</a>
+                }
+                @if (CanNavAny(PermissionCodes.TeachersView, PermissionCodes.StaffView))
+                {
                     <a href="/Manage/School/Staff/Teachers" class="@(IsActive("/Teachers") ? "active" : null)">Teachers</a>
+                }
+                @if (CanNavAny(PermissionCodes.StaffCategoriesView, PermissionCodes.StaffManage))
+                {
                     <a href="/Manage/School/Staff/Categories" class="@(IsActive("/Categories") ? "active" : null)">Staff categories</a>
                 }
                 @if (CanNav(PermissionCodes.AdminsManage))
@@ -109,13 +119,47 @@
             </div>
 
             <div class="mg-nav-group">
+                <div class="mg-nav-label">Operations</div>
+                @if (CanNavAny(PermissionCodes.TimetableView, PermissionCodes.TimetableCreate))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Timetable</span>
+                }
+                @if (CanNavAny(PermissionCodes.FeesRecordsView, PermissionCodes.FeesVouchersCreate))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Fee management</span>
+                }
+                @if (CanNavAny(PermissionCodes.AttendanceView, PermissionCodes.AttendanceManage))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Attendance</span>
+                }
+                @if (CanNavAny(PermissionCodes.AnnouncementsView, PermissionCodes.AnnouncementsCreate))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Announcements</span>
+                }
+                @if (CanNavAny(PermissionCodes.MaterialsView, PermissionCodes.MaterialsUpload))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Course material</span>
+                }
+                @if (CanNavAny(PermissionCodes.MarksView, PermissionCodes.GradebookView, PermissionCodes.AcademicReportsView))
+                {
+                    <span class="mg-nav-soon" title="Module coming soon">Academic records</span>
+                }
+            </div>
+
+            <div class="mg-nav-group">
                 <div class="mg-nav-label">Reports</div>
                 @if (CanNav(PermissionCodes.ReportsView))
                 {
                     <a href="/Manage/School/Reports" class="@(IsActive("/Reports") && !IsActive("/Reports/") ? "active" : (IsActive("/Reports/Overview") || path.EndsWith("/Reports") ? "active" : null))">Overview</a>
+                }
+                @if (CanNav(PermissionCodes.ReportsView))
+                {
                     <a href="/Manage/School/Reports/Rooms" class="@(IsActive("/Reports/Rooms") ? "active" : null)">Room inventory</a>
                     <a href="/Manage/School/Reports/Furniture" class="@(IsActive("/Reports/Furniture") ? "active" : null)">Furniture inventory</a>
                     <a href="/Manage/School/Reports/Staff" class="@(IsActive("/Reports/Staff") ? "active" : null)">Staff</a>
+                }
+                @if (CanNavAny(PermissionCodes.ReportsStudents, PermissionCodes.ReportsView))
+                {
                     <a href="/Manage/School/Reports/Students" class="@(IsActive("/Reports/Students") ? "active" : null)">Students</a>
                 }
             </div>

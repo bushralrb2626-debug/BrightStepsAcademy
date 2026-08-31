@@ -72,11 +72,18 @@ public class SchoolAdminsController : SchoolManageControllerBase
             .ToListAsync(ct);
         model.PermissionCodes = (permissionCodes ?? Array.Empty<string>()).ToList();
 
-        if (string.IsNullOrWhiteSpace(model.FullName) || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+        if (string.IsNullOrWhiteSpace(model.FullName) || string.IsNullOrWhiteSpace(model.Email)
+            || string.IsNullOrWhiteSpace(model.Password) || string.IsNullOrWhiteSpace(model.LoginId))
         {
-            ModelState.AddModelError(string.Empty, "Full name, email, and password are required.");
+            ModelState.AddModelError(string.Empty, "Full name, email, login ID, and password are required.");
             return SchoolView("Administrators/Create", model);
         }
+
+        var validCodes = PermissionCatalog.All.Select(p => p.Code).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        model.PermissionCodes = model.PermissionCodes
+            .Where(c => validCodes.Contains(c))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
         var user = new ApplicationUser
         {

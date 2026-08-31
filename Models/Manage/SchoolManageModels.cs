@@ -118,6 +118,12 @@ public class CreateAdminVm
     public List<AppPermission> AllPermissions { get; set; } = new();
 }
 
+public class PermissionPickerVm
+{
+    public string FieldName { get; set; } = "permissionCodes";
+    public IEnumerable<string> SelectedCodes { get; set; } = Array.Empty<string>();
+}
+
 public class SearchResultVm
 {
     public string Query { get; set; } = "";

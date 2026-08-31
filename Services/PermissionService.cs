@@ -15,17 +15,33 @@ public class PermissionService : IPermissionService
         _userManager = userManager;
     }
 
-    public async Task<bool> HasAsync(string userId, Guid? schoolId, string permissionCode)
+    public Task<bool> HasAsync(string userId, Guid? schoolId, string permissionCode)
+        => HasAnyAsync(userId, schoolId, permissionCode);
+
+    public async Task<bool> HasAnyAsync(string userId, Guid? schoolId, params string[] permissionCodes)
     {
-        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(permissionCode))
+        if (string.IsNullOrWhiteSpace(userId) || permissionCodes.Length == 0)
             return false;
+
+        var expanded = ExpandCodes(permissionCodes);
+        var granted = await GetGrantedCodesAsync(userId, schoolId);
+        return expanded.Any(granted.Contains);
+    }
+
+    public async Task<IReadOnlySet<string>> GetGrantedCodesAsync(string userId, Guid? schoolId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null || !user.IsActive)
-            return false;
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         if (await _userManager.IsInRoleAsync(user, AppRoleNames.SuperAdmin))
-            return true;
+            return AllCodes();
+
+        if (await _userManager.IsInRoleAsync(user, AppRoleNames.SchoolAdmin))
+            return AllCodes();
 
         if (schoolId.HasValue)
         {
@@ -37,18 +53,40 @@ public class PermissionService : IPermissionService
                     && p.IsActive);
 
             if (isPrimaryAdmin)
-                return true;
+                return AllCodes();
         }
 
         if (!schoolId.HasValue)
-            return false;
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        return await _db.UserPermissionGrants.AsNoTracking()
-            .AnyAsync(g =>
+        var codes = await _db.UserPermissionGrants.AsNoTracking()
+            .Where(g =>
                 g.UserId == userId
                 && g.SchoolId == schoolId.Value
-                && g.PermissionCode == permissionCode
                 && g.Granted
-                && g.IsActive);
+                && g.IsActive)
+            .Select(g => g.PermissionCode)
+            .ToListAsync();
+
+        return codes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static HashSet<string> AllCodes()
+        => PermissionCatalog.All.Select(p => p.Code).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    private static IEnumerable<string> ExpandCodes(IEnumerable<string> requested)
+    {
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var code in requested)
+        {
+            if (string.IsNullOrWhiteSpace(code)) continue;
+            set.Add(code);
+            if (PermissionCatalog.ImpliedBy.TryGetValue(code, out var implied))
+            {
+                foreach (var alt in implied)
+                    set.Add(alt);
+            }
+        }
+        return set;
     }
 }

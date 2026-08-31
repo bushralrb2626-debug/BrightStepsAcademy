@@ -1,18 +1,23 @@
 @model AssessmentFormVm
-@{ Layout = "_DashboardLayout"; }
+@{
+    Layout = "_DashboardLayout";
+}
+<partial name="Partials/_TeacherAssignmentPicker" />
 <div class="dash-panel reveal">
-    <h3>New assessment</h3>
-    <form asp-action="CreateAssessment" method="post">
+    <h3>New assessment &amp; marks</h3>
+    <p class="text-muted">Add mark columns by assessment type, enter important info, then fill marks for the whole class.</p>
+    <form asp-action="CreateAssessment" method="post" id="assessmentForm">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="AssignmentId" />
-        <div class="mb-2"><label>Name</label><input asp-for="Name" class="form-control" required /></div>
-        <div class="mb-2"><label>Type</label><select asp-for="AssessmentType" class="form-select"></select></div>
-        <div class="mb-2"><label>Date</label><input asp-for="AssessmentDate" type="date" class="form-control" /></div>
-        <div class="row g-2 mb-2">
-            <div class="col"><label>Total marks</label><input asp-for="TotalMarks" type="number" step="0.01" class="form-control" /></div>
-            <div class="col"><label>Passing marks</label><input asp-for="PassingMarks" type="number" step="0.01" class="form-control" /></div>
-        </div>
-        <div class="mb-2"><label>Description</label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
-        <button type="submit" class="btn-bsa btn-bsa-primary">Create & enter marks</button>
+        <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+        <partial name="Partials/_AssessmentMarksGrid" model="new AssessmentMarksGridVm {
+            ImportantInfo = Model.ImportantInfo,
+            Columns = Model.Columns,
+            Marks = Model.Marks
+        }" />
+
+        <button type="submit" class="btn-bsa btn-bsa-primary">Save assessment &amp; marks</button>
+        <a asp-action="GradeBook" asp-route-assignmentId="@Model.AssignmentId" class="btn-bsa btn-bsa-soft">Cancel</a>
     </form>
 </div>
