@@ -1,0 +1,64 @@
+@model IReadOnlyList<StudentTimetableSlotVm>
+@{
+    Layout = "_DashboardLayout";
+    var today = ViewBag.TodaySlots as IReadOnlyList<StudentTimetableSlotVm> ?? Array.Empty<StudentTimetableSlotVm>();
+}
+<div class="section-head reveal mb-2">
+    <h2>My Timetable</h2>
+</div>
+
+<div class="dash-panel reveal mb-2">
+    <div class="dash-panel__head"><h3>Today's Timetable</h3></div>
+    @if (today.Count == 0)
+    {
+        <p class="text-muted mb-0">No classes scheduled for today.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead><tr><th>Time</th><th>Subject</th><th>Teacher</th><th>Room</th></tr></thead>
+                <tbody>
+                @foreach (var slot in today)
+                {
+                    <tr>
+                        <td>@slot.StartTime.ToString("h:mm tt") – @slot.EndTime.ToString("h:mm tt")</td>
+                        <td>@slot.SubjectName</td>
+                        <td>@(slot.TeacherName ?? "—")</td>
+                        <td>@(slot.RoomName ?? "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div class="dash-panel reveal">
+    <div class="dash-panel__head"><h3>Weekly Timetable</h3></div>
+    @if (Model.Count == 0)
+    {
+        <p class="text-muted mb-0">No timetable published for your class yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead><tr><th>Day</th><th>Period</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Room</th></tr></thead>
+                <tbody>
+                @foreach (var slot in Model)
+                {
+                    <tr>
+                        <td>@slot.DayOfWeek</td>
+                        <td>@(slot.PeriodLabel ?? slot.PeriodOrder.ToString())</td>
+                        <td>@slot.StartTime.ToString("h:mm tt") – @slot.EndTime.ToString("h:mm tt")</td>
+                        <td>@slot.SubjectName</td>
+                        <td>@(slot.TeacherName ?? "—")</td>
+                        <td>@(slot.RoomName ?? "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bridge.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/vibrant.css" asp-append-version="true" />
+    @if (roleKey == "StudentPortal")
+    {
+        <link rel="stylesheet" href="~/css/student-portal.css" asp-append-version="true" />
+    }
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="dash-body" data-role="@roleKey">

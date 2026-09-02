@@ -1,0 +1,15 @@
+@model RoomFormVm
+<section class="mg-form-section" style="margin-top:1rem;">
+    <h2 class="mg-form-section__title">Class &amp; section (optional)</h2>
+    <p class="mg-page-sub" style="margin-bottom:0.75rem;">Assign this room to a class/section.</p>
+    <div class="mg-grid-2">
+        <div class="mg-field">
+            <label>Class</label>
+            <select asp-for="SchoolClassId" asp-items="Model.ClassOptions" id="SchoolClassId"></select>
+        </div>
+        <div class="mg-field">
+            <label>Section</label>
+            <select asp-for="SchoolSectionId" asp-items="Model.SectionOptions" id="SchoolSectionId"></select>
+        </div>
+    </div>
+</section>

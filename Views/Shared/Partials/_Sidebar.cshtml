@@ -32,8 +32,9 @@
         }
     </nav>
     <div class="dash-sidebar__foot">
-        <a class="btn-bsa btn-bsa-ghost" asp-controller="Portal" asp-action="Login">
-            Log out
-        </a>
+        <form method="post" asp-controller="Portal" asp-action="Logout">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-bsa btn-bsa-ghost w-100">Log out</button>
+        </form>
     </div>
 </aside>

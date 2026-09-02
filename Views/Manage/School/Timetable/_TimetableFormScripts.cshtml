@@ -1,0 +1,39 @@
+<script>
+async function reloadTeachers(classId, sectionId, selectedId) {
+  const teacher = document.getElementById('StaffMemberId');
+  if (!teacher) return;
+  teacher.innerHTML = '<option value="">Loading…</option>';
+  const params = new URLSearchParams();
+  if (classId) params.set('classId', classId);
+  if (sectionId) params.set('sectionId', sectionId);
+  const res = await fetch('/Manage/School/Timetable/TeachersByClassSection?' + params);
+  const data = await res.json();
+  teacher.innerHTML = '<option value="">— Select teacher —</option>' + data.map(t =>
+    `<option value="${t.id}"${selectedId && t.id === selectedId ? ' selected' : ''}>${t.label}</option>`
+  ).join('');
+}
+
+async function reloadRooms(classId, sectionId, selectedId) {
+  const room = document.getElementById('RoomId');
+  if (!room) return;
+  room.innerHTML = '<option value="">Loading…</option>';
+  const params = new URLSearchParams();
+  if (classId) params.set('classId', classId);
+  if (sectionId) params.set('sectionId', sectionId);
+  const res = await fetch('/Manage/School/Timetable/RoomsForTimetable?' + params);
+  const data = await res.json();
+  room.innerHTML = '<option value="">— Select room —</option>' + data.map(r =>
+    `<option value="${r.id}"${selectedId && r.id === selectedId ? ' selected' : ''}>${r.label}</option>`
+  ).join('');
+}
+
+function onClassSectionChange() {
+  const classId = document.getElementById('SchoolClassId')?.value;
+  const sectionId = document.getElementById('SchoolSectionId')?.value;
+  reloadTeachers(classId, sectionId, null);
+  reloadRooms(classId, sectionId, null);
+}
+
+document.getElementById('SchoolClassId')?.addEventListener('change', onClassSectionChange);
+document.getElementById('SchoolSectionId')?.addEventListener('change', onClassSectionChange);
+</script>

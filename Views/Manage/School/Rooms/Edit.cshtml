@@ -5,30 +5,25 @@
 <h1 class="mg-page-title">Edit room</h1>
 <p class="mg-page-sub"><a href="/Manage/School/Rooms">← Rooms</a></p>
 <div class="mg-card">
-<form method="post" class="mg-form">
+<form method="post" action="/Manage/School/Rooms/Edit/@Model.Id" class="mg-form">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All"></div>
-    <div class="mg-field"><label>Building</label><select asp-for="BuildingId" asp-items="ViewBag.Buildings" id="BuildingId" required></select></div>
-    <div class="mg-field"><label>Floor</label><select asp-for="FloorId" asp-items="ViewBag.Floors" id="FloorId" required></select></div>
+    <div class="mg-field"><label>Building</label><select asp-for="BuildingId" asp-items="ViewBag.Buildings as SelectList" id="BuildingId" required></select></div>
+    <div class="mg-field"><label>Floor</label><select asp-for="FloorId" asp-items="ViewBag.Floors as SelectList" id="FloorId" required></select></div>
     <div class="mg-grid-2">
         <div class="mg-field"><label>Room number</label><input asp-for="RoomNumber" required /></div>
         <div class="mg-field"><label>Room name</label><input asp-for="RoomName" /></div>
-        <div class="mg-field"><label>Type</label><select asp-for="RoomType" asp-items="ViewBag.RoomTypes"></select></div>
+        <div class="mg-field"><label>Type</label><select asp-for="RoomType" asp-items="ViewBag.RoomTypes as SelectList"></select></div>
         <div class="mg-field"><label>Capacity</label><input asp-for="Capacity" type="number" /></div>
     </div>
     <div class="mg-field"><label>Description</label><textarea asp-for="Description"></textarea></div>
+
+    <partial name="_RoomClassSectionFields" model="Model" />
+
     <button type="submit" class="mg-btn mg-btn-primary">Save</button>
 </form>
 </div>
+<partial name="_RoomQuickAcademic" model="Model" />
 @section Scripts {
-<script>
-document.getElementById('BuildingId')?.addEventListener('change', async function () {
-  const id = this.value;
-  const floor = document.getElementById('FloorId');
-  floor.innerHTML = '<option value="">Loading…</option>';
-  const res = await fetch('/Manage/School/Rooms/FloorsByBuilding?buildingId=' + id);
-  const data = await res.json();
-  floor.innerHTML = '<option value="">Select…</option>' + data.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
-});
-</script>
+    <partial name="_RoomFormScripts" />
 }

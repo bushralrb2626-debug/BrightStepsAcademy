@@ -1,0 +1,88 @@
+@using BrightStepsAcademy.Models.Manage
+@model List<TimetableSlotListVm>
+@{
+    ViewData["Title"] = "Timetable";
+    var filter = ViewBag.Filter as TimetableFilterVm ?? new TimetableFilterVm();
+    string DayLabel(DayOfWeek d) => d.ToString();
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Timetable</h1>
+        <p class="mg-page-sub">Class schedules and period slots</p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Timetable/Create">Add slot</a>
+</div>
+
+<div class="mg-card" style="margin-bottom:1rem;">
+    <form method="get" class="mg-form" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;">
+        <div class="mg-field" style="margin:0;">
+            <label>Class</label>
+            <select name="classId" asp-items="filter.ClassOptions"></select>
+        </div>
+        <div class="mg-field" style="margin:0;">
+            <label>Section</label>
+            <select name="sectionId" asp-items="filter.SectionOptions"></select>
+        </div>
+        <div class="mg-field" style="margin:0;">
+            <label>Day</label>
+            <select name="day">
+                <option value="">All days</option>
+                @foreach (DayOfWeek d in Enum.GetValues<DayOfWeek>())
+                {
+                    <option value="@((int)d)" selected="@(filter.DayOfWeek == d ? "selected" : null)">@DayLabel(d)</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="mg-btn mg-btn-secondary">Filter</button>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Timetable">Clear</a>
+    </form>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No timetable slots</h3><p>Add periods for your classes or adjust filters.</p><a class="mg-btn mg-btn-primary" href="/Manage/School/Timetable/Create">Add slot</a></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>Day</th>
+                    <th>Period</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                    <th>Teacher</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var slot in Model)
+            {
+                <tr>
+                    <td>@slot.ClassName</td>
+                    <td>@slot.SectionName</td>
+                    <td>@DayLabel(slot.DayOfWeek)</td>
+                    <td>@(slot.PeriodLabel ?? $"P{slot.PeriodOrder}")</td>
+                    <td>@slot.StartTime.ToString("HH:mm") – @slot.EndTime.ToString("HH:mm")</td>
+                    <td>@slot.SubjectName</td>
+                    <td>@(slot.TeacherName ?? "—")</td>
+                    <td>@(slot.RoomName ?? "—")</td>
+                    <td><span class="mg-badge @(slot.Status == BrightStepsAcademy.Domain.PublishStatus.Published ? "mg-badge-ok" : "mg-badge-off")">@slot.Status</span></td>
+                    <td>
+                        <a class="mg-btn mg-btn-sm mg-btn-secondary" href="/Manage/School/Timetable/Edit/@slot.Id">Edit</a>
+                        <form method="post" action="/Manage/School/Timetable/Delete/@slot.Id" style="display:inline;" onsubmit="return confirm('Delete this slot?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="mg-btn mg-btn-sm mg-btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

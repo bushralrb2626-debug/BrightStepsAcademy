@@ -1,0 +1,68 @@
+@model BrightStepsAcademy.Models.Manage.TimetableSlotFormVm
+@using BrightStepsAcademy.Domain
+@{
+    ViewData["Title"] = "Add Timetable Slot";
+    var hasRooms = Model.RoomOptions.Count > 1;
+    var hasTeachers = Model.TeacherOptions.Count > 1;
+}
+<h1 class="mg-page-title">Add timetable slot</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Timetable">← Timetable</a></p>
+
+@if (!hasRooms)
+{
+    <div class="mg-card" style="margin-bottom:1rem;">
+        <div class="mg-empty">
+            <h3>No rooms found</h3>
+            <p>Pehle <a href="/Manage/School/Rooms/Create">room add karein</a>, phir timetable mein select hoga.</p>
+        </div>
+    </div>
+}
+@if (!hasTeachers)
+{
+    <div class="mg-card" style="margin-bottom:1rem;">
+        <div class="mg-empty">
+            <h3>No teachers found</h3>
+            <p><a href="/Manage/School/Staff/Create">Staff add karein</a> ya <a href="/Manage/School/Academic/Assignments/Create">teacher assignment</a> banayein.</p>
+        </div>
+    </div>
+}
+
+<div class="mg-card">
+<form method="post" action="/Manage/School/Timetable/Create" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Class</label><select asp-for="SchoolClassId" asp-items="Model.ClassOptions" id="SchoolClassId" required></select></div>
+        <div class="mg-field"><label>Section</label><select asp-for="SchoolSectionId" asp-items="Model.SectionOptions" id="SchoolSectionId" required></select></div>
+        <div class="mg-field">
+            <label>Day</label>
+            <select asp-for="DayOfWeek">
+                @foreach (DayOfWeek d in Enum.GetValues<DayOfWeek>())
+                {
+                    <option value="@d">@d</option>
+                }
+            </select>
+        </div>
+        <div class="mg-field"><label>Period order</label><input asp-for="PeriodOrder" type="number" min="1" /></div>
+        <div class="mg-field"><label>Period label</label><input asp-for="PeriodLabel" placeholder="e.g. Period 1" /></div>
+        <div class="mg-field"><label>Subject</label><select asp-for="SubjectId" asp-items="Model.SubjectOptions" required></select></div>
+        <div class="mg-field"><label>Start time</label><input asp-for="StartTime" type="time" step="60" /></div>
+        <div class="mg-field"><label>End time</label><input asp-for="EndTime" type="time" step="60" /></div>
+        <div class="mg-field"><label>Teacher</label><select asp-for="StaffMemberId" asp-items="Model.TeacherOptions" id="StaffMemberId"></select></div>
+        <div class="mg-field"><label>Room</label><select asp-for="RoomId" asp-items="Model.RoomOptions" id="RoomId"></select></div>
+        <div class="mg-field">
+            <label>Status</label>
+            <select asp-for="Status">
+                @foreach (PublishStatus s in Enum.GetValues<PublishStatus>())
+                {
+                    <option value="@s">@s</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="mg-btn mg-btn-primary">Add slot</button>
+</form>
+</div>
+@section Scripts {
+<partial name="Timetable/_TimetableFormScripts" />
+}

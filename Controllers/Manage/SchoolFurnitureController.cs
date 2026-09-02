@@ -40,8 +40,9 @@ public class SchoolFurnitureController : SchoolManageControllerBase
     {
         if (await ForbidUnlessAsync(PermissionCodes.FurnitureManage) is { } deny)
             return deny;
-        await LoadRoomsAsync(ct);
-        return SchoolView("Furniture/Create", new FurnitureFormVm { Quantity = 1 });
+        var model = new FurnitureFormVm { Quantity = 1 };
+        await LoadRoomOptionsAsync(model, ct);
+        return SchoolView("Furniture/Create", model);
     }
 
     [HttpPost("Create")]
@@ -55,7 +56,7 @@ public class SchoolFurnitureController : SchoolManageControllerBase
         if (!roomOk)
         {
             ModelState.AddModelError(nameof(model.RoomId), "Select a valid room.");
-            await LoadRoomsAsync(ct);
+            await LoadRoomOptionsAsync(model, ct);
             return SchoolView("Furniture/Create", model);
         }
 
@@ -109,8 +110,7 @@ public class SchoolFurnitureController : SchoolManageControllerBase
             return deny;
         var item = await Db.FurnitureItems.FirstOrDefaultAsync(f => f.Id == id && f.SchoolId == SchoolId, ct);
         if (item is null) return NotFound();
-        await LoadRoomsAsync(ct);
-        return SchoolView("Furniture/Edit", new FurnitureFormVm
+        var editModel = new FurnitureFormVm
         {
             Id = item.Id,
             RoomId = item.RoomId,
@@ -120,7 +120,9 @@ public class SchoolFurnitureController : SchoolManageControllerBase
             Condition = item.Condition,
             Description = item.Description,
             PurchaseDate = item.PurchaseDate
-        });
+        };
+        await LoadRoomOptionsAsync(editModel, ct);
+        return SchoolView("Furniture/Edit", editModel);
     }
 
     [HttpPost("Edit/{id:guid}")]
@@ -146,7 +148,7 @@ public class SchoolFurnitureController : SchoolManageControllerBase
         catch (DbUpdateException)
         {
             ModelState.AddModelError(string.Empty, "Another furniture item with this name already exists in the room.");
-            await LoadRoomsAsync(ct);
+            await LoadRoomOptionsAsync(model, ct);
             return SchoolView("Furniture/Edit", model);
         }
 
@@ -169,16 +171,25 @@ public class SchoolFurnitureController : SchoolManageControllerBase
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task LoadRoomsAsync(CancellationToken ct)
+    private async Task LoadRoomOptionsAsync(FurnitureFormVm model, CancellationToken ct)
     {
-        ViewBag.Rooms = new SelectList(
-            await Db.Rooms.AsNoTracking()
-                .Include(r => r.Building)
-                .Where(r => r.SchoolId == SchoolId && r.IsActive)
-                .OrderBy(r => r.Building.Name).ThenBy(r => r.RoomNumber)
-                .Select(r => new { r.Id, Label = $"{r.Building.Name} · {r.RoomNumber}" })
-                .ToListAsync(ct),
-            "Id", "Label");
-        ViewBag.Conditions = new SelectList(Enum.GetValues<FurnitureCondition>());
+        var rooms = await Db.Rooms.AsNoTracking()
+            .Where(r => r.SchoolId == SchoolId && r.IsActive)
+            .Join(
+                Db.Buildings.AsNoTracking().Where(b => b.SchoolId == SchoolId),
+                r => r.BuildingId,
+                b => b.Id,
+                (r, b) => new { r.Id, BuildingName = b.Name, r.RoomNumber, r.RoomName })
+            .OrderBy(x => x.BuildingName).ThenBy(x => x.RoomNumber)
+            .ToListAsync(ct);
+
+        model.RoomOptions =
+        [
+            new SelectListItem("— Select room —", ""),
+            .. rooms.Select(r => new SelectListItem(
+                $"{r.BuildingName} · {r.RoomNumber}{(string.IsNullOrWhiteSpace(r.RoomName) ? "" : " — " + r.RoomName)}",
+                r.Id.ToString(),
+                r.Id == model.RoomId))
+        ];
     }
 }

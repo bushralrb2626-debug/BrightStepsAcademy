@@ -13,6 +13,16 @@
         </div>
     </div>
     <div class="dash-topbar__right">
+        @if (ViewBag.SchoolName is string schoolName && !string.IsNullOrWhiteSpace(schoolName))
+        {
+            <div class="sp-school-brand">
+                @if (ViewBag.SchoolLogo is string logo && !string.IsNullOrWhiteSpace(logo))
+                {
+                    <img src="@logo" alt="@schoolName" />
+                }
+                <strong>@schoolName</strong>
+            </div>
+        }
         <partial name="Partials/_NotificationDropdown" />
         <div class="dash-user">
             <img src="@profile.Avatar" alt="@profile.DisplayName" width="44" height="44" />
@@ -20,7 +30,10 @@
                 <strong>@profile.DisplayName</strong>
                 <small>@profile.UserId</small>
             </div>
-            <a class="btn-bsa btn-bsa-soft" asp-controller="Portal" asp-action="Login">Logout</a>
+            <form method="post" asp-controller="Portal" asp-action="Logout" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-bsa btn-bsa-soft">Logout</button>
+            </form>
         </div>
     </div>
 </header>

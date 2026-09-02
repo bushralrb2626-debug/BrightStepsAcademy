@@ -1,0 +1,24 @@
+@model BrightStepsAcademy.Models.Manage.FeeVoucherFormVm
+@{
+    ViewData["Title"] = "Create Fee Voucher";
+}
+<h1 class="mg-page-title">Create fee voucher</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Fees/Vouchers">← Vouchers</a></p>
+<div class="mg-card">
+<form method="post" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Student</label><select asp-for="StudentId" asp-items="Model.StudentOptions" required></select></div>
+        <div class="mg-field"><label>Title</label><input asp-for="Title" placeholder="e.g. March tuition" required /></div>
+        <div class="mg-field"><label>Total amount</label><input asp-for="TotalAmount" type="number" step="0.01" min="0" required /></div>
+        <div class="mg-field"><label>Issue date</label><input asp-for="IssueDate" type="date" /></div>
+        <div class="mg-field"><label>Due date</label><input asp-for="DueDate" type="date" /></div>
+        <div class="mg-field" style="grid-column:1/-1;">
+            <label>Notes</label>
+            <textarea asp-for="Notes"></textarea>
+        </div>
+    </div>
+    <button type="submit" class="mg-btn mg-btn-primary">Create voucher</button>
+</form>
+</div>

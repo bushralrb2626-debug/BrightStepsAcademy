@@ -1,0 +1,38 @@
+@model IReadOnlyList<StudentAnnouncementItemVm>
+@{
+    Layout = "_DashboardLayout";
+    var filter = (StudentAnnouncementFilterVm?)ViewBag.Filter;
+}
+<div class="section-head reveal mb-2"><h2>Announcements</h2></div>
+
+@if (filter is not null)
+{
+    <form method="get" class="dash-panel reveal mb-2 d-flex gap-2 flex-wrap align-items-end">
+        <div>
+            <label class="small text-muted">Subject</label>
+            <select name="subjectId" class="form-select form-select-sm" asp-items="filter.SubjectOptions"><option value="">All</option></select>
+        </div>
+        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Filter</button>
+    </form>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">No announcements yet.</p></div>
+}
+else
+{
+    <div class="dash-panel reveal">
+        @foreach (var item in Model)
+        {
+            <article class="mb-3 pb-3 border-bottom">
+                <div class="d-flex justify-content-between gap-2 flex-wrap">
+                    <h4 class="mb-1">@item.Title</h4>
+                    <span class="text-muted">@item.ContentDate.ToString("MMM d, yyyy")</span>
+                </div>
+                <p class="text-muted mb-2">@item.SubjectName · @item.AuthorName</p>
+                <p class="mb-0">@item.Message</p>
+            </article>
+        }
+    </div>
+}

@@ -1,0 +1,121 @@
+@model IReadOnlyList<StudentMaterialItemVm>
+
+@using BrightStepsAcademy.Domain
+
+@{
+
+    Layout = "_DashboardLayout";
+
+    var filter = (StudentMaterialFilterVm?)ViewBag.Filter;
+
+    var bySubject = Model.GroupBy(m => m.SubjectName).OrderBy(g => g.Key);
+
+}
+
+<div class="section-head reveal mb-2"><h2>Course Material</h2></div>
+
+
+
+@if (filter is not null)
+
+{
+
+    <form method="get" class="dash-panel reveal mb-2 d-flex gap-2 flex-wrap align-items-end">
+
+        <div>
+
+            <label class="small text-muted">Subject</label>
+
+            <select name="subjectId" class="form-select form-select-sm" asp-items="filter.SubjectOptions"><option value="">All</option></select>
+
+        </div>
+
+        <div>
+
+            <label class="small text-muted">Category</label>
+
+            <select name="category" class="form-select form-select-sm">
+
+                <option value="">All</option>
+
+                @foreach (CourseMaterialCategory c in Enum.GetValues<CourseMaterialCategory>())
+
+                {
+
+                    <option value="@c" selected="@(filter.Category == c)">@c</option>
+
+                }
+
+            </select>
+
+        </div>
+
+        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Filter</button>
+
+    </form>
+
+}
+
+
+
+@if (Model.Count == 0)
+
+{
+
+    <div class="dash-panel reveal">
+
+        <div class="sp-empty"><span class="sp-empty__emoji">📁</span><p class="mb-0">No study material available.</p></div>
+
+    </div>
+
+}
+
+else
+
+{
+
+    <div class="dash-panel reveal">
+
+        @foreach (var group in bySubject)
+
+        {
+
+            <div class="sp-subject-group">
+
+                <h3>@group.Key</h3>
+
+                @foreach (var item in group)
+
+                {
+
+                    <div class="info-row">
+
+                        <div>
+
+                            <strong>📄 @item.Title</strong>
+
+                            <div class="text-muted small">@item.Category · @item.ContentDate.ToString("MMM d, yyyy")</div>
+
+                        </div>
+
+                        @if (item.HasFile)
+
+                        {
+
+                            <a class="btn-bsa btn-bsa-sm btn-bsa-soft" href="/Files/Material/@item.Id">Download</a>
+
+                        }
+
+                    </div>
+
+                }
+
+            </div>
+
+        }
+
+    </div>
+
+}
+
+

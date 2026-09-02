@@ -66,6 +66,7 @@ public static class NavCatalog
                 I("My Classes", "board", "Teacher", "Classes"),
                 I("Students", "backpack", "Teacher", "Students"),
                 I("Daily Diary", "book", "Teacher", "Diary"),
+                I("Assignments", "pencil", "Teacher", "ClassAssignments"),
                 I("Attendance", "check", "Teacher", "Attendance"),
                 I("Grade Book", "star", "Teacher", "GradeBook")),
             G("Content",
@@ -90,8 +91,21 @@ public static class NavCatalog
         ],
         "StudentPortal" =>
         [
-            G("Main", I("Dashboard", "grid", "StudentPortal", "Index")),
-            G("Academic", I("Report Card", "star", "StudentPortal", "ReportCard"))
+            G("Main",
+                I("Dashboard", "grid", "StudentPortal", "Index"),
+                I("My Timetable", "clock", "StudentPortal", "Timetable"),
+                I("Daily Diary", "book", "StudentPortal", "Diary"),
+                I("Assignments", "pencil", "StudentPortal", "Assignments"),
+                I("Course Material", "folder", "StudentPortal", "Materials")),
+            G("Academic",
+                I("Marks & Grades", "chart", "StudentPortal", "Marks"),
+                I("Attendance", "check", "StudentPortal", "Attendance"),
+                I("Announcements", "bell", "StudentPortal", "Announcements"),
+                I("Exams", "cal", "StudentPortal", "Exams")),
+            G("Account",
+                I("Notifications", "bell", "StudentPortal", "Notifications"),
+                I("My Profile", "user", "StudentPortal", "Profile"),
+                I("Settings", "cog", "StudentPortal", "Settings"))
         ],
         _ =>
         [

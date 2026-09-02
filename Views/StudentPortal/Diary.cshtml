@@ -1,0 +1,50 @@
+@model IReadOnlyList<StudentDiaryItemVm>
+@{
+    Layout = "_DashboardLayout";
+    var filter = (StudentDiaryFilterVm?)ViewBag.Filter;
+}
+<div class="section-head reveal mb-2"><h2>Daily Diary</h2></div>
+
+@if (filter is not null)
+{
+    <form method="get" class="dash-panel reveal mb-2 d-flex gap-2 flex-wrap align-items-end">
+        <div>
+            <label class="small text-muted">Subject</label>
+            <select name="subjectId" class="form-select form-select-sm" asp-items="filter.SubjectOptions">
+                <option value="">All subjects</option>
+            </select>
+        </div>
+        <div>
+            <label class="small text-muted">Date</label>
+            <input type="date" name="date" class="form-control form-control-sm" value="@filter.Date?.ToString("yyyy-MM-dd")" />
+        </div>
+        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Filter</button>
+    </form>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal">
+        <div class="sp-empty"><span class="sp-empty__emoji">📖</span><p class="mb-0">No diary entries available.</p></div>
+    </div>
+}
+else
+{
+    <div class="dash-panel reveal">
+        @foreach (var item in Model)
+        {
+            <article class="mb-3 pb-3 border-bottom">
+                <div class="d-flex justify-content-between gap-2 flex-wrap">
+                    <h4 class="mb-1">@item.SubjectName</h4>
+                    <span class="text-muted">@item.ContentDate.ToString("MMM d, yyyy")</span>
+                </div>
+                <p class="text-muted mb-2">@item.TeacherName</p>
+                @if (!string.IsNullOrWhiteSpace(item.Topic)) { <p><strong>Topic:</strong> @item.Topic</p> }
+                @if (!string.IsNullOrWhiteSpace(item.Classwork)) { <p><strong>Classwork:</strong> @item.Classwork</p> }
+                @if (!string.IsNullOrWhiteSpace(item.Homework)) { <p><strong>Homework:</strong> @item.Homework</p> }
+                @if (!string.IsNullOrWhiteSpace(item.Instructions)) { <p>@item.Instructions</p> }
+                @if (item.DueDate.HasValue) { <p><strong>Due:</strong> @item.DueDate.Value.ToString("MMM d, yyyy")</p> }
+            </article>
+        }
+    </div>
+}

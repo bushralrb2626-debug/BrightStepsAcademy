@@ -62,5 +62,23 @@ public enum AcademicAttachmentOwnerType
     ImportantInformation = 1,
     Announcement = 2,
     CourseMaterial = 3,
-    Assessment = 4
+    Assessment = 4,
+    ClassAssignment = 5
+}
+
+public enum AssignmentSubmissionStatus
+{
+    Submitted = 0,
+    Reviewed = 1,
+    Graded = 2,
+    Returned = 3
+}
+
+public enum StudentAssignmentDisplayStatus
+{
+    Upcoming = 0,
+    Pending = 1,
+    Submitted = 2,
+    Late = 3,
+    Completed = 4
 }

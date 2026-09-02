@@ -69,6 +69,8 @@ builder.Services.AddScoped<IGuardianService, GuardianService>();
 builder.Services.AddScoped<ITeacherAccessService, TeacherAccessService>();
 builder.Services.AddScoped<IParentAcademicService, ParentAcademicService>();
 builder.Services.AddScoped<IStudentAcademicService, StudentAcademicService>();
+builder.Services.AddScoped<IStudentAccountService, StudentAccountService>();
+builder.Services.AddScoped<IStudentNotificationService, StudentNotificationService>();
 builder.Services.AddScoped<IReportCardService, ReportCardService>();
 builder.Services.AddScoped<IGradingService, GradingService>();
 builder.Services.AddScoped<IAcademicContentService, AcademicContentService>();
@@ -86,6 +88,8 @@ using (var scope = app.Services.CreateScope())
     else
         await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(app.Services);
+    await StudentPortalBootstrap.EnsurePortalLoginsAsync(app.Services);
+    await DemoPortalAccountsBootstrap.EnsureDemoAccountsAsync(app.Services);
 }
 
 if (!app.Environment.IsDevelopment())

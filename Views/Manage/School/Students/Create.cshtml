@@ -15,11 +15,18 @@
             <div class="mg-field"><label>Student code</label><input asp-for="StudentCode" required /></div>
             <div class="mg-field"><label>Full name</label><input asp-for="FullName" required /></div>
             <div class="mg-field"><label>Email</label><input asp-for="Email" type="email" /></div>
-            <div class="mg-field"><label>Gender</label><input asp-for="Gender" /></div>
+            <div class="mg-field">
+                <label>Gender</label>
+                <select asp-for="Gender">
+                    <option value="">— Select gender —</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
             <div class="mg-field"><label>Date of birth</label><input asp-for="DateOfBirth" type="date" /></div>
             <div class="mg-field"><label>Admission date</label><input asp-for="AdmissionDate" type="date" /></div>
-            <div class="mg-field"><label>Class</label><select asp-for="SchoolClassId" asp-items="Model.ClassOptions"><option value="">— Or type below —</option></select></div>
-            <div class="mg-field"><label>Section</label><select asp-for="SchoolSectionId" asp-items="Model.SectionOptions"><option value="">— Or type below —</option></select></div>
+            <div class="mg-field"><label>Class</label><select asp-for="SchoolClassId" asp-items="Model.ClassOptions"></select></div>
+            <div class="mg-field"><label>Section</label><select asp-for="SchoolSectionId" asp-items="Model.SectionOptions"></select></div>
             <div class="mg-field"><label>Class (legacy text)</label><input asp-for="ClassName" /></div>
             <div class="mg-field"><label>Section (legacy text)</label><input asp-for="Section" /></div>
             <div class="mg-field"><label>Roll number</label><input asp-for="RollNumber" /></div>
@@ -29,6 +36,7 @@
     </section>
 
     <partial name="_GuardianFields" model="Model" />
+    <partial name="_StudentPortalFields" model="Model" />
 
     <button type="submit" class="mg-btn mg-btn-primary">Create student</button>
 </form>

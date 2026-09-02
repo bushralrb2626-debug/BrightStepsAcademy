@@ -1,0 +1,76 @@
+@model StudentAssignmentDetailVm?
+@using BrightStepsAcademy.Domain
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2">
+    <h2>@(Model?.Title ?? "Assignment")</h2>
+</div>
+
+@if (Model is null)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">Assignment not found.</p></div>
+}
+else
+{
+    <div class="dash-panel reveal mb-2">
+        <p class="text-muted mb-2">@Model.SubjectName · @Model.TeacherName</p>
+        <div class="info-row"><span>Assigned</span><strong>@Model.AssignedDate.ToString("MMM d, yyyy")</strong></div>
+        <div class="info-row"><span>Due</span><strong>@Model.DueDate.ToString("MMM d, yyyy")</strong></div>
+        @if (Model.TotalMarks.HasValue)
+        {
+            <div class="info-row"><span>Marks</span><strong>@Model.TotalMarks</strong></div>
+        }
+        <div class="info-row"><span>Status</span><strong>@Model.DisplayStatus</strong></div>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p class="mt-2">@Model.Description</p>
+        }
+        @if (Model.HasAttachment)
+        {
+            <p class="mt-2"><a class="btn-bsa btn-bsa-sm btn-bsa-soft" href="/Files/Assignment/@Model.Id">📎 @(Model.AttachmentFileName ?? "Download attachment")</a></p>
+        }
+    </div>
+
+    @if (Model.Submission is not null)
+    {
+        <div class="dash-panel reveal mb-2">
+            <h3>Submission Status: @Model.Submission.ReviewStatus</h3>
+            <p class="text-muted">Submitted @Model.Submission.SubmittedAt.ToLocalTime().ToString("f")</p>
+            @if (!string.IsNullOrWhiteSpace(Model.Submission.TextResponse))
+            {
+                <p>@Model.Submission.TextResponse</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Submission.FileName))
+            {
+                <p>📎 @Model.Submission.FileName</p>
+            }
+            @if (Model.Submission.ObtainedMarks.HasValue)
+            {
+                <p><strong>Marks:</strong> @Model.Submission.ObtainedMarks</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Submission.TeacherFeedback))
+            {
+                <p><strong>Feedback:</strong> @Model.Submission.TeacherFeedback</p>
+            }
+        </div>
+    }
+    else if (Model.AllowSubmission)
+    {
+        <div class="dash-panel reveal">
+            <h3>Submit Assignment</h3>
+            <form method="post" asp-action="SubmitAssignment" asp-route-id="@Model.Id" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="mb-2">
+                    <label class="form-label">Your response</label>
+                    <textarea name="TextResponse" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Upload file (optional)</label>
+                    <input type="file" name="UploadFile" class="form-control" />
+                </div>
+                <button type="submit" class="btn-bsa btn-bsa-primary">Submit</button>
+            </form>
+        </div>
+    }
+}

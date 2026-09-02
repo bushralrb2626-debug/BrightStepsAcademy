@@ -1,0 +1,54 @@
+@model IReadOnlyList<StudentExamItemVm>
+@{
+    Layout = "_DashboardLayout";
+    var previous = ViewBag.PreviousExams as IReadOnlyList<StudentExamItemVm> ?? Array.Empty<StudentExamItemVm>();
+}
+<div class="section-head reveal mb-2"><h2>Exams</h2></div>
+
+<div class="dash-panel reveal mb-2">
+    <h3 class="sp-section-title">Upcoming</h3>
+    @if (Model.Count == 0)
+    {
+        <div class="sp-empty"><span class="sp-empty__emoji">📝</span><p class="mb-0">No upcoming exams scheduled.</p></div>
+    }
+    else
+    {
+        <div class="grid-2 stagger">
+            @foreach (var exam in Model)
+            {
+                <article class="card-lift mb-2 p-3" style="background:#f8fafc;border-radius:0.75rem;">
+                    <h4 class="mb-1">@exam.Name</h4>
+                    <p class="text-muted mb-2">@exam.SubjectName · @exam.AssessmentType</p>
+                    <div class="info-row"><span>Date</span><strong>@exam.ExamDate.ToString("MMMM d, yyyy")</strong></div>
+                    <div class="info-row"><span>Total marks</span><strong>@exam.TotalMarks</strong></div>
+                    @if (!string.IsNullOrWhiteSpace(exam.Instructions))
+                    {
+                        <p class="mt-2 mb-0 small">@exam.Instructions</p>
+                    }
+                </article>
+            }
+        </div>
+    }
+</div>
+
+<div class="dash-panel reveal">
+    <h3 class="sp-section-title">Previous</h3>
+    @if (previous.Count == 0)
+    {
+        <p class="text-muted mb-0">No previous exams on record.</p>
+    }
+    else
+    {
+        @foreach (var exam in previous)
+        {
+            <div class="info-row">
+                <div>
+                    <strong>@exam.Name</strong>
+                    <div class="text-muted small">@exam.SubjectName · @exam.ExamDate.ToString("MMM d, yyyy")</div>
+                </div>
+                <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="ExamResults">View results</a>
+            </div>
+        }
+    }
+</div>
+

@@ -4,8 +4,11 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /
     envVars:
       - key: USE_SQLITE
         value: "1"
       - key: ConnectionStrings__DefaultConnection
         value: Data Source=/tmp/brightsteps.db
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

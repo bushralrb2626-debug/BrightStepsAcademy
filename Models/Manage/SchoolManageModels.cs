@@ -1,5 +1,6 @@
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BrightStepsAcademy.Models.Manage;
 
@@ -148,6 +149,24 @@ public class RoomFormVm
     public string RoomType { get; set; } = nameof(RoomTypeKind.Classroom);
     public int? Capacity { get; set; }
     public string? Description { get; set; }
+    public Guid? SchoolClassId { get; set; }
+    public Guid? SchoolSectionId { get; set; }
+    public List<SelectListItem> ClassOptions { get; set; } = new();
+    public List<SelectListItem> SectionOptions { get; set; } = new();
+}
+
+public class RoomQuickClassVm
+{
+    public string Name { get; set; } = "";
+    public string? GradeLevel { get; set; }
+    public Guid? ReturnRoomId { get; set; }
+}
+
+public class RoomQuickSectionVm
+{
+    public Guid SchoolClassId { get; set; }
+    public string Name { get; set; } = "";
+    public Guid? ReturnRoomId { get; set; }
 }
 
 public class FurnitureFormVm
@@ -160,6 +179,7 @@ public class FurnitureFormVm
     public FurnitureCondition Condition { get; set; } = FurnitureCondition.Good;
     public string? Description { get; set; }
     public DateOnly? PurchaseDate { get; set; }
+    public List<SelectListItem> RoomOptions { get; set; } = new();
 }
 
 public class StaffFormVm
@@ -223,6 +243,16 @@ public class StudentFormVm
     public string? NewGuardianPassword { get; set; }
     public string? NewGuardianConfirmPassword { get; set; }
     public List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ExistingGuardians { get; set; } = new();
+
+    // Student portal login
+    public bool EnableStudentPortal { get; set; }
+    public string? StudentLoginId { get; set; }
+    public string? StudentPassword { get; set; }
+    public string? StudentConfirmPassword { get; set; }
+    public bool HasStudentLogin { get; set; }
+    public bool ResetStudentPassword { get; set; }
+    public string? NewStudentPassword { get; set; }
+    public string? NewStudentConfirmPassword { get; set; }
 
     // Legacy fields kept for reports compatibility
     public string? ParentName { get; set; }

@@ -1,0 +1,52 @@
+@model StudentSearchResultsVm
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2"><h2>Search</h2></div>
+
+<form method="get" class="dash-panel reveal mb-2 d-flex gap-2">
+    <input type="search" name="q" class="form-control" placeholder="Search diary, assignments, materials…" value="@Model.Query" />
+    <button type="submit" class="btn-bsa btn-bsa-primary">Search</button>
+</form>
+
+@if (string.IsNullOrWhiteSpace(Model.Query))
+{
+    <p class="text-muted">Enter a keyword to search your accessible content.</p>
+}
+else if (!Model.HasResults)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">No results for “@Model.Query”.</p></div>
+}
+else
+{
+    @if (Model.Diary.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2"><h3>Diary</h3>
+            @foreach (var item in Model.Diary) { <p><strong>@item.SubjectName</strong> — @item.Title</p> }
+        </div>
+    }
+    @if (Model.Assignments.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2"><h3>Assignments</h3>
+            @foreach (var item in Model.Assignments) { <p><a asp-action="AssignmentDetail" asp-route-id="@item.Id">@item.Title</a> — @item.SubjectName</p> }
+        </div>
+    }
+    @if (Model.Materials.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2"><h3>Course Material</h3>
+            @foreach (var item in Model.Materials) { <p>@item.Title — @item.SubjectName</p> }
+        </div>
+    }
+    @if (Model.Announcements.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2"><h3>Announcements</h3>
+            @foreach (var item in Model.Announcements) { <p><strong>@item.Title</strong></p> }
+        </div>
+    }
+    @if (Model.ImportantInformation.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2"><h3>Important Information</h3>
+            @foreach (var item in Model.ImportantInformation) { <p><strong>@item.Title</strong></p> }
+        </div>
+    }
+}

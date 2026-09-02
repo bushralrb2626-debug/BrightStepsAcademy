@@ -8,7 +8,7 @@
 <form method="post" class="mg-form">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All"></div>
-    <div class="mg-field"><label>Room</label><select asp-for="RoomId" asp-items="ViewBag.Rooms" disabled></select></div>
+    <div class="mg-field"><label>Room</label><select asp-for="RoomId" asp-items="Model.RoomOptions" disabled></select></div>
     <input type="hidden" asp-for="RoomId" />
     <div class="mg-grid-2">
         <div class="mg-field"><label>Name</label><input asp-for="Name" required /></div>

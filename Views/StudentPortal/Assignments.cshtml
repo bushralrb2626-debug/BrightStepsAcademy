@@ -1,0 +1,108 @@
+@model IReadOnlyList<StudentAssignmentItemVm>
+@using BrightStepsAcademy.Domain
+@{
+    Layout = "_DashboardLayout";
+    var filter = (StudentAssignmentFilterVm?)ViewBag.Filter;
+    var pending = Model.Where(a => a.DisplayStatus is StudentAssignmentDisplayStatus.Pending or StudentAssignmentDisplayStatus.Upcoming).ToList();
+    var submitted = Model.Where(a => a.DisplayStatus == StudentAssignmentDisplayStatus.Submitted).ToList();
+    var completed = Model.Where(a => a.DisplayStatus == StudentAssignmentDisplayStatus.Completed).ToList();
+    var overdue = Model.Where(a => a.DisplayStatus == StudentAssignmentDisplayStatus.Late).ToList();
+}
+<div class="section-head reveal mb-2"><h2>Assignments</h2></div>
+
+@if (filter is not null)
+{
+    <form method="get" class="dash-panel reveal mb-2 d-flex gap-2 flex-wrap align-items-end">
+        <div>
+            <label class="small text-muted">Subject</label>
+            <select name="subjectId" class="form-select form-select-sm" asp-items="filter.SubjectOptions">
+                <option value="">All subjects</option>
+            </select>
+        </div>
+        <div>
+            <label class="small text-muted">Status</label>
+            <select name="status" class="form-select form-select-sm">
+                <option value="">All statuses</option>
+                @foreach (StudentAssignmentDisplayStatus s in Enum.GetValues<StudentAssignmentDisplayStatus>())
+                {
+                    <option value="@s" selected="@(filter.Status == s)">@s</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Filter</button>
+    </form>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal">
+        <div class="sp-empty"><span class="sp-empty__emoji">🎉</span><p class="mb-0">No assignments right now!</p></div>
+    </div>
+}
+else
+{
+    @if (pending.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2">
+            <h3 class="sp-section-title">Pending</h3>
+            @foreach (var item in pending)
+            {
+                <div class="info-row">
+                    <div>
+                        <strong><a asp-action="AssignmentDetail" asp-route-id="@item.Id">@item.Title</a></strong>
+                        <div class="text-muted small">@item.SubjectName · @item.TeacherName · Due @item.DueDate.ToString("MMM d")</div>
+                    </div>
+                    <span class="badge-status badge-status--pending">@item.DisplayStatus</span>
+                </div>
+            }
+        </div>
+    }
+    @if (overdue.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2">
+            <h3 class="sp-section-title">Overdue</h3>
+            @foreach (var item in overdue)
+            {
+                <div class="info-row">
+                    <div>
+                        <strong><a asp-action="AssignmentDetail" asp-route-id="@item.Id">@item.Title</a></strong>
+                        <div class="text-muted small">@item.SubjectName · Due @item.DueDate.ToString("MMM d")</div>
+                    </div>
+                    <span class="badge-status badge-status--overdue">@item.DisplayStatus</span>
+                </div>
+            }
+        </div>
+    }
+    @if (submitted.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2">
+            <h3 class="sp-section-title">Submitted</h3>
+            @foreach (var item in submitted)
+            {
+                <div class="info-row">
+                    <div>
+                        <strong><a asp-action="AssignmentDetail" asp-route-id="@item.Id">@item.Title</a></strong>
+                        <div class="text-muted small">@item.SubjectName · @item.TeacherName</div>
+                    </div>
+                    <span class="badge-status badge-status--submitted">@item.DisplayStatus</span>
+                </div>
+            }
+        </div>
+    }
+    @if (completed.Count > 0)
+    {
+        <div class="dash-panel reveal mb-2">
+            <h3 class="sp-section-title">Completed</h3>
+            @foreach (var item in completed)
+            {
+                <div class="info-row">
+                    <div>
+                        <strong><a asp-action="AssignmentDetail" asp-route-id="@item.Id">@item.Title</a></strong>
+                        <div class="text-muted small">@item.SubjectName · @item.TeacherName</div>
+                    </div>
+                    <span class="badge-status badge-status--graded">@item.DisplayStatus</span>
+                </div>
+            }
+        </div>
+    }
+}

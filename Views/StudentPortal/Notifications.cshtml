@@ -1,0 +1,56 @@
+@model IReadOnlyList<BrightStepsAcademy.Domain.AppNotification>
+@{
+    Layout = "_DashboardLayout";
+    var unread = Model.Count(n => !n.IsRead);
+}
+<div class="section-head reveal mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h2>Notifications</h2>
+        @if (unread > 0)
+        {
+            <p class="text-muted mb-0">@unread unread notification@(unread == 1 ? "" : "s")</p>
+        }
+    </div>
+    @if (unread > 0)
+    {
+        <form method="post" asp-action="MarkAllNotificationsRead">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Mark all as read</button>
+        </form>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal">
+        <div class="sp-empty">
+            <span class="sp-empty__emoji">✨</span>
+            <p class="mb-0">You're all caught up!</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="dash-panel reveal">
+        @foreach (var n in Model)
+        {
+            <article class="mb-3 pb-3 border-bottom @(n.IsRead ? "opacity-75" : "")">
+                <div class="d-flex justify-content-between gap-2 flex-wrap align-items-start">
+                    <div>
+                        <h4 class="mb-1">🔔 @n.Title</h4>
+                        <p class="mb-1">@n.Message</p>
+                        <span class="text-muted small">@n.CreatedAt.ToLocalTime().ToString("MMM d, h:mm tt")</span>
+                    </div>
+                    @if (!n.IsRead)
+                    {
+                        <form method="post" asp-action="MarkNotificationRead" asp-route-id="@n.Id">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Mark as read</button>
+                        </form>
+                    }
+                </div>
+            </article>
+        }
+    </div>
+}
+

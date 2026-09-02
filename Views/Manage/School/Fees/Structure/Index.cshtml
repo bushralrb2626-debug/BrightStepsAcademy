@@ -1,0 +1,36 @@
+@model List<BrightStepsAcademy.Models.Manage.FeeStructureListVm>
+@{
+    ViewData["Title"] = "Fee Structure";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Fee structure</h1>
+        <p class="mg-page-sub"><a href="/Manage/School/Fees">← Fee management</a></p>
+    </div>
+    <a class="mg-btn mg-btn-primary" href="/Manage/School/Fees/Structure/Create">Add fee item</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No fee items</h3><p>Define tuition, transport, and other recurring charges.</p><a class="mg-btn mg-btn-primary" href="/Manage/School/Fees/Structure/Create">Add fee item</a></div></div>
+}
+else
+{
+    <div class="mg-card mg-table-wrap">
+        <table class="mg-table">
+            <thead><tr><th>Name</th><th>Class</th><th>Amount</th><th>Frequency</th><th>Status</th></tr></thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@(item.ClassName ?? "All classes")</td>
+                    <td>@item.Amount.ToString("N2")</td>
+                    <td>@(item.BillingFrequency ?? "—")</td>
+                    <td><span class="mg-badge @(item.IsActive ? "mg-badge-ok" : "mg-badge-off")">@(item.IsActive ? "Active" : "Inactive")</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

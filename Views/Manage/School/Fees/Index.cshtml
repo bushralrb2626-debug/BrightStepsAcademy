@@ -1,0 +1,29 @@
+@model BrightStepsAcademy.Models.Manage.FeeDashboardVm
+@{
+    ViewData["Title"] = "Fee Management";
+}
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Fee Management</h1>
+        <p class="mg-page-sub">Structure, vouchers, and payments</p>
+    </div>
+</div>
+
+<div class="mg-stats">
+    <div class="mg-stat"><div class="mg-stat__value">@Model.StructureCount</div><div class="mg-stat__label">Fee items</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.VoucherCount</div><div class="mg-stat__label">Vouchers</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.PendingCount</div><div class="mg-stat__label">Pending</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.PaidCount</div><div class="mg-stat__label">Paid</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.TotalOutstanding.ToString("N0")</div><div class="mg-stat__label">Outstanding</div></div>
+    <div class="mg-stat"><div class="mg-stat__value">@Model.TotalCollected.ToString("N0")</div><div class="mg-stat__label">Collected</div></div>
+</div>
+
+<div class="mg-card" style="margin-top:1.25rem;">
+    <h2 class="mg-section-title">Quick actions</h2>
+    <div class="mg-actions">
+        <a class="mg-btn mg-btn-primary" href="/Manage/School/Fees/Structure">Fee structure</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Fees/Structure/Create">+ Add fee item</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Fees/Vouchers">All vouchers</a>
+        <a class="mg-btn mg-btn-secondary" href="/Manage/School/Fees/Vouchers/Create">+ Create voucher</a>
+    </div>
+</div>

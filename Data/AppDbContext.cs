@@ -35,6 +35,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
     public DbSet<Assessment> Assessments => Set<Assessment>();
     public DbSet<AssessmentMark> AssessmentMarks => Set<AssessmentMark>();
+    public DbSet<ClassTimetableSlot> ClassTimetableSlots => Set<ClassTimetableSlot>();
+    public DbSet<ClassAssignmentItem> ClassAssignmentItems => Set<ClassAssignmentItem>();
+    public DbSet<ClassAssignmentSubmission> ClassAssignmentSubmissions => Set<ClassAssignmentSubmission>();
+    public DbSet<FeeStructureItem> FeeStructureItems => Set<FeeStructureItem>();
+    public DbSet<FeeVoucher> FeeVouchers => Set<FeeVoucher>();
+    public DbSet<FeePayment> FeePayments => Set<FeePayment>();
     public DbSet<AppPermission> AppPermissions => Set<AppPermission>();
     public DbSet<SchoolAdminProfile> SchoolAdminProfiles => Set<SchoolAdminProfile>();
     public DbSet<UserPermissionGrant> UserPermissionGrants => Set<UserPermissionGrant>();
@@ -193,6 +199,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.HasOne(x => x.Floor)
                 .WithMany(f => f.Rooms)
                 .HasForeignKey(x => x.FloorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(x => x.SchoolClass)
+                .WithMany()
+                .HasForeignKey(x => x.SchoolClassId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(x => x.SchoolSection)
+                .WithMany()
+                .HasForeignKey(x => x.SchoolSectionId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -467,6 +483,78 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.Property(x => x.Topic).HasMaxLength(256);
             e.Property(x => x.Homework).HasMaxLength(2000);
             e.Property(x => x.Instructions).HasMaxLength(2000);
+        });
+
+        ConfigureClassScopedContent<ClassAssignmentItem>(builder, "ClassAssignmentItems");
+        builder.Entity<ClassAssignmentItem>(e =>
+        {
+            e.Property(x => x.TotalMarks).HasPrecision(8, 2);
+            e.Property(x => x.AttachmentPath).HasMaxLength(512);
+            e.Property(x => x.AttachmentFileName).HasMaxLength(256);
+            e.Property(x => x.AttachmentContentType).HasMaxLength(128);
+        });
+
+        builder.Entity<ClassAssignmentSubmission>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.TextResponse).HasMaxLength(8000);
+            e.Property(x => x.FilePath).HasMaxLength(512);
+            e.Property(x => x.FileName).HasMaxLength(256);
+            e.Property(x => x.FileContentType).HasMaxLength(128);
+            e.Property(x => x.TeacherFeedback).HasMaxLength(2000);
+            e.Property(x => x.ObtainedMarks).HasPrecision(8, 2);
+            e.HasIndex(x => new { x.AssignmentId, x.StudentId }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Assignment).WithMany(a => a.Submissions).HasForeignKey(x => x.AssignmentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<ClassTimetableSlot>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.PeriodLabel).HasMaxLength(64);
+            e.HasIndex(x => new { x.SchoolClassId, x.SchoolSectionId, x.DayOfWeek, x.PeriodOrder }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolSection).WithMany().HasForeignKey(x => x.SchoolSectionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Subject).WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.StaffMember).WithMany().HasForeignKey(x => x.StaffMemberId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Room).WithMany().HasForeignKey(x => x.RoomId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<FeeStructureItem>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            e.Property(x => x.Description).HasMaxLength(512);
+            e.Property(x => x.Amount).HasPrecision(12, 2);
+            e.Property(x => x.BillingFrequency).HasMaxLength(64);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.SchoolClass).WithMany().HasForeignKey(x => x.SchoolClassId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<FeeVoucher>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.VoucherNumber).HasMaxLength(32).IsRequired();
+            e.Property(x => x.Title).HasMaxLength(256).IsRequired();
+            e.Property(x => x.TotalAmount).HasPrecision(12, 2);
+            e.Property(x => x.PaidAmount).HasPrecision(12, 2);
+            e.Property(x => x.Notes).HasMaxLength(2000);
+            e.HasIndex(x => new { x.SchoolId, x.VoucherNumber }).IsUnique();
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<FeePayment>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Amount).HasPrecision(12, 2);
+            e.Property(x => x.PaymentMethod).HasMaxLength(64);
+            e.Property(x => x.Reference).HasMaxLength(128);
+            e.Property(x => x.Notes).HasMaxLength(512);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.FeeVoucher).WithMany(v => v.Payments).HasForeignKey(x => x.FeeVoucherId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 

@@ -1,0 +1,36 @@
+<script>
+document.getElementById('BuildingId')?.addEventListener('change', async function () {
+  const id = this.value;
+  const floor = document.getElementById('FloorId');
+  floor.innerHTML = '<option value="">Loading…</option>';
+  if (!id) { floor.innerHTML = '<option value="">Select…</option>'; return; }
+  const res = await fetch('/Manage/School/Rooms/FloorsByBuilding?buildingId=' + id);
+  const data = await res.json();
+  floor.innerHTML = '<option value="">Select…</option>' + data.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+});
+
+async function reloadSections(classId, selectedSectionId) {
+  const section = document.getElementById('SchoolSectionId');
+  if (!section) return;
+  if (!classId) {
+    section.innerHTML = '<option value="">— No section —</option>';
+    return;
+  }
+  section.innerHTML = '<option value="">Loading…</option>';
+  const res = await fetch('/Manage/School/Rooms/SectionsByClass?classId=' + classId);
+  const data = await res.json();
+  section.innerHTML = '<option value="">— No section —</option>' + data.map(s =>
+    `<option value="${s.id}"${selectedSectionId && s.id === selectedSectionId ? ' selected' : ''}>${s.label}</option>`
+  ).join('');
+}
+
+document.getElementById('SchoolClassId')?.addEventListener('change', function () {
+  const quickClass = document.getElementById('QuickSectionClassId');
+  if (quickClass) quickClass.value = this.value;
+  reloadSections(this.value, null);
+});
+
+const initialClass = document.getElementById('SchoolClassId')?.value;
+const initialSection = document.getElementById('SchoolSectionId')?.value;
+if (initialClass) reloadSections(initialClass, initialSection);
+</script>

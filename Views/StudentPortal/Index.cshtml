@@ -1,35 +1,238 @@
-@using BrightStepsAcademy.Domain
-@{
-    Layout = "_DashboardLayout";
-    var student = ViewBag.Student as StudentRecord;
-}
-<div class="welcome-banner reveal">
-    <h2>Welcome@(student is not null ? $", {student.FullName.Split(' ').FirstOrDefault()}" : "")</h2>
-    <p>View your report card and academic progress from published school records.</p>
-</div>
-
-@if (student is null)
-{
-    <div class="dash-panel reveal">
-        <p class="text-muted mb-0">Your student profile is not linked to this account yet. Please contact your school administrator.</p>
-    </div>
-}
-else
-{
-    <div class="grid-2 stagger mb-2">
-        <article class="info-card card-lift accent-sky">
-            <h3 class="mb-0">@student.FullName</h3>
-            <p class="text-muted mb-1">@student.StudentCode · Roll @(student.RollNumber ?? "—")</p>
-            <div class="info-row">
-                <span>Class</span>
-                <strong>@(student.SchoolClass?.Name ?? student.ClassName ?? "—") · @(student.SchoolSection?.Name ?? student.Section ?? "—")</strong>
-            </div>
-            <a class="btn-bsa btn-bsa-sm btn-bsa-primary mt-2" asp-action="ReportCard">View report card</a>
-        </article>
-        <article class="info-card card-lift accent-mint">
-            <h3 class="mb-0">Report Card</h3>
-            <p class="text-muted">Subject-wise marks for class tests, bi-monthly, mid term, and final term — plus attendance summary.</p>
-            <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="ReportCard">Open report card</a>
-        </article>
-    </div>
-}
+@model StudentDashboardVm
+@using BrightStepsAcademy.Domain
+@{
+    Layout = "_DashboardLayout";
+    var student = ViewBag.Student as StudentRecord;
+    var profile = (DashboardProfile)ViewBag.Profile;
+    var hour = DateTime.Now.Hour;
+    var greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+    var now = TimeOnly.FromDateTime(DateTime.Now);
+}
+@if (ViewBag.MustChangePassword == true)
+{
+    <div class="alert-bsa alert-bsa-warn mb-2">
+        Please <a asp-action="Settings">change your password</a> in Settings to continue using the student portal.
+    </div>
+}
+
+@if (student is null)
+{
+    <div class="dash-panel reveal">
+        <div class="sp-empty">
+            <span class="sp-empty__emoji">🔗</span>
+            <p class="mb-0">Your student profile is not linked to this account yet. Please contact your school administrator.</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="welcome-banner reveal">
+        <h2>@greeting, @profile.FirstName! 👋</h2>
+        <p>@Model.ClassDisplay</p>
+    </div>
+
+    <div class="grid-4 stagger mb-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;">
+        <article class="stat-card reveal accent-mint">
+            <p class="text-muted mb-0">Attendance</p>
+            <h3 class="mb-0">@Model.AttendancePercentage%</h3>
+        </article>
+        <article class="stat-card reveal accent-sky">
+            <p class="text-muted mb-0">Pending Assignments</p>
+            <h3 class="mb-0">@Model.PendingAssignmentCount</h3>
+        </article>
+        <article class="stat-card reveal accent-royal">
+            <p class="text-muted mb-0">Upcoming Exams</p>
+            <h3 class="mb-0">@Model.UpcomingExamCount</h3>
+        </article>
+        <article class="stat-card reveal accent-coral">
+            <p class="text-muted mb-0">Recent Average</p>
+            <h3 class="mb-0">@(Model.RecentAverage.HasValue ? $"{Model.RecentAverage:0.#}%" : "—")</h3>
+        </article>
+    </div>
+
+    <div class="grid-2 mb-2">
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Today's Classes</h3></div>
+            @if (Model.TodayTimetable.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">📅</span><p class="mb-0">No classes scheduled for today.</p></div>
+            }
+            else
+            {
+                foreach (var slot in Model.TodayTimetable)
+                {
+                    var isCurrent = now >= slot.StartTime && now <= slot.EndTime;
+                    var isUpcoming = !isCurrent && now < slot.StartTime;
+                    var css = isCurrent ? "is-current" : isUpcoming ? "is-upcoming" : "";
+                    <div class="sp-timetable-slot @css">
+                        <div class="sp-time">@slot.StartTime.ToString("h:mm tt") – @slot.EndTime.ToString("h:mm tt")</div>
+                        <div>
+                            <strong>@slot.SubjectName</strong>
+                            <div class="text-muted small">@(slot.TeacherName ?? "—")@(slot.RoomName is not null ? $" · {slot.RoomName}" : "")</div>
+                        </div>
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Timetable">View timetable</a>
+        </div>
+
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Today's Diary</h3></div>
+            @if (Model.TodayDiary.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">📖</span><p class="mb-0">No diary entries available.</p></div>
+            }
+            else
+            {
+                foreach (var item in Model.TodayDiary.Take(3))
+                {
+                    <div class="mb-3">
+                        <strong>@item.SubjectName</strong>
+                        @if (!string.IsNullOrWhiteSpace(item.Topic))
+                        {
+                            <div class="text-muted small">Topic: @item.Topic</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(item.Homework))
+                        {
+                            <div class="text-muted small">Homework: @item.Homework</div>
+                        }
+                        @if (item.DueDate.HasValue)
+                        {
+                            <div class="text-muted small">Due: @item.DueDate.Value.ToString("MMM d")</div>
+                        }
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Diary">View diary</a>
+        </div>
+    </div>
+
+    <div class="grid-2 mb-2">
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Upcoming Assignments</h3></div>
+            @if (Model.UpcomingAssignments.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">🎉</span><p class="mb-0">No assignments right now!</p></div>
+            }
+            else
+            {
+                foreach (var a in Model.UpcomingAssignments.Take(4))
+                {
+                    <div class="info-row">
+                        <div>
+                            <strong><a asp-action="AssignmentDetail" asp-route-id="@a.Id">@a.Title</a></strong>
+                            <div class="text-muted small">@a.SubjectName · Due @a.DueDate.ToString("MMM d")</div>
+                        </div>
+                        <span class="badge-status badge-status--pending">@a.DisplayStatus</span>
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Assignments">View all assignments</a>
+        </div>
+
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>My Attendance</h3></div>
+            <h3 class="mb-2">@Model.AttendancePercentage%</h3>
+            <div class="d-flex gap-3 flex-wrap text-muted small mb-2">
+                <span>Present: <strong>@Model.AttendancePresent</strong></span>
+                <span>Absent: <strong>@Model.AttendanceAbsent</strong></span>
+                <span>Late: <strong>@Model.AttendanceLate</strong></span>
+            </div>
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft" asp-action="Attendance">View attendance</a>
+        </div>
+    </div>
+
+    <div class="grid-2 mb-2">
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Recent Announcements</h3></div>
+            @if (Model.RecentAnnouncements.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">✨</span><p class="mb-0">You're all caught up!</p></div>
+            }
+            else
+            {
+                foreach (var a in Model.RecentAnnouncements.Take(3))
+                {
+                    <div class="mb-2">
+                        <strong>@a.Title</strong>
+                        <div class="text-muted small">@a.AuthorName · @a.ContentDate.ToString("MMM d")</div>
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Announcements">View announcements</a>
+        </div>
+
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Recent Materials</h3></div>
+            @if (Model.RecentMaterials.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">📁</span><p class="mb-0">No study material available.</p></div>
+            }
+            else
+            {
+                foreach (var m in Model.RecentMaterials.Take(4))
+                {
+                    <div class="info-row">
+                        <div>
+                            <strong>📄 @m.Title</strong>
+                            <div class="text-muted small">@m.SubjectName · @m.ContentDate.ToString("MMM d")</div>
+                        </div>
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Materials">View course material</a>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Recent Results</h3></div>
+            @if (Model.RecentMarks.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">📊</span><p class="mb-0">No results have been published yet.</p></div>
+            }
+            else
+            {
+                foreach (var m in Model.RecentMarks.Take(4))
+                {
+                    <div class="sp-mark-row">
+                        <div>
+                            <strong>@m.AssessmentName</strong>
+                            <div class="text-muted small">@m.SubjectName</div>
+                        </div>
+                        <div class="text-end">
+                            <div>@m.ObtainedMarks / @m.TotalMarks</div>
+                            <div class="text-muted small">@(m.Percentage.HasValue ? $"{m.Percentage:0.#}%" : "")</div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(m.GradeLabel))
+                        {
+                            <span class="sp-grade-pill">@m.GradeLabel</span>
+                        }
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Marks">View all results</a>
+        </div>
+
+        <div class="dash-panel reveal">
+            <div class="dash-panel__head"><h3>Upcoming Exams</h3></div>
+            @if (Model.UpcomingExams.Count == 0)
+            {
+                <div class="sp-empty"><span class="sp-empty__emoji">📝</span><p class="mb-0">No upcoming exams scheduled.</p></div>
+            }
+            else
+            {
+                foreach (var exam in Model.UpcomingExams.Take(3))
+                {
+                    <div class="mb-3">
+                        <strong>@exam.Name</strong>
+                        <div class="text-muted small">@exam.SubjectName · @exam.ExamDate.ToString("MMM d, yyyy")</div>
+                        <div class="text-muted small">Total marks: @exam.TotalMarks</div>
+                    </div>
+                }
+            }
+            <a class="btn-bsa btn-bsa-sm btn-bsa-soft mt-2" asp-action="Exams">View exam schedule</a>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,62 @@
+@model StudentFormVm
+
+<section class="mg-form-section">
+    <h2 class="mg-form-section__title">Student portal login</h2>
+    <p class="mg-page-sub">Optional — leave unchecked to create the student without portal access.</p>
+    <input type="hidden" asp-for="HasStudentLogin" />
+
+    <div class="mg-field">
+        <label class="mg-check">
+            <input type="checkbox" asp-for="EnableStudentPortal" id="enableStudentPortal" />
+            Enable student portal access
+        </label>
+    </div>
+
+    <div id="studentPortalFields" style="@(Model.EnableStudentPortal ? "" : "display:none;")">
+        <div class="mg-grid-2">
+            <div class="mg-field"><label>Login ID</label><input asp-for="StudentLoginId" placeholder="e.g. STU_1234" /></div>
+            @if (!Model.HasStudentLogin)
+            {
+                <div class="mg-field"><label>Initial password</label><input asp-for="StudentPassword" type="password" autocomplete="new-password" /></div>
+                <div class="mg-field"><label>Confirm password</label><input asp-for="StudentConfirmPassword" type="password" autocomplete="new-password" /></div>
+            }
+        </div>
+
+        @if (Model.HasStudentLogin)
+        {
+            <div class="mg-field">
+                <label class="mg-check"><input type="checkbox" asp-for="ResetStudentPassword" id="resetStudentPassword" /> Reset student password</label>
+            </div>
+            <div id="resetStudentPasswordFields" style="@(Model.ResetStudentPassword ? "" : "display:none;")">
+                <div class="mg-grid-2">
+                    <div class="mg-field"><label>New password</label><input asp-for="NewStudentPassword" type="password" autocomplete="new-password" /></div>
+                    <div class="mg-field"><label>Confirm new password</label><input asp-for="NewStudentConfirmPassword" type="password" autocomplete="new-password" /></div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<script>
+(function () {
+    const enableStudentPortal = document.getElementById('enableStudentPortal');
+    const studentPortalFields = document.getElementById('studentPortalFields');
+    const resetStudentPassword = document.getElementById('resetStudentPassword');
+    const resetStudentPasswordFields = document.getElementById('resetStudentPasswordFields');
+
+    function syncStudentPortal() {
+        if (studentPortalFields && enableStudentPortal) {
+            studentPortalFields.style.display = enableStudentPortal.checked ? '' : 'none';
+        }
+    }
+
+    function syncStudentReset() {
+        if (resetStudentPasswordFields && resetStudentPassword) {
+            resetStudentPasswordFields.style.display = resetStudentPassword.checked ? '' : 'none';
+        }
+    }
+
+    if (enableStudentPortal) enableStudentPortal.addEventListener('change', syncStudentPortal);
+    if (resetStudentPassword) resetStudentPassword.addEventListener('change', syncStudentReset);
+})();
+</script>

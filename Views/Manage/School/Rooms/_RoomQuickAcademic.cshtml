@@ -1,0 +1,29 @@
+@model RoomFormVm
+<div class="mg-card" style="margin-top:1rem;">
+    <h2 class="mg-section-title">Quick add class or section</h2>
+    <div class="mg-grid-2">
+        <form method="post" action="/Manage/School/Rooms/QuickClass" class="mg-form" style="padding:0.75rem;background:#f8faf9;border-radius:8px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnRoomId" value="@(Model.Id == Guid.Empty ? null : Model.Id)" />
+            <div class="mg-field" style="margin:0;"><label>Add class</label><input name="Name" placeholder="e.g. Grade 5" required /></div>
+            <div class="mg-field" style="margin:0.5rem 0 0;"><input name="GradeLevel" placeholder="Grade level (optional)" /></div>
+            <button type="submit" class="mg-btn mg-btn-sm mg-btn-secondary" style="margin-top:0.5rem;">Add class</button>
+        </form>
+        <form method="post" action="/Manage/School/Rooms/QuickSection" class="mg-form" style="padding:0.75rem;background:#f8faf9;border-radius:8px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnRoomId" value="@(Model.Id == Guid.Empty ? null : Model.Id)" />
+            <div class="mg-field" style="margin:0;">
+                <label>Add section</label>
+                <select name="SchoolClassId" id="QuickSectionClassId" required>
+                    <option value="">Select class…</option>
+                    @foreach (var item in Model.ClassOptions.Where(x => !string.IsNullOrEmpty(x.Value)))
+                    {
+                        <option value="@item.Value" selected="@(item.Value == Model.SchoolClassId?.ToString() ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="mg-field" style="margin:0.5rem 0 0;"><input name="Name" placeholder="e.g. A" required /></div>
+            <button type="submit" class="mg-btn mg-btn-sm mg-btn-secondary" style="margin-top:0.5rem;">Add section</button>
+        </form>
+    </div>
+</div>

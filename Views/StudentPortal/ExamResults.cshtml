@@ -1,0 +1,28 @@
+@model StudentExamResultsVm?
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2"><h2>Exam Results</h2><p>Only published exam results are shown.</p></div>
+
+@if (Model is null || Model.SubjectResults.Count == 0)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">No published exam results yet.</p></div>
+}
+else
+{
+    <div class="dash-panel reveal mb-2">
+        <h3>Overall: @Model.OverallPercentage%</h3>
+    </div>
+    <div class="dash-panel reveal">
+        @foreach (var r in Model.SubjectResults)
+        {
+            <div class="info-row">
+                <div>
+                    <strong>@r.SubjectName</strong>
+                    <div class="text-muted small">@r.AssessmentName</div>
+                </div>
+                <strong>@(r.Percentage.HasValue ? $"{r.Percentage:0.#}%" : "—") @(r.GradeLabel is not null ? $"({r.GradeLabel})" : "")</strong>
+            </div>
+        }
+    </div>
+}

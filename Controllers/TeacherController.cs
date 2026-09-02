@@ -831,4 +831,113 @@ public class TeacherController : TeacherPortalControllerBase
         ViewBag.User = user;
         return View();
     }
+
+    public async Task<IActionResult> ClassAssignments(Guid? assignmentId, CancellationToken ct)
+    {
+        if (RequireSchool(out var schoolId) is { } deny) return deny;
+        await HydrateAsync(ct, assignmentId);
+        var selected = assignmentId ?? (Guid?)ViewBag.SelectedAssignmentId;
+        if (!selected.HasValue) return View(Array.Empty<ClassAssignmentListItemVm>());
+
+        var assignment = await GetOwnedAssignmentAsync(schoolId, selected.Value, ct);
+        if (assignment is null) return Forbid();
+
+        var items = await Db.ClassAssignmentItems.AsNoTracking()
+            .Where(a => a.SchoolId == schoolId
+                        && a.SchoolClassId == assignment.SchoolClassId
+                        && a.SchoolSectionId == assignment.SchoolSectionId
+                        && a.SubjectId == assignment.SubjectId)
+            .OrderByDescending(a => a.ContentDate)
+            .Select(a => new ClassAssignmentListItemVm
+            {
+                Id = a.Id,
+                Title = a.Title,
+                ContentDate = a.ContentDate,
+                DueDate = a.DueDate,
+                Status = a.Status,
+                AllowSubmission = a.AllowSubmission,
+                AssignmentLabel = assignment.DisplayLabel
+            })
+            .ToListAsync(ct);
+        ViewData["Title"] = "Student Assignments";
+        return View(items);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CreateClassAssignment(Guid assignmentId, CancellationToken ct)
+    {
+        if (RequireSchool(out var schoolId) is { } deny) return deny;
+        if (await GetOwnedAssignmentAsync(schoolId, assignmentId, ct) is null) return Forbid();
+        await HydrateAsync(ct, assignmentId);
+        ViewData["Title"] = "Create assignment";
+        return View(new ClassAssignmentFormVm { AssignmentId = assignmentId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateClassAssignment(ClassAssignmentFormVm model, CancellationToken ct)
+    {
+        if (RequireSchool(out var schoolId) is { } deny) return deny;
+        var (staff, staffErr) = await RequireStaffAsync(schoolId, ct);
+        if (staffErr is not null) return staffErr;
+        var assignment = await GetOwnedAssignmentAsync(schoolId, model.AssignmentId, ct);
+        if (assignment is null || staff is null) return Forbid();
+
+        if (!ModelState.IsValid)
+        {
+            await HydrateAsync(ct, model.AssignmentId);
+            ViewData["Title"] = "Create assignment";
+            return View(model);
+        }
+
+        string? path = null;
+        string? fileName = null;
+        string? contentType = null;
+        long? size = null;
+        if (model.Attachment is { Length: > 0 })
+        {
+            path = await _files.SaveAcademicAsync(model.Attachment, schoolId, "class-assignments", ct);
+            fileName = model.Attachment.FileName;
+            contentType = model.Attachment.ContentType;
+            size = model.Attachment.Length;
+        }
+
+        var item = new ClassAssignmentItem
+        {
+            Title = model.Title.Trim(),
+            Description = model.Description?.Trim(),
+            ContentDate = model.ContentDate,
+            DueDate = model.DueDate,
+            TotalMarks = model.TotalMarks,
+            AllowSubmission = model.AllowSubmission,
+            Status = model.Status,
+            PublishedAt = model.Status == PublishStatus.Published ? DateTimeOffset.UtcNow : null,
+            AttachmentPath = path,
+            AttachmentFileName = fileName,
+            AttachmentContentType = contentType,
+            AttachmentSizeBytes = size,
+            CreatedByUserId = CurrentUserId,
+            IsActive = true
+        };
+        ApplyAssignmentScope(item, assignment, schoolId, staff.Id);
+        Db.ClassAssignmentItems.Add(item);
+        await Db.SaveChangesAsync(ct);
+
+        if (model.Status == PublishStatus.Published)
+            await _content.PublishAsync(PublishStatus.Published, schoolId, item.Id, AcademicContentKind.ClassAssignment, ct);
+
+        TempData["Flash"] = "Assignment created.";
+        return RedirectToAction(nameof(ClassAssignments), new { assignmentId = model.AssignmentId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PublishClassAssignment(Guid id, Guid assignmentId, CancellationToken ct)
+    {
+        if (RequireSchool(out var schoolId) is { } deny) return deny;
+        if (await GetOwnedAssignmentAsync(schoolId, assignmentId, ct) is null) return Forbid();
+        await _content.PublishAsync(PublishStatus.Published, schoolId, id, AcademicContentKind.ClassAssignment, ct);
+        TempData["Flash"] = "Assignment published.";
+        return RedirectToAction(nameof(ClassAssignments), new { assignmentId });
+    }
 }

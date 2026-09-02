@@ -122,11 +122,11 @@
                 <div class="mg-nav-label">Operations</div>
                 @if (CanNavAny(PermissionCodes.TimetableView, PermissionCodes.TimetableCreate))
                 {
-                    <span class="mg-nav-soon" title="Module coming soon">Timetable</span>
+                    <a href="/Manage/School/Timetable" class="@(IsActive("/Timetable") ? "active" : null)">Timetable</a>
                 }
                 @if (CanNavAny(PermissionCodes.FeesRecordsView, PermissionCodes.FeesVouchersCreate))
                 {
-                    <span class="mg-nav-soon" title="Module coming soon">Fee management</span>
+                    <a href="/Manage/School/Fees" class="@(IsActive("/Fees") ? "active" : null)">Fee management</a>
                 }
                 @if (CanNavAny(PermissionCodes.AttendanceView, PermissionCodes.AttendanceManage))
                 {

@@ -30,6 +30,8 @@ public class SchoolRoomsController : SchoolManageControllerBase
         var items = await Db.Rooms.AsNoTracking()
             .Include(r => r.Building)
             .Include(r => r.Floor)
+            .Include(r => r.SchoolClass)
+            .Include(r => r.SchoolSection)
             .Where(r => r.SchoolId == SchoolId)
             .OrderBy(r => r.Building.Name).ThenBy(r => r.Floor.FloorNumber).ThenBy(r => r.RoomNumber)
             .ToListAsync(ct);
@@ -37,12 +39,18 @@ public class SchoolRoomsController : SchoolManageControllerBase
     }
 
     [HttpGet("Create")]
-    public async Task<IActionResult> Create(CancellationToken ct)
+    public async Task<IActionResult> Create(Guid? classId, Guid? sectionId, CancellationToken ct)
     {
         if (await ForbidUnlessAsync(PermissionCodes.RoomsManage) is { } deny)
             return deny;
         await LoadCascadeAsync(null, null, ct);
-        return SchoolView("Rooms/Create", new RoomFormVm());
+        var model = new RoomFormVm
+        {
+            SchoolClassId = classId,
+            SchoolSectionId = sectionId
+        };
+        await LoadClassSectionOptionsAsync(model, ct);
+        return SchoolView("Rooms/Create", model);
     }
 
     [HttpPost("Create")]
@@ -55,6 +63,7 @@ public class SchoolRoomsController : SchoolManageControllerBase
         if (!await ValidateRoomParentAsync(model, ct))
         {
             await LoadCascadeAsync(model.BuildingId, model.FloorId, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Rooms/Create", model);
         }
 
@@ -68,6 +77,8 @@ public class SchoolRoomsController : SchoolManageControllerBase
             RoomType = string.IsNullOrWhiteSpace(model.RoomType) ? nameof(RoomTypeKind.Classroom) : model.RoomType,
             Capacity = model.Capacity,
             Description = model.Description?.Trim(),
+            SchoolClassId = model.SchoolClassId,
+            SchoolSectionId = model.SchoolSectionId,
             CreatedByUserId = CurrentUserId,
             IsActive = true
         };
@@ -88,6 +99,7 @@ public class SchoolRoomsController : SchoolManageControllerBase
             ModelState.AddModelError(string.Empty,
                 $"Room {model.RoomNumber?.Trim()} already exists on {floorLabel} of {buildingName}.");
             await LoadCascadeAsync(model.BuildingId, model.FloorId, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Rooms/Create", model);
         }
 
@@ -97,14 +109,14 @@ public class SchoolRoomsController : SchoolManageControllerBase
     }
 
     [HttpGet("Edit/{id:guid}")]
-    public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
+    public async Task<IActionResult> Edit(Guid id, Guid? classId, Guid? sectionId, CancellationToken ct)
     {
         if (await ForbidUnlessAsync(PermissionCodes.RoomsManage) is { } deny)
             return deny;
         var room = await Db.Rooms.FirstOrDefaultAsync(r => r.Id == id && r.SchoolId == SchoolId, ct);
         if (room is null) return NotFound();
         await LoadCascadeAsync(room.BuildingId, room.FloorId, ct);
-        return SchoolView("Rooms/Edit", new RoomFormVm
+        var model = new RoomFormVm
         {
             Id = room.Id,
             BuildingId = room.BuildingId,
@@ -113,8 +125,12 @@ public class SchoolRoomsController : SchoolManageControllerBase
             RoomName = room.RoomName,
             RoomType = room.RoomType,
             Capacity = room.Capacity,
-            Description = room.Description
-        });
+            Description = room.Description,
+            SchoolClassId = classId ?? room.SchoolClassId,
+            SchoolSectionId = sectionId ?? room.SchoolSectionId
+        };
+        await LoadClassSectionOptionsAsync(model, ct);
+        return SchoolView("Rooms/Edit", model);
     }
 
     [HttpPost("Edit/{id:guid}")]
@@ -129,6 +145,7 @@ public class SchoolRoomsController : SchoolManageControllerBase
         if (!await ValidateRoomParentAsync(model, ct))
         {
             await LoadCascadeAsync(model.BuildingId, model.FloorId, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Rooms/Edit", model);
         }
 
@@ -139,6 +156,8 @@ public class SchoolRoomsController : SchoolManageControllerBase
         room.RoomType = model.RoomType;
         room.Capacity = model.Capacity;
         room.Description = model.Description?.Trim();
+        room.SchoolClassId = model.SchoolClassId;
+        room.SchoolSectionId = model.SchoolSectionId;
         room.UpdatedAt = DateTimeOffset.UtcNow;
         room.UpdatedByUserId = CurrentUserId;
         try
@@ -150,6 +169,7 @@ public class SchoolRoomsController : SchoolManageControllerBase
             ModelState.AddModelError(string.Empty,
                 $"Room {model.RoomNumber?.Trim()} already exists on the selected floor of the selected building.");
             await LoadCascadeAsync(model.BuildingId, model.FloorId, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Rooms/Edit", model);
         }
 
@@ -254,6 +274,86 @@ public class SchoolRoomsController : SchoolManageControllerBase
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet("SectionsByClass")]
+    public async Task<IActionResult> SectionsByClass(Guid classId, CancellationToken ct)
+    {
+        var sections = await Db.SchoolSections.AsNoTracking()
+            .Where(s => s.SchoolId == SchoolId && s.SchoolClassId == classId && s.IsActive)
+            .OrderBy(s => s.Name)
+            .Select(s => new { s.Id, Label = s.Name })
+            .ToListAsync(ct);
+        return Json(sections);
+    }
+
+    [HttpPost("QuickClass")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> QuickClass(RoomQuickClassVm model, CancellationToken ct)
+    {
+        if (await ForbidUnlessAnyAsync(PermissionCodes.RoomsManage, PermissionCodes.ClassesManage) is { } deny)
+            return deny;
+        if (string.IsNullOrWhiteSpace(model.Name))
+        {
+            SetFlash("Class name is required.", "error");
+            return RedirectToRoomForm(model.ReturnRoomId);
+        }
+
+        var entity = new SchoolClass
+        {
+            SchoolId = SchoolId,
+            Name = model.Name.Trim(),
+            GradeLevel = model.GradeLevel?.Trim(),
+            IsActive = true
+        };
+        Db.SchoolClasses.Add(entity);
+        await Db.SaveChangesAsync(ct);
+        SetFlash($"Class \"{entity.Name}\" added.");
+        return RedirectToRoomForm(model.ReturnRoomId, entity.Id);
+    }
+
+    [HttpPost("QuickSection")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> QuickSection(RoomQuickSectionVm model, CancellationToken ct)
+    {
+        if (await ForbidUnlessAnyAsync(PermissionCodes.RoomsManage, PermissionCodes.SectionsManage) is { } deny)
+            return deny;
+        if (model.SchoolClassId == Guid.Empty)
+        {
+            SetFlash("Select a class before adding a section.", "error");
+            return RedirectToRoomForm(model.ReturnRoomId);
+        }
+        if (string.IsNullOrWhiteSpace(model.Name))
+        {
+            SetFlash("Section name is required.", "error");
+            return RedirectToRoomForm(model.ReturnRoomId);
+        }
+
+        var classOk = await Db.SchoolClasses.AnyAsync(c => c.Id == model.SchoolClassId && c.SchoolId == SchoolId, ct);
+        if (!classOk)
+        {
+            SetFlash("Selected class was not found.", "error");
+            return RedirectToRoomForm(model.ReturnRoomId);
+        }
+
+        var entity = new SchoolSection
+        {
+            SchoolId = SchoolId,
+            SchoolClassId = model.SchoolClassId,
+            Name = model.Name.Trim(),
+            IsActive = true
+        };
+        Db.SchoolSections.Add(entity);
+        await Db.SaveChangesAsync(ct);
+        SetFlash($"Section \"{entity.Name}\" added.");
+        return RedirectToRoomForm(model.ReturnRoomId, model.SchoolClassId, entity.Id);
+    }
+
+    private IActionResult RedirectToRoomForm(Guid? roomId, Guid? classId = null, Guid? sectionId = null)
+    {
+        if (roomId.HasValue)
+            return RedirectToAction(nameof(Edit), new { id = roomId, classId, sectionId });
+        return RedirectToAction(nameof(Create), new { classId, sectionId });
+    }
+
     [HttpGet("FloorsByBuilding")]
     public async Task<IActionResult> FloorsByBuilding(Guid buildingId, CancellationToken ct)
     {
@@ -273,7 +373,60 @@ public class SchoolRoomsController : SchoolManageControllerBase
         if (!floorOk) ModelState.AddModelError(nameof(model.FloorId), "Select a valid floor for that building.");
         if (string.IsNullOrWhiteSpace(model.RoomNumber))
             ModelState.AddModelError(nameof(model.RoomNumber), "Room number is required.");
+
+        if (model.SchoolSectionId.HasValue && !model.SchoolClassId.HasValue)
+            ModelState.AddModelError(nameof(model.SchoolClassId), "Select a class when assigning a section.");
+
+        if (model.SchoolClassId.HasValue)
+        {
+            var classOk = await Db.SchoolClasses.AnyAsync(c => c.Id == model.SchoolClassId && c.SchoolId == SchoolId && c.IsActive, ct);
+            if (!classOk)
+                ModelState.AddModelError(nameof(model.SchoolClassId), "Select a valid class.");
+        }
+
+        if (model.SchoolSectionId.HasValue)
+        {
+            var sectionOk = await Db.SchoolSections.AnyAsync(s =>
+                s.Id == model.SchoolSectionId
+                && s.SchoolId == SchoolId
+                && s.IsActive
+                && (!model.SchoolClassId.HasValue || s.SchoolClassId == model.SchoolClassId), ct);
+            if (!sectionOk)
+                ModelState.AddModelError(nameof(model.SchoolSectionId), "Select a valid section for the chosen class.");
+        }
+
         return ModelState.IsValid;
+    }
+
+    private async Task LoadClassSectionOptionsAsync(RoomFormVm model, CancellationToken ct)
+    {
+        var classes = await Db.SchoolClasses.AsNoTracking()
+            .Where(c => c.SchoolId == SchoolId && c.IsActive)
+            .OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name)
+            .Select(c => new { c.Id, c.Name })
+            .ToListAsync(ct);
+
+        model.ClassOptions =
+        [
+            new SelectListItem("— No class —", ""),
+            .. classes.Select(c => new SelectListItem(c.Name, c.Id.ToString(), c.Id == model.SchoolClassId))
+        ];
+
+        var sectionsQ = Db.SchoolSections.AsNoTracking()
+            .Where(s => s.SchoolId == SchoolId && s.IsActive);
+        if (model.SchoolClassId.HasValue)
+            sectionsQ = sectionsQ.Where(s => s.SchoolClassId == model.SchoolClassId);
+
+        var sections = await sectionsQ
+            .OrderBy(s => s.Name)
+            .Select(s => new { s.Id, s.Name })
+            .ToListAsync(ct);
+
+        model.SectionOptions =
+        [
+            new SelectListItem("— No section —", ""),
+            .. sections.Select(s => new SelectListItem(s.Name, s.Id.ToString(), s.Id == model.SchoolSectionId))
+        ];
     }
 
     private async Task LoadCascadeAsync(Guid? buildingId, Guid? floorId, CancellationToken ct)

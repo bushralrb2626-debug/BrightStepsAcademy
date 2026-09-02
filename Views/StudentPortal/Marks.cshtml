@@ -1,0 +1,85 @@
+@model IReadOnlyList<StudentMarkItemVm>
+@{
+    Layout = "_DashboardLayout";
+    var filter = (StudentMarkFilterVm?)ViewBag.Filter;
+    var performance = ViewBag.Performance as IReadOnlyList<StudentPerformanceSubjectVm> ?? Array.Empty<StudentPerformanceSubjectVm>();
+    var overallAvg = performance.Count > 0 ? performance.Average(p => p.AveragePercentage) : (decimal?)null;
+    var bestSubject = performance.OrderByDescending(p => p.AveragePercentage).FirstOrDefault();
+}
+<div class="section-head reveal mb-2"><h2>Marks & Grades</h2><p>Only published results are shown.</p></div>
+
+@if (performance.Count > 0)
+{
+    <div class="dash-panel reveal mb-2">
+        <h3 class="sp-section-title">Performance Overview</h3>
+        <div class="grid-3 stagger mb-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+            <article class="stat-card reveal">
+                <p class="text-muted mb-0">Overall average</p>
+                <h3 class="mb-0">@(overallAvg.HasValue ? $"{overallAvg:0.#}%" : "—")</h3>
+            </article>
+            @if (bestSubject is not null)
+            {
+                <article class="stat-card reveal">
+                    <p class="text-muted mb-0">Best subject</p>
+                    <h3 class="mb-0" style="font-size:1.1rem;">@bestSubject.SubjectName</h3>
+                    <small class="text-muted">@bestSubject.AveragePercentage%</small>
+                </article>
+            }
+        </div>
+        <div class="grid-2 stagger">
+            @foreach (var subject in performance)
+            {
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between mb-1">
+                        <strong>@subject.SubjectName</strong>
+                        <span>@subject.AveragePercentage%</span>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar" style="width:@subject.AveragePercentage%"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@if (filter is not null)
+{
+    <form method="get" class="dash-panel reveal mb-2 d-flex gap-2 flex-wrap align-items-end">
+        <div>
+            <label class="small text-muted">Subject</label>
+            <select name="subjectId" class="form-select form-select-sm" asp-items="filter.SubjectOptions"><option value="">All</option></select>
+        </div>
+        <button type="submit" class="btn-bsa btn-bsa-sm btn-bsa-soft">Filter</button>
+    </form>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="dash-panel reveal">
+        <div class="sp-empty"><span class="sp-empty__emoji">📊</span><p class="mb-0">No results have been published yet.</p></div>
+    </div>
+}
+else
+{
+    <div class="dash-panel reveal table-responsive">
+        <table class="table table-sm">
+            <thead><tr><th>Assessment</th><th>Subject</th><th>Date</th><th>Marks</th><th>Total</th><th>%</th><th>Grade</th></tr></thead>
+            <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@m.AssessmentName</td>
+                    <td>@m.SubjectName</td>
+                    <td>@m.AssessmentDate.ToString("MMM d, yyyy")</td>
+                    <td>@m.ObtainedMarks</td>
+                    <td>@m.TotalMarks</td>
+                    <td>@(m.Percentage.HasValue ? $"{m.Percentage:0.#}%" : "—")</td>
+                    <td>@(m.GradeLabel ?? "—")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+

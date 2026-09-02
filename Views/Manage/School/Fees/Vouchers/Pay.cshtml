@@ -1,0 +1,26 @@
+@model BrightStepsAcademy.Models.Manage.FeePaymentFormVm
+@{
+    ViewData["Title"] = "Record Payment";
+}
+<h1 class="mg-page-title">Record payment</h1>
+<p class="mg-page-sub"><a href="/Manage/School/Fees/Vouchers">← Vouchers</a></p>
+<div class="mg-card">
+    <p><strong>Voucher:</strong> @Model.VoucherNumber &nbsp;·&nbsp; <strong>Student:</strong> @Model.StudentName &nbsp;·&nbsp; <strong>Balance:</strong> @Model.Balance.ToString("N2")</p>
+</div>
+<div class="mg-card">
+<form method="post" class="mg-form wide">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <div class="mg-grid-2">
+        <div class="mg-field"><label>Amount</label><input asp-for="Amount" type="number" step="0.01" min="0" required /></div>
+        <div class="mg-field"><label>Payment date</label><input asp-for="PaymentDate" type="date" /></div>
+        <div class="mg-field"><label>Payment method</label><input asp-for="PaymentMethod" placeholder="Cash, Bank transfer, etc." /></div>
+        <div class="mg-field"><label>Reference</label><input asp-for="Reference" placeholder="Receipt or transaction #" /></div>
+        <div class="mg-field" style="grid-column:1/-1;">
+            <label>Notes</label>
+            <textarea asp-for="Notes"></textarea>
+        </div>
+    </div>
+    <button type="submit" class="mg-btn mg-btn-primary">Record payment</button>
+</form>
+</div>

@@ -13,6 +13,7 @@ namespace BrightStepsAcademy.Controllers.Manage;
 public class SchoolStudentsController : SchoolManageControllerBase
 {
     private readonly IGuardianService _guardians;
+    private readonly IStudentAccountService _studentAccounts;
 
     public SchoolStudentsController(
         AppDbContext db,
@@ -20,10 +21,12 @@ public class SchoolStudentsController : SchoolManageControllerBase
         IPermissionService permissions,
         IAuditService audit,
         UserManager<ApplicationUser> userManager,
-        IGuardianService guardians)
+        IGuardianService guardians,
+        IStudentAccountService studentAccounts)
         : base(db, tenant, permissions, audit, userManager)
     {
         _guardians = guardians;
+        _studentAccounts = studentAccounts;
     }
 
     [HttpGet("")]
@@ -57,6 +60,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
             return deny;
 
         ValidateGuardianFields(model, isEdit: false);
+        ValidateStudentPortalFields(model, isEdit: false);
         if (!ModelState.IsValid)
         {
             await LoadExistingGuardiansAsync(model, ct);
@@ -94,6 +98,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
         {
             ModelState.AddModelError(string.Empty, "Student code must be unique within the school.");
             await LoadExistingGuardiansAsync(model, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Students/Create", model);
         }
 
@@ -119,7 +124,30 @@ public class SchoolStudentsController : SchoolManageControllerBase
             await Db.SaveChangesAsync(ct);
             ModelState.AddModelError(string.Empty, guardianResult.Error ?? "Could not assign guardian.");
             await LoadExistingGuardiansAsync(model, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Students/Create", model);
+        }
+
+        if (model.EnableStudentPortal)
+        {
+            var studentLogin = await _studentAccounts.ConfigureLoginAsync(new StudentAccountRequest
+            {
+                SchoolId = SchoolId,
+                StudentId = student.Id,
+                UpdatedByUserId = CurrentUserId,
+                EnablePortal = true,
+                LoginId = model.StudentLoginId,
+                Password = model.StudentPassword
+            }, ct);
+
+            if (!studentLogin.Success)
+            {
+                await RollbackCreatedStudentAsync(student.Id, ct);
+                ModelState.AddModelError(string.Empty, studentLogin.Error ?? "Could not create student portal login.");
+                await LoadExistingGuardiansAsync(model, ct);
+                await LoadClassSectionOptionsAsync(model, ct);
+                return SchoolView("Students/Create", model);
+            }
         }
 
         await Audit.LogAsync("Create", "Students", SchoolId, "Student", student.Id.ToString(), student.FullName, ct);
@@ -176,6 +204,14 @@ public class SchoolStudentsController : SchoolManageControllerBase
             model.GuardianPhone = item.ParentPhone;
         }
 
+        model.HasStudentLogin = !string.IsNullOrEmpty(item.UserId);
+        if (model.HasStudentLogin && item.UserId is not null)
+        {
+            var studentUser = await UserManager.FindByIdAsync(item.UserId);
+            model.StudentLoginId = studentUser?.LoginId;
+            model.EnableStudentPortal = studentUser?.IsActive == true;
+        }
+
         await LoadExistingGuardiansAsync(model, ct);
         await LoadClassSectionOptionsAsync(model, ct);
         return SchoolView("Students/Edit", model);
@@ -191,6 +227,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
         if (item is null) return NotFound();
 
         ValidateGuardianFields(model, isEdit: true);
+        ValidateStudentPortalFields(model, isEdit: true);
         if (!ModelState.IsValid)
         {
             await LoadExistingGuardiansAsync(model, ct);
@@ -237,7 +274,39 @@ public class SchoolStudentsController : SchoolManageControllerBase
         {
             ModelState.AddModelError(string.Empty, guardianResult.Error ?? "Could not update guardian.");
             await LoadExistingGuardiansAsync(model, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Students/Edit", model);
+        }
+
+        if (model.EnableStudentPortal && model.ResetStudentPassword && model.NewStudentPassword != model.NewStudentConfirmPassword)
+        {
+            ModelState.AddModelError(nameof(model.NewStudentConfirmPassword), "Student passwords do not match.");
+            await LoadExistingGuardiansAsync(model, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
+            return SchoolView("Students/Edit", model);
+        }
+
+        if (model.EnableStudentPortal || model.HasStudentLogin || model.ResetStudentPassword)
+        {
+            var studentLogin = await _studentAccounts.ConfigureLoginAsync(new StudentAccountRequest
+            {
+                SchoolId = SchoolId,
+                StudentId = id,
+                UpdatedByUserId = CurrentUserId,
+                EnablePortal = model.EnableStudentPortal,
+                LoginId = model.StudentLoginId,
+                Password = model.StudentPassword,
+                ResetPassword = model.ResetStudentPassword,
+                NewPassword = model.NewStudentPassword
+            }, ct);
+
+            if (!studentLogin.Success)
+            {
+                ModelState.AddModelError(string.Empty, studentLogin.Error ?? "Could not update student portal login.");
+                await LoadExistingGuardiansAsync(model, ct);
+                await LoadClassSectionOptionsAsync(model, ct);
+                return SchoolView("Students/Edit", model);
+            }
         }
 
         try
@@ -248,6 +317,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
         {
             ModelState.AddModelError(string.Empty, "Student code must be unique within the school.");
             await LoadExistingGuardiansAsync(model, ct);
+            await LoadClassSectionOptionsAsync(model, ct);
             return SchoolView("Students/Edit", model);
         }
 
@@ -272,20 +342,32 @@ public class SchoolStudentsController : SchoolManageControllerBase
 
     private async Task LoadClassSectionOptionsAsync(StudentFormVm model, CancellationToken ct)
     {
-        model.ClassOptions = await Db.SchoolClasses.AsNoTracking()
+        var selectedClassId = model.SchoolClassId;
+        var classes = await Db.SchoolClasses.AsNoTracking()
             .Where(c => c.SchoolId == SchoolId && c.IsActive)
             .OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name)
-            .Select(c => new SelectListItem(c.Name, c.Id.ToString(), c.Id == model.SchoolClassId))
-            .Prepend(new SelectListItem("— Select class —", ""))
+            .Select(c => new { c.Id, c.Name })
             .ToListAsync(ct);
 
-        model.SectionOptions = await Db.SchoolSections.AsNoTracking()
+        model.ClassOptions =
+        [
+            new SelectListItem("— Select class —", ""),
+            .. classes.Select(c => new SelectListItem(c.Name, c.Id.ToString(), c.Id == selectedClassId))
+        ];
+
+        var selectedSectionId = model.SchoolSectionId;
+        var sections = await Db.SchoolSections.AsNoTracking()
             .Where(s => s.SchoolId == SchoolId && s.IsActive
-                        && (!model.SchoolClassId.HasValue || s.SchoolClassId == model.SchoolClassId))
+                        && (!selectedClassId.HasValue || s.SchoolClassId == selectedClassId))
             .OrderBy(s => s.Name)
-            .Select(s => new SelectListItem(s.Name, s.Id.ToString(), s.Id == model.SchoolSectionId))
-            .Prepend(new SelectListItem("— Select section —", ""))
+            .Select(s => new { s.Id, s.Name })
             .ToListAsync(ct);
+
+        model.SectionOptions =
+        [
+            new SelectListItem("— Select section —", ""),
+            .. sections.Select(s => new SelectListItem(s.Name, s.Id.ToString(), s.Id == selectedSectionId))
+        ];
     }
 
     private async Task SyncClassSectionTextAsync(StudentFormVm model, CancellationToken ct)
@@ -307,13 +389,15 @@ public class SchoolStudentsController : SchoolManageControllerBase
     private async Task LoadExistingGuardiansAsync(StudentFormVm model, CancellationToken ct)
     {
         var guardians = await _guardians.ListGuardiansAsync(SchoolId, ct);
-        model.ExistingGuardians = guardians
-            .Select(g => new SelectListItem(
+        var selectedGuardianId = model.ExistingGuardianId;
+        model.ExistingGuardians =
+        [
+            new SelectListItem("— Select guardian —", ""),
+            .. guardians.Select(g => new SelectListItem(
                 $"{g.FullName} ({g.Email}){(g.PortalEnabled ? " · Portal" : "")}",
                 g.Id.ToString(),
-                model.ExistingGuardianId == g.Id))
-            .Prepend(new SelectListItem("— Select guardian —", ""))
-            .ToList();
+                g.Id == selectedGuardianId))
+        ];
     }
 
     private void ValidateGuardianFields(StudentFormVm model, bool isEdit)
@@ -369,5 +453,41 @@ public class SchoolStudentsController : SchoolManageControllerBase
             else if (model.NewGuardianPassword != model.NewGuardianConfirmPassword)
                 ModelState.AddModelError(nameof(model.NewGuardianConfirmPassword), "Passwords do not match.");
         }
+    }
+
+    private void ValidateStudentPortalFields(StudentFormVm model, bool isEdit)
+    {
+        if (!model.EnableStudentPortal)
+            return;
+
+        var creatingLogin = !isEdit || !model.HasStudentLogin;
+        if (creatingLogin)
+        {
+            if (string.IsNullOrWhiteSpace(model.StudentPassword))
+                ModelState.AddModelError(nameof(model.StudentPassword), "Initial password is required when student portal access is enabled.");
+            else if (model.StudentPassword != model.StudentConfirmPassword)
+                ModelState.AddModelError(nameof(model.StudentConfirmPassword), "Student passwords do not match.");
+        }
+
+        if (model.ResetStudentPassword)
+        {
+            if (string.IsNullOrWhiteSpace(model.NewStudentPassword))
+                ModelState.AddModelError(nameof(model.NewStudentPassword), "Enter a new temporary password.");
+            else if (model.NewStudentPassword != model.NewStudentConfirmPassword)
+                ModelState.AddModelError(nameof(model.NewStudentConfirmPassword), "Student passwords do not match.");
+        }
+    }
+
+    private async Task RollbackCreatedStudentAsync(Guid studentId, CancellationToken ct)
+    {
+        var link = await Db.StudentGuardianLinks.FirstOrDefaultAsync(l => l.StudentId == studentId && l.SchoolId == SchoolId, ct);
+        if (link is not null)
+            Db.StudentGuardianLinks.Remove(link);
+
+        var student = await Db.StudentRecords.FirstOrDefaultAsync(s => s.Id == studentId && s.SchoolId == SchoolId, ct);
+        if (student is not null)
+            Db.StudentRecords.Remove(student);
+
+        await Db.SaveChangesAsync(ct);
     }
 }

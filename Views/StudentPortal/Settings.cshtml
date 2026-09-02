@@ -1,0 +1,36 @@
+@model StudentSettingsVm
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2">
+    <h2>Settings</h2>
+    <p>Manage your account and security preferences.</p>
+</div>
+
+<div class="grid-2 stagger">
+    <article class="dash-panel reveal">
+        <h3 class="sp-section-title">Account</h3>
+        <div class="info-row"><span>Full name</span><strong>@Model.FullName</strong></div>
+        <div class="info-row"><span>Login ID</span><strong>@Model.LoginId</strong></div>
+        @if (!string.IsNullOrWhiteSpace(Model.Email))
+        {
+            <div class="info-row"><span>Email</span><strong>@Model.Email</strong></div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ClassDisplay))
+        {
+            <div class="info-row"><span>Class</span><strong>@Model.ClassDisplay</strong></div>
+        }
+        <p class="text-muted small mt-2 mb-0">Official academic details can only be updated by your school administrator.</p>
+    </article>
+
+    <article class="dash-panel reveal">
+        <h3 class="sp-section-title">Security</h3>
+        <p class="text-muted">Change your password anytime. Your current password is never shown to anyone.</p>
+        <a class="btn-bsa btn-bsa-primary" asp-action="Security">Change password</a>
+        <form method="post" asp-controller="Portal" asp-action="Logout" class="mt-3">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-bsa btn-bsa-ghost">Log out</button>
+        </form>
+    </article>
+</div>
+

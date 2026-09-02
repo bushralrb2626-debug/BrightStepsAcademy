@@ -11,6 +11,5 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV USE_SQLITE=1
 ENV ConnectionStrings__DefaultConnection=Data Source=/tmp/brightsteps.db
-ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "BrightStepsAcademy.dll"]

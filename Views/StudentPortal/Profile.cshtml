@@ -1,0 +1,30 @@
+@model StudentProfileVm?
+@{
+    Layout = "_DashboardLayout";
+}
+<div class="section-head reveal mb-2">
+    <h2>My Profile</h2>
+    <p>Official school record — contact your administrator to update core details.</p>
+</div>
+
+@if (Model is null)
+{
+    <div class="dash-panel reveal"><p class="text-muted mb-0">Profile not available.</p></div>
+}
+else
+{
+    <article class="info-card card-lift accent-sky reveal">
+        <h3 class="mb-1">@Model.FullName</h3>
+        <p class="text-muted mb-2">@Model.StudentCode · Roll @(Model.RollNumber ?? "—")</p>
+        <div class="info-row"><span>Class</span><strong>@Model.ClassDisplay</strong></div>
+        <div class="info-row"><span>School</span><strong>@Model.SchoolName</strong></div>
+        @if (Model.DateOfBirth.HasValue)
+        {
+            <div class="info-row"><span>Date of birth</span><strong>@Model.DateOfBirth.Value.ToString("MMM d, yyyy")</strong></div>
+        }
+        @if (Model.AdmissionDate.HasValue)
+        {
+            <div class="info-row"><span>Admission date</span><strong>@Model.AdmissionDate.Value.ToString("MMM d, yyyy")</strong></div>
+        }
+    </article>
+}

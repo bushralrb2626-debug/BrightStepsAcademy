@@ -1,0 +1,178 @@
+/* Student Portal — modern, friendly academic UI */
+body[data-role="StudentPortal"] {
+  --sp-accent: #5b6cff;
+  --sp-mint: #2dd4bf;
+  --sp-sky: #38bdf8;
+  --sp-coral: #fb7185;
+  --sp-gold: #fbbf24;
+}
+
+body[data-role="StudentPortal"] .dash-sidebar {
+  background: linear-gradient(180deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
+}
+
+body[data-role="StudentPortal"] .dash-nav-link.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  border-left: 3px solid var(--sp-gold);
+}
+
+body[data-role="StudentPortal"] .welcome-banner {
+  background: linear-gradient(125deg, #5b6cff 0%, #7c3aed 50%, #ec4899 100%);
+  border-radius: 1.25rem;
+  padding: 1.75rem 2rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 12px 40px rgba(91, 108, 255, 0.25);
+}
+
+body[data-role="StudentPortal"] .welcome-banner h2 {
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+body[data-role="StudentPortal"] .welcome-banner p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+body[data-role="StudentPortal"] .stat-card {
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: none;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body[data-role="StudentPortal"] .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.1);
+}
+
+body[data-role="StudentPortal"] .stat-card h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+body[data-role="StudentPortal"] .sp-timetable-slot {
+  display: flex;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #f8fafc;
+  border-left: 4px solid transparent;
+}
+
+body[data-role="StudentPortal"] .sp-timetable-slot.is-current {
+  background: #eef2ff;
+  border-left-color: var(--sp-accent);
+  box-shadow: 0 0 0 1px rgba(91, 108, 255, 0.2);
+}
+
+body[data-role="StudentPortal"] .sp-timetable-slot.is-upcoming {
+  background: #f0fdf4;
+  border-left-color: var(--sp-mint);
+}
+
+body[data-role="StudentPortal"] .sp-time {
+  min-width: 7rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+body[data-role="StudentPortal"] .sp-empty {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  color: #64748b;
+}
+
+body[data-role="StudentPortal"] .sp-empty__emoji {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+body[data-role="StudentPortal"] .badge-status {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+body[data-role="StudentPortal"] .badge-status--pending { background: #fef3c7; color: #b45309; }
+body[data-role="StudentPortal"] .badge-status--submitted { background: #dbeafe; color: #1d4ed8; }
+body[data-role="StudentPortal"] .badge-status--graded { background: #d1fae5; color: #047857; }
+body[data-role="StudentPortal"] .badge-status--overdue { background: #fee2e2; color: #b91c1c; }
+
+body[data-role="StudentPortal"] .sp-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+body[data-role="StudentPortal"] .sp-school-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-right: 1rem;
+}
+
+body[data-role="StudentPortal"] .sp-school-brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+body[data-role="StudentPortal"] .sp-school-brand strong {
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+body[data-role="StudentPortal"] .sp-mark-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+body[data-role="StudentPortal"] .sp-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5b6cff, #7c3aed);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+body[data-role="StudentPortal"] .sp-subject-group {
+  margin-bottom: 1.5rem;
+}
+
+body[data-role="StudentPortal"] .sp-subject-group h3 {
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  body[data-role="StudentPortal"] .welcome-banner {
+    padding: 1.25rem;
+  }
+
+  body[data-role="StudentPortal"] .sp-timetable-slot {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
