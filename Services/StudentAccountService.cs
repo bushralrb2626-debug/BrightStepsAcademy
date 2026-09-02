@@ -1,5 +1,6 @@
 using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +34,8 @@ public interface IStudentAccountService
 
 public class StudentAccountService(
     AppDbContext db,
-    UserManager<ApplicationUser> userManager) : IStudentAccountService
+    UserManager<ApplicationUser> userManager,
+    IAccountEmailNotificationService accountEmails) : IStudentAccountService
 {
     public async Task<StudentAccountResult> ConfigureLoginAsync(StudentAccountRequest request, CancellationToken ct = default)
     {
@@ -82,6 +84,8 @@ public class StudentAccountService(
 
             existing.MustChangePassword = true;
             await userManager.UpdateAsync(existing);
+
+            await TrySendPasswordResetEmailAsync(existing, student, request, ct);
             return StudentAccountResult.Ok();
         }
 
@@ -138,7 +142,55 @@ public class StudentAccountService(
         student.UpdatedAt = DateTimeOffset.UtcNow;
         student.UpdatedByUserId = request.UpdatedByUserId;
         await db.SaveChangesAsync(ct);
+
+        await TrySendNewAccountEmailAsync(newUser, student, request, ct);
         return StudentAccountResult.Ok();
+    }
+
+    private async Task TrySendNewAccountEmailAsync(
+        ApplicationUser user,
+        StudentRecord student,
+        StudentAccountRequest request,
+        CancellationToken ct)
+    {
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(student.Email)
+                        ?? AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is null || string.IsNullOrWhiteSpace(request.Password))
+            return;
+
+        await accountEmails.SendNewAccountEmailAsync(new AccountEmailRequest
+        {
+            SchoolId = request.SchoolId,
+            UserId = user.Id,
+            RecipientEmail = recipient,
+            UserName = user.FullName,
+            LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+            TemporaryPassword = request.Password,
+            AccountType = PortalAccountType.Student
+        }, ct);
+    }
+
+    private async Task TrySendPasswordResetEmailAsync(
+        ApplicationUser user,
+        StudentRecord student,
+        StudentAccountRequest request,
+        CancellationToken ct)
+    {
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(student.Email)
+                        ?? AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is null || string.IsNullOrWhiteSpace(request.NewPassword))
+            return;
+
+        await accountEmails.SendPasswordResetEmailAsync(new AccountEmailRequest
+        {
+            SchoolId = request.SchoolId,
+            UserId = user.Id,
+            RecipientEmail = recipient,
+            UserName = user.FullName,
+            LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+            TemporaryPassword = request.NewPassword,
+            AccountType = PortalAccountType.Student
+        }, ct);
     }
 
     private async Task<string> ResolveUniqueStudentEmailAsync(

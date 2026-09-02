@@ -3,6 +3,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models.Manage;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,17 @@ public class SuperAdminSchoolsController : SuperAdminControllerBase
     private const int SchoolsPageSize = 10;
     private const string WizardTempKey = "SuperAdminSchoolWizard";
 
+    private readonly IAccountEmailNotificationService _accountEmails;
+
     public SuperAdminSchoolsController(
         AppDbContext db,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IFileStorageService files)
+        IFileStorageService files,
+        IAccountEmailNotificationService accountEmails)
         : base(db, userManager, signInManager, files)
     {
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("Schools")]
@@ -270,6 +275,21 @@ public class SuperAdminSchoolsController : SuperAdminControllerBase
                 Message = $"Your school admin account for {school.Name} is ready. Please sign in and change your temporary password.",
                 CreatedAt = DateTimeOffset.UtcNow
             });
+
+            var recipient = AccountEmailNotificationService.ResolveRecipientEmail(adminUser.Email);
+            if (recipient is not null)
+            {
+                await _accountEmails.SendNewAccountEmailAsync(new AccountEmailRequest
+                {
+                    SchoolId = school.Id,
+                    UserId = adminUser.Id,
+                    RecipientEmail = recipient,
+                    UserName = adminUser.FullName,
+                    LoginId = adminUser.LoginId ?? adminUser.Email ?? adminUser.UserName ?? adminUser.Id,
+                    TemporaryPassword = wizard.AdminTemporaryPassword,
+                    AccountType = PortalAccountType.Admin
+                }, ct);
+            }
         }
 
         await WriteAuditAsync(school.Id, "SchoolCreated", "Schools", nameof(School), school.Id.ToString(),
@@ -634,6 +654,21 @@ public class SuperAdminSchoolsController : SuperAdminControllerBase
 
         user.MustChangePassword = true;
         await UserManager.UpdateAsync(user);
+
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is not null)
+        {
+            await _accountEmails.SendPasswordResetEmailAsync(new AccountEmailRequest
+            {
+                SchoolId = id,
+                UserId = user.Id,
+                RecipientEmail = recipient,
+                UserName = user.FullName,
+                LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+                TemporaryPassword = model.TemporaryPassword,
+                AccountType = PortalAccountType.Admin
+            }, ct);
+        }
 
         await WriteAuditAsync(id, "SchoolAdminPasswordReset", "SchoolAdmin", nameof(ApplicationUser), user.Id,
             $"Password reset for school admin '{user.FullName}'.", ct);

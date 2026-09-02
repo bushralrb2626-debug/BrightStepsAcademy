@@ -1,5 +1,6 @@
 using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,7 +62,8 @@ public interface IGuardianService
 
 public class GuardianService(
     AppDbContext db,
-    UserManager<ApplicationUser> userManager) : IGuardianService
+    UserManager<ApplicationUser> userManager,
+    IAccountEmailNotificationService accountEmails) : IGuardianService
 {
     public async Task<IReadOnlyList<GuardianProfile>> ListGuardiansAsync(Guid schoolId, CancellationToken ct = default)
         => await db.GuardianProfiles.AsNoTracking()
@@ -253,6 +255,8 @@ public class GuardianService(
 
             user.MustChangePassword = true;
             await userManager.UpdateAsync(user);
+
+            await TrySendGuardianPasswordResetEmailAsync(user, guardian, request.SchoolId, request.NewPassword, ct);
         }
 
         try
@@ -421,7 +425,57 @@ public class GuardianService(
         await userManager.AddToRoleAsync(user, AppRoleNames.Guardian);
         guardian.UserId = user.Id;
         guardian.PortalEnabled = true;
+
+        await TrySendGuardianNewAccountEmailAsync(user, guardian, schoolId, password, ct);
         return (true, null);
+    }
+
+    private async Task TrySendGuardianNewAccountEmailAsync(
+        ApplicationUser user,
+        GuardianProfile guardian,
+        Guid schoolId,
+        string password,
+        CancellationToken ct)
+    {
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(guardian.Email)
+                        ?? AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is null)
+            return;
+
+        await accountEmails.SendNewAccountEmailAsync(new AccountEmailRequest
+        {
+            SchoolId = schoolId,
+            UserId = user.Id,
+            RecipientEmail = recipient,
+            UserName = user.FullName,
+            LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+            TemporaryPassword = password,
+            AccountType = PortalAccountType.Guardian
+        }, ct);
+    }
+
+    private async Task TrySendGuardianPasswordResetEmailAsync(
+        ApplicationUser user,
+        GuardianProfile guardian,
+        Guid schoolId,
+        string? newPassword,
+        CancellationToken ct)
+    {
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(guardian.Email)
+                        ?? AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is null || string.IsNullOrWhiteSpace(newPassword))
+            return;
+
+        await accountEmails.SendPasswordResetEmailAsync(new AccountEmailRequest
+        {
+            SchoolId = schoolId,
+            UserId = user.Id,
+            RecipientEmail = recipient,
+            UserName = user.FullName,
+            LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+            TemporaryPassword = newPassword,
+            AccountType = PortalAccountType.Guardian
+        }, ct);
     }
 
     private static void SyncStudentParentFields(StudentRecord student, GuardianProfile guardian, string relationship)

@@ -75,6 +75,14 @@ builder.Services.AddScoped<IReportCardService, ReportCardService>();
 builder.Services.AddScoped<IGradingService, GradingService>();
 builder.Services.AddScoped<IAcademicContentService, AcademicContentService>();
 
+builder.Services.Configure<BrightStepsAcademy.Services.Email.EmailOptions>(
+    builder.Configuration.GetSection(BrightStepsAcademy.Services.Email.EmailOptions.SectionName));
+builder.Services.AddSingleton<BrightStepsAcademy.Services.Email.SmtpEmailSender>();
+builder.Services.AddSingleton<BrightStepsAcademy.Services.Email.FileEmailOutboxSender>();
+builder.Services.AddSingleton<BrightStepsAcademy.Services.Email.IEmailSender, BrightStepsAcademy.Services.Email.CompositeEmailSender>();
+builder.Services.AddSingleton<BrightStepsAcademy.Services.Email.IEmailTemplateRenderer, BrightStepsAcademy.Services.Email.EmailTemplateRenderer>();
+builder.Services.AddScoped<BrightStepsAcademy.Services.Email.IAccountEmailNotificationService, BrightStepsAcademy.Services.Email.AccountEmailNotificationService>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ISchoolData, MockSchoolData>();
 

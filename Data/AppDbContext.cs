@@ -56,6 +56,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SchoolSubscription> SchoolSubscriptions => Set<SchoolSubscription>();
     public DbSet<SubscriptionChangeLog> SubscriptionChangeLogs => Set<SubscriptionChangeLog>();
     public DbSet<PlatformSettings> PlatformSettings => Set<PlatformSettings>();
+    public DbSet<AccountEmailLog> AccountEmailLogs => Set<AccountEmailLog>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -68,6 +69,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         ConfigurePermissions(builder);
         ConfigureWebsite(builder);
         ConfigureAuditAndNotifications(builder);
+        ConfigureAccountEmailLogs(builder);
         ConfigureApplicationUser(builder);
         ConfigureSubscriptionsAndPlatform(builder);
     }
@@ -750,6 +752,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .WithMany()
                 .HasForeignKey(x => x.SchoolId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
+    private static void ConfigureAccountEmailLogs(ModelBuilder builder)
+    {
+        builder.Entity<AccountEmailLog>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.UserId).HasMaxLength(450).IsRequired();
+            e.Property(x => x.RecipientEmail).HasMaxLength(256).IsRequired();
+            e.Property(x => x.FailureReason).HasMaxLength(500);
+            e.HasIndex(x => new { x.UserId, x.EmailType, x.CreatedAt });
+            e.HasIndex(x => new { x.SchoolId, x.Status });
         });
     }
 

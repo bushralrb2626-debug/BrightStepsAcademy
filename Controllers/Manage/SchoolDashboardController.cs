@@ -2,6 +2,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models.Manage;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,18 @@ namespace BrightStepsAcademy.Controllers.Manage;
 [Route("Manage/School")]
 public class SchoolDashboardController : SchoolManageControllerBase
 {
+    private readonly IAccountEmailNotificationService _accountEmails;
+
     public SchoolDashboardController(
         AppDbContext db,
         ITenantContext tenant,
         IPermissionService permissions,
         IAuditService audit,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IAccountEmailNotificationService accountEmails)
         : base(db, tenant, permissions, audit, userManager)
     {
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("")]
@@ -151,7 +156,7 @@ public class SchoolDashboardController : SchoolManageControllerBase
 
     [HttpPost("Security")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Security(ChangePasswordVm model)
+    public async Task<IActionResult> Security(ChangePasswordVm model, CancellationToken ct = default)
     {
         var user = await UserManager.GetUserAsync(User);
         ViewBag.MustChangePassword = user?.MustChangePassword == true;
@@ -170,6 +175,7 @@ public class SchoolDashboardController : SchoolManageControllerBase
 
         user.MustChangePassword = false;
         await UserManager.UpdateAsync(user);
+        await _accountEmails.SendPasswordChangedEmailAsync(user.Id, ct);
         SetFlash("Password updated successfully.");
         return RedirectToAction(nameof(Index));
     }

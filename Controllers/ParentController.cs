@@ -2,6 +2,7 @@ using System.Security.Claims;
 using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models;using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class ParentController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly AppDbContext _db;
     private readonly IReportCardService _reportCards;
+    private readonly IAccountEmailNotificationService _accountEmails;
 
     public ParentController(
         ISchoolData store,
@@ -26,7 +28,8 @@ public class ParentController : Controller
         IParentAcademicService academic,
         UserManager<ApplicationUser> userManager,
         AppDbContext db,
-        IReportCardService reportCards)
+        IReportCardService reportCards,
+        IAccountEmailNotificationService accountEmails)
     {
         _store = store;
         _guardians = guardians;
@@ -34,6 +37,7 @@ public class ParentController : Controller
         _userManager = userManager;
         _db = db;
         _reportCards = reportCards;
+        _accountEmails = accountEmails;
     }
 
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -260,6 +264,7 @@ public class ParentController : Controller
 
         user.MustChangePassword = false;
         await _userManager.UpdateAsync(user);
+        await _accountEmails.SendPasswordChangedEmailAsync(user.Id, ct);
         TempData["Flash"] = "Password updated successfully.";
         return RedirectToAction(nameof(Index));
     }

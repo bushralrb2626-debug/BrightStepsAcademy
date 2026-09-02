@@ -38,6 +38,13 @@
     <partial name="_GuardianFields" model="Model" />
     <partial name="_StudentPortalFields" model="Model" />
 
+    @if (Model.HasStudentLogin)
+    {
+        ViewBag.ResendCredentialsAction = $"/Manage/School/Students/ResendCredentials/{Model.Id}";
+        ViewBag.ResendCredentialsId = Model.Id;
+        <partial name="Shared/_AccountEmailStatus" model="Model" />
+    }
+
     <button type="submit" class="mg-btn mg-btn-primary">Save changes</button>
 </form>
 </div>

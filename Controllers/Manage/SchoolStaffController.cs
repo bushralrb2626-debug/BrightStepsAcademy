@@ -2,6 +2,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models.Manage;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,14 +13,18 @@ namespace BrightStepsAcademy.Controllers.Manage;
 [Route("Manage/School/Staff")]
 public class SchoolStaffController : SchoolManageControllerBase
 {
+    private readonly IAccountEmailNotificationService _accountEmails;
+
     public SchoolStaffController(
         AppDbContext db,
         ITenantContext tenant,
         IPermissionService permissions,
         IAuditService audit,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IAccountEmailNotificationService accountEmails)
         : base(db, tenant, permissions, audit, userManager)
     {
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("")]
@@ -140,6 +145,14 @@ public class SchoolStaffController : SchoolManageControllerBase
         }
 
         await Audit.LogAsync("Create", "Staff", SchoolId, "StaffMember", staff.Id.ToString(), staff.FullName, ct);
+
+        if (model.HasLoginAccess && staff.UserId is not null)
+        {
+            var createdUser = await UserManager.FindByIdAsync(staff.UserId);
+            if (createdUser is not null)
+                await SendStaffAccountEmailAsync(createdUser, staff.Email, model.StaffCategoryId, model.LoginPassword!, ct);
+        }
+
         SetFlash("Staff member created.");
         return RedirectToAction(nameof(Index));
     }
@@ -152,7 +165,8 @@ public class SchoolStaffController : SchoolManageControllerBase
         var item = await Db.StaffMembers.FirstOrDefaultAsync(s => s.Id == id && s.SchoolId == SchoolId, ct);
         if (item is null) return NotFound();
         await LoadCategoriesAsync(ct, item.StaffCategoryId);
-        return SchoolView("Staff/Edit", new StaffFormVm
+
+        var model = new StaffFormVm
         {
             Id = item.Id,
             StaffCategoryId = item.StaffCategoryId,
@@ -170,7 +184,20 @@ public class SchoolStaffController : SchoolManageControllerBase
             LoginId = item.UserId is null
                 ? null
                 : (await UserManager.FindByIdAsync(item.UserId))?.LoginId
-        });
+        };
+
+        if (!string.IsNullOrEmpty(item.UserId))
+        {
+            var log = await _accountEmails.GetLatestStatusAsync(item.UserId, AccountEmailType.NewAccountCreated, ct);
+            if (log is not null)
+            {
+                model.CredentialsEmailStatus = log.Status.ToString();
+                model.CredentialsEmailFailureReason = log.FailureReason;
+            }
+            model.CanResendCredentialsEmail = log is null || log.Status != AccountEmailDeliveryStatus.Sent;
+        }
+
+        return SchoolView("Staff/Edit", model);
     }
 
     [HttpPost("Edit/{id:guid}")]
@@ -247,6 +274,8 @@ public class SchoolStaffController : SchoolManageControllerBase
             await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("school_id", SchoolId.ToString()));
             item.UserId = user.Id;
             item.HasLoginAccess = true;
+
+            await SendStaffAccountEmailAsync(user, item.Email, model.StaffCategoryId, model.LoginPassword!, ct);
         }
         else if (!model.HasLoginAccess)
         {
@@ -404,6 +433,63 @@ public class SchoolStaffController : SchoolManageControllerBase
                 .Select(c => new { c.Id, c.Name })
                 .ToListAsync(ct),
             "Id", "Name", selectedId);
+    }
+
+    [HttpPost("ResendCredentials/{id:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendCredentials(Guid id, CancellationToken ct)
+    {
+        if (await ForbidUnlessAsync(PermissionCodes.StaffManage) is { } deny)
+            return deny;
+
+        var item = await Db.StaffMembers.FirstOrDefaultAsync(s => s.Id == id && s.SchoolId == SchoolId, ct);
+        if (item is null || string.IsNullOrEmpty(item.UserId))
+        {
+            SetFlash("This staff member does not have portal login access.", "error");
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var accountType = await ResolveStaffAccountTypeAsync(item.StaffCategoryId, ct);
+        var log = await _accountEmails.ResendCredentialsEmailAsync(item.UserId, SchoolId, accountType, ct);
+        SetFlash(log.Status == AccountEmailDeliveryStatus.Sent
+            ? "Credentials email sent with a new temporary password."
+            : $"Could not send credentials email: {log.FailureReason ?? "Unknown error"}",
+            log.Status == AccountEmailDeliveryStatus.Sent ? "success" : "error");
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    private async Task SendStaffAccountEmailAsync(
+        ApplicationUser user,
+        string? staffEmail,
+        Guid staffCategoryId,
+        string password,
+        CancellationToken ct)
+    {
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(staffEmail)
+                        ?? AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is null)
+            return;
+
+        var accountType = await ResolveStaffAccountTypeAsync(staffCategoryId, ct);
+        await _accountEmails.SendNewAccountEmailAsync(new AccountEmailRequest
+        {
+            SchoolId = SchoolId,
+            UserId = user.Id,
+            RecipientEmail = recipient,
+            UserName = user.FullName,
+            LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+            TemporaryPassword = password,
+            AccountType = accountType
+        }, ct);
+    }
+
+    private async Task<PortalAccountType> ResolveStaffAccountTypeAsync(Guid staffCategoryId, CancellationToken ct)
+    {
+        var category = await Db.StaffCategories.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == staffCategoryId && c.SchoolId == SchoolId, ct);
+        return category?.Name.Contains("teacher", StringComparison.OrdinalIgnoreCase) == true
+            ? PortalAccountType.Teacher
+            : PortalAccountType.Staff;
     }
 
     private async Task AssignStaffPortalRolesAsync(ApplicationUser user, Guid staffCategoryId, CancellationToken ct)

@@ -1,0 +1,31 @@
+@model dynamic
+@{
+    var status = Model?.CredentialsEmailStatus as string;
+    var failure = Model?.CredentialsEmailFailureReason as string;
+    var canResend = Model?.CanResendCredentialsEmail == true;
+    var resendAction = ViewBag.ResendCredentialsAction as string;
+    var resendId = ViewBag.ResendCredentialsId;
+}
+
+@if (!string.IsNullOrWhiteSpace(status))
+{
+    <section class="mg-form-section">
+        <h2 class="mg-form-section__title">Account email</h2>
+        <p class="mg-page-sub">
+            Email status:
+            <span class="mg-badge @(status == "Sent" ? "mg-badge-ok" : status == "Failed" ? "mg-badge-danger" : "mg-badge-off")">@status</span>
+        </p>
+        @if (!string.IsNullOrWhiteSpace(failure))
+        {
+            <p class="mg-page-sub" style="color:#b91c1c;">@failure</p>
+        }
+        @if (canResend && !string.IsNullOrWhiteSpace(resendAction) && resendId is not null)
+        {
+            <form method="post" action="@resendAction" style="margin-top:12px;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="mg-btn mg-btn-secondary">Resend credentials email</button>
+            </form>
+            <p class="mg-page-sub">A new temporary password will be generated. The previous password will stop working immediately.</p>
+        }
+    </section>
+}

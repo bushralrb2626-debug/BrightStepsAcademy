@@ -196,6 +196,7 @@
 
     nodes.forEach(function (node) {
       if (!node.parentElement) return;
+      if (node.parentElement.closest("[data-no-translate]")) return;
       var tag = node.parentElement.tagName;
       if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") return;
       var text = node.nodeValue;
@@ -214,6 +215,7 @@
     });
 
     root.querySelectorAll("[placeholder],[aria-label],[alt],[title]").forEach(function (el) {
+      if (el.closest("[data-no-translate]")) return;
       ["placeholder", "aria-label", "alt", "title"].forEach(function (attr) {
         var val = el.getAttribute(attr);
         if (!val) return;

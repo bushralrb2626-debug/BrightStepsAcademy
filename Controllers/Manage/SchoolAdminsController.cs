@@ -2,6 +2,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models.Manage;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,18 @@ namespace BrightStepsAcademy.Controllers.Manage;
 [Route("Manage/School/Administrators")]
 public class SchoolAdminsController : SchoolManageControllerBase
 {
+    private readonly IAccountEmailNotificationService _accountEmails;
+
     public SchoolAdminsController(
         AppDbContext db,
         ITenantContext tenant,
         IPermissionService permissions,
         IAuditService audit,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IAccountEmailNotificationService accountEmails)
         : base(db, tenant, permissions, audit, userManager)
     {
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("")]
@@ -133,6 +138,22 @@ public class SchoolAdminsController : SchoolManageControllerBase
 
         await Db.SaveChangesAsync(ct);
         await Audit.LogAsync("Create", "Administrators", SchoolId, "User", user.Id, user.FullName, ct);
+
+        var recipient = AccountEmailNotificationService.ResolveRecipientEmail(user.Email);
+        if (recipient is not null)
+        {
+            await _accountEmails.SendNewAccountEmailAsync(new AccountEmailRequest
+            {
+                SchoolId = SchoolId,
+                UserId = user.Id,
+                RecipientEmail = recipient,
+                UserName = user.FullName,
+                LoginId = user.LoginId ?? user.Email ?? user.UserName ?? user.Id,
+                TemporaryPassword = model.Password,
+                AccountType = PortalAccountType.Admin
+            }, ct);
+        }
+
         SetFlash("Custom admin created.");
         return RedirectToAction(nameof(Index));
     }
@@ -163,6 +184,26 @@ public class SchoolAdminsController : SchoolManageControllerBase
         }
         await Db.SaveChangesAsync(ct);
         SetFlash("Administrator deactivated.");
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("ResendCredentials/{userId}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendCredentials(string userId, CancellationToken ct)
+    {
+        if (await ForbidUnlessAsync(PermissionCodes.AdminsManage) is { } deny)
+            return deny;
+
+        var profile = await Db.SchoolAdminProfiles
+            .FirstOrDefaultAsync(p => p.SchoolId == SchoolId && p.UserId == userId, ct);
+        if (profile is null)
+            return NotFound();
+
+        var log = await _accountEmails.ResendCredentialsEmailAsync(userId, SchoolId, PortalAccountType.Admin, ct);
+        SetFlash(log.Status == AccountEmailDeliveryStatus.Sent
+            ? "Credentials email sent with a new temporary password."
+            : $"Could not send credentials email: {log.FailureReason ?? "Unknown error"}",
+            log.Status == AccountEmailDeliveryStatus.Sent ? "success" : "error");
         return RedirectToAction(nameof(Index));
     }
 }

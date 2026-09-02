@@ -3,6 +3,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ public class StudentPortalController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly AppDbContext _db;
     private readonly IFileStorageService _files;
+    private readonly IAccountEmailNotificationService _accountEmails;
 
     public StudentPortalController(
         ISchoolData store,
@@ -28,7 +30,8 @@ public class StudentPortalController : Controller
         IReportCardService reportCards,
         UserManager<ApplicationUser> userManager,
         AppDbContext db,
-        IFileStorageService files)
+        IFileStorageService files,
+        IAccountEmailNotificationService accountEmails)
     {
         _store = store;
         _academic = academic;
@@ -36,6 +39,7 @@ public class StudentPortalController : Controller
         _userManager = userManager;
         _db = db;
         _files = files;
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("")]
@@ -395,6 +399,7 @@ public class StudentPortalController : Controller
 
         user.MustChangePassword = false;
         await _userManager.UpdateAsync(user);
+        await _accountEmails.SendPasswordChangedEmailAsync(user.Id, ct);
         TempData["Flash"] = "Password updated successfully.";
         return RedirectToAction(nameof(Index));
     }

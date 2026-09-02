@@ -3,6 +3,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ public class TeacherController : TeacherPortalControllerBase
     private readonly IAcademicContentService _content;
     private readonly IGradingService _grading;
     private readonly IFileStorageService _files;
+    private readonly IAccountEmailNotificationService _accountEmails;
 
     public TeacherController(
         ISchoolData store,
@@ -23,12 +25,14 @@ public class TeacherController : TeacherPortalControllerBase
         AppDbContext db,
         IAcademicContentService content,
         IGradingService grading,
-        IFileStorageService files)
+        IFileStorageService files,
+        IAccountEmailNotificationService accountEmails)
         : base(store, tenant, teacherAccess, userManager, db)
     {
         _content = content;
         _grading = grading;
         _files = files;
+        _accountEmails = accountEmails;
     }
 
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -816,6 +820,7 @@ public class TeacherController : TeacherPortalControllerBase
 
         user.MustChangePassword = false;
         await UserManager.UpdateAsync(user);
+        await _accountEmails.SendPasswordChangedEmailAsync(user.Id, ct);
         TempData["Flash"] = "Password updated.";
         return RedirectToAction(nameof(Index));
     }

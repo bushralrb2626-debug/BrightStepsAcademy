@@ -199,6 +199,9 @@ public class StaffFormVm
     public bool HasLoginAccess { get; set; }
     public string? LoginId { get; set; }
     public string? LoginPassword { get; set; }
+    public string? CredentialsEmailStatus { get; set; }
+    public string? CredentialsEmailFailureReason { get; set; }
+    public bool CanResendCredentialsEmail { get; set; }
 }
 
 public class StudentFormVm
@@ -253,6 +256,9 @@ public class StudentFormVm
     public bool ResetStudentPassword { get; set; }
     public string? NewStudentPassword { get; set; }
     public string? NewStudentConfirmPassword { get; set; }
+    public string? CredentialsEmailStatus { get; set; }
+    public string? CredentialsEmailFailureReason { get; set; }
+    public bool CanResendCredentialsEmail { get; set; }
 
     // Legacy fields kept for reports compatibility
     public string? ParentName { get; set; }

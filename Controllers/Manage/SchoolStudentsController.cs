@@ -2,6 +2,7 @@ using BrightStepsAcademy.Data;
 using BrightStepsAcademy.Domain;
 using BrightStepsAcademy.Models.Manage;
 using BrightStepsAcademy.Services;
+using BrightStepsAcademy.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
 {
     private readonly IGuardianService _guardians;
     private readonly IStudentAccountService _studentAccounts;
+    private readonly IAccountEmailNotificationService _accountEmails;
 
     public SchoolStudentsController(
         AppDbContext db,
@@ -22,11 +24,13 @@ public class SchoolStudentsController : SchoolManageControllerBase
         IAuditService audit,
         UserManager<ApplicationUser> userManager,
         IGuardianService guardians,
-        IStudentAccountService studentAccounts)
+        IStudentAccountService studentAccounts,
+        IAccountEmailNotificationService accountEmails)
         : base(db, tenant, permissions, audit, userManager)
     {
         _guardians = guardians;
         _studentAccounts = studentAccounts;
+        _accountEmails = accountEmails;
     }
 
     [HttpGet("")]
@@ -214,6 +218,7 @@ public class SchoolStudentsController : SchoolManageControllerBase
 
         await LoadExistingGuardiansAsync(model, ct);
         await LoadClassSectionOptionsAsync(model, ct);
+        await LoadStudentEmailStatusAsync(model, item, ct);
         return SchoolView("Students/Edit", model);
     }
 
@@ -338,6 +343,48 @@ public class SchoolStudentsController : SchoolManageControllerBase
         await Db.SaveChangesAsync(ct);
         SetFlash("Student deactivated.");
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("ResendCredentials/{id:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendCredentials(Guid id, CancellationToken ct)
+    {
+        if (await ForbidUnlessAsync(PermissionCodes.StudentsManage) is { } deny)
+            return deny;
+
+        var student = await Db.StudentRecords.FirstOrDefaultAsync(s => s.Id == id && s.SchoolId == SchoolId, ct);
+        if (student is null || string.IsNullOrEmpty(student.UserId))
+        {
+            SetFlash("This student does not have portal login access.", "error");
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var log = await _accountEmails.ResendCredentialsEmailAsync(student.UserId, SchoolId, PortalAccountType.Student, ct);
+        SetFlash(log.Status == AccountEmailDeliveryStatus.Sent
+            ? "Credentials email sent with a new temporary password."
+            : $"Could not send credentials email: {log.FailureReason ?? "Unknown error"}",
+            log.Status == AccountEmailDeliveryStatus.Sent ? "success" : "error");
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    private async Task LoadStudentEmailStatusAsync(StudentFormVm model, StudentRecord student, CancellationToken ct)
+    {
+        if (string.IsNullOrEmpty(student.UserId))
+            return;
+
+        if (string.IsNullOrEmpty(student.UserId))
+            return;
+
+        var log = await _accountEmails.GetLatestStatusAsync(student.UserId, AccountEmailType.NewAccountCreated, ct);
+        if (log is null)
+        {
+            model.CanResendCredentialsEmail = true;
+            return;
+        }
+
+        model.CredentialsEmailStatus = log.Status.ToString();
+        model.CredentialsEmailFailureReason = log.FailureReason;
+        model.CanResendCredentialsEmail = log.Status != AccountEmailDeliveryStatus.Sent;
     }
 
     private async Task LoadClassSectionOptionsAsync(StudentFormVm model, CancellationToken ct)
