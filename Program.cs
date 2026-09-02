@@ -11,6 +11,7 @@ var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrWhiteSpace(port))
 {
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+    Console.WriteLine($"BrightStepsAcademy binding to 0.0.0.0:{port}");
 }
 
 var connectionString =
@@ -88,6 +89,8 @@ builder.Services.AddSingleton<ISchoolData, MockSchoolData>();
 
 var app = builder.Build();
 
+app.MapGet("/health", () => Results.Ok("ok"));
+
 static void EnsureSqliteStorage(string connectionString)
 {
     if (!connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase))
@@ -108,27 +111,39 @@ static void EnsureSqliteStorage(string connectionString)
         Directory.CreateDirectory(directory);
 }
 
-using (var scope = app.Services.CreateScope())
+app.Lifetime.ApplicationStarted.Register(() =>
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (useSqlite)
+    _ = Task.Run(async () =>
     {
-        EnsureSqliteStorage(connectionString);
-        await db.Database.EnsureCreatedAsync();
-    }
-    else
-        await db.Database.MigrateAsync();
-    await DbSeeder.SeedAsync(app.Services);
-    await StudentPortalBootstrap.EnsurePortalLoginsAsync(app.Services);
-    await DemoPortalAccountsBootstrap.EnsureDemoAccountsAsync(app.Services);
-}
+        var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseInit");
+        try
+        {
+            logger.LogInformation("Database initialization started.");
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            if (useSqlite)
+            {
+                EnsureSqliteStorage(connectionString);
+                await db.Database.EnsureCreatedAsync();
+            }
+            else
+                await db.Database.MigrateAsync();
+            await DbSeeder.SeedAsync(app.Services);
+            await StudentPortalBootstrap.EnsurePortalLoginsAsync(app.Services);
+            await DemoPortalAccountsBootstrap.EnsureDemoAccountsAsync(app.Services);
+            logger.LogInformation("Database initialization completed.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Database initialization failed.");
+        }
+    });
+});
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-    if (string.IsNullOrWhiteSpace(port))
-        app.UseHttpsRedirection();
 }
 
 app.UseStaticFiles();

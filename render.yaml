@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /
+    healthCheckPath: /health
     autoDeployTrigger: commit
     envVars:
       - key: USE_SQLITE
