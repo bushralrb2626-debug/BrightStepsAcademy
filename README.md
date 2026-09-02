@@ -76,11 +76,14 @@ BrightStepsAcademy.sln
 └── render.yaml           # Render service config
 ```
 
-## Deploy (Render)
+## Live (Render)
 
-1. Push to GitHub: `https://github.com/bushralrb2626-debug/BrightStepsAcademy`
-2. Connect repo on Render as a Docker web service
-3. Set env vars from `render.yaml` (`USE_SQLITE`, connection string, etc.)
+**URL:** https://brightsteps-academy.onrender.com  
+**Login:** https://brightsteps-academy.onrender.com/Login
+
+Deploy once from the [Render Blueprint](https://dashboard.render.com/blueprint/new) by connecting repo `bushralrb2626-debug/BrightStepsAcademy` and clicking **Deploy Blueprint**. Pushes to `main` auto-deploy.
+
+Production uses **SQLite** at `/app/data/brightsteps.db` (seeded on first boot with demo schools and accounts).
 
 ## Stack
 

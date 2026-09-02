@@ -7,7 +7,7 @@ services:
     region: singapore
     dockerfilePath: ./Dockerfile
     healthCheckPath: /
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
       - key: USE_SQLITE
         value: "1"
