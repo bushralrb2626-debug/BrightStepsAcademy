@@ -94,41 +94,7 @@ builder.Services.AddSingleton<ISchoolData, MockSchoolData>();
 
 var app = builder.Build();
 
-app.MapGet("/health", () => Results.Ok("ok"));
-app.MapGet("/health/ready", () =>
-    DatabaseStartup.IsReady ? Results.Ok("ready") : Results.StatusCode(503));
-
 DatabaseStartup.Begin(app, useSqlite, connectionString);
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/health"))
-    {
-        await next();
-        return;
-    }
-
-    if (!DatabaseStartup.IsReady)
-    {
-        try
-        {
-            await DatabaseStartup.WaitForReadyAsync(context.RequestAborted);
-        }
-        catch (OperationCanceledException)
-        {
-            context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
-            return;
-        }
-        catch (Exception)
-        {
-            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-            await context.Response.WriteAsync("The application is starting up. Please refresh in a moment.");
-            return;
-        }
-    }
-
-    await next();
-});
 
 if (!app.Environment.IsDevelopment())
 {
@@ -136,8 +102,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseStaticFiles();
 app.UseRouting();
+
+app.MapGet("/health", () => Results.Ok("ok"));
+app.MapGet("/health/ready", () =>
+    DatabaseStartup.IsSeedReady ? Results.Ok("ready") : Results.StatusCode(503));
+
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -16,7 +16,7 @@ public class WebsiteContentService : IWebsiteContentService
         string? schoolCode = null,
         CancellationToken cancellationToken = default)
     {
-        if (!DatabaseStartup.IsReady)
+        if (!DatabaseStartup.IsSeedReady)
             return null;
 
         try

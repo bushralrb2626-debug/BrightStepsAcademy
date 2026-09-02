@@ -5,14 +5,12 @@ namespace BrightStepsAcademy.Services;
 
 public static class DatabaseStartup
 {
-    private static readonly SemaphoreSlim Gate = new(1, 1);
-    private static readonly TaskCompletionSource Ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private static readonly TaskCompletionSource SchemaReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private static readonly TaskCompletionSource SeedReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private static volatile bool _started;
 
-    public static bool IsReady => Ready.Task.IsCompletedSuccessfully;
-
-    public static Task WaitForReadyAsync(CancellationToken ct = default)
-        => Ready.Task.WaitAsync(ct);
+    public static bool IsSchemaReady => SchemaReady.Task.IsCompletedSuccessfully;
+    public static bool IsSeedReady => SeedReady.Task.IsCompletedSuccessfully;
 
     public static void Begin(WebApplication app, bool useSqlite, string connectionString)
     {
@@ -24,10 +22,9 @@ public static class DatabaseStartup
         _ = Task.Run(async () =>
         {
             var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseStartup");
-            await Gate.WaitAsync();
             try
             {
-                logger.LogInformation("Database initialization started.");
+                logger.LogInformation("Creating database schema...");
                 using (var scope = app.Services.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -42,21 +39,21 @@ public static class DatabaseStartup
                     }
                 }
 
+                SchemaReady.TrySetResult();
+                logger.LogInformation("Database schema ready. Seeding data...");
+
                 await DbSeeder.SeedAsync(app.Services);
                 await StudentPortalBootstrap.EnsurePortalLoginsAsync(app.Services);
                 await DemoPortalAccountsBootstrap.EnsureDemoAccountsAsync(app.Services);
 
-                Ready.TrySetResult();
-                logger.LogInformation("Database initialization completed.");
+                SeedReady.TrySetResult();
+                logger.LogInformation("Database seeding completed.");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Database initialization failed. App will run with demo data only.");
-                Ready.TrySetResult();
-            }
-            finally
-            {
-                Gate.Release();
+                logger.LogError(ex, "Database startup failed. App will continue with demo data.");
+                SchemaReady.TrySetResult();
+                SeedReady.TrySetResult();
             }
         });
     }

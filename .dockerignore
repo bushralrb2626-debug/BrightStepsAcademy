@@ -14,3 +14,6 @@ wwwroot/uploads/
 tmp-*.csx
 *.log
 README.md
+publish-test/
+tmp-publish/
+tmp-*.db

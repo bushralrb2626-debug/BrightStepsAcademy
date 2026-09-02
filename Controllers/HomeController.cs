@@ -20,7 +20,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         PublicWebsiteViewModel? site = null;
-        if (DatabaseStartup.IsReady)
+        if (DatabaseStartup.IsSeedReady)
         {
             try
             {
