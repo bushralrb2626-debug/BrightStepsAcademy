@@ -1,77 +1,87 @@
 # BrightSteps Academy
 
-Frontend-only ASP.NET Core MVC (.NET 10) prototype of a colorful school management platform.
+Multi-tenant School Management System SaaS — ASP.NET Core MVC (.NET 10).
 
 **BrightSteps Academy · Learn. Explore. Grow.**
 
-This phase is **100% frontend**: mock data only — no SQL Server, EF, Identity, APIs, or real persistence.
-
-## Run
+## Quick start
 
 ```bash
-cd BrightStepsAcademy
+dotnet restore
+dotnet ef database update
 dotnet run --launch-profile http
 ```
 
 Open **http://localhost:5182/**
 
-## What’s included
+### Database
 
-### Public website
-Home journey with hero, about, programs, why choose us, facilities, teachers, activities, events, achievements, gallery (lightbox), notices, portal CTA, contact form (toast), and footer.
+- **Local development:** SQL Server LocalDB (`BrightStepsAcademy` database)
+- **Render / Docker:** SQLite (`USE_SQLITE=1`, file at `/tmp/brightsteps.db`)
 
-### Portal
-Six role cards → mock login (any email/password) → role dashboard.
+Connection string is in `appsettings.json`. Migrations run automatically on startup.
 
-### Role dashboards
-| Role | Highlights |
-|------|------------|
-| Super Admin | Platform stats, charts, user management tabs, schools |
-| Admin | Students / teachers / parents / classes, notices, attendance |
-| Headmaster | Command center, approvals, assign teacher, performance |
-| Teacher | Classes, attendance marking, assignments, timetable |
-| Parent | Children cards, homework, results, messages |
-| Student | Playful home, stars/badges, homework, achievements |
+## Demo logins
 
-Shared modules: Messages, Reports, Settings, Profile, Assignments, Attendance, Results, Timetable, Notices, Events.
+Password for all demo accounts: **`Demo@12345`**
 
-## Demo tip
-
-1. Open http://localhost:5182/
-2. Click **Login** (or a public portal card: Teacher / Parent / Student / Headmaster)
-3. Use a demo email — **role is resolved from the account**, not a dropdown
-
-| Email | Opens |
-|-------|--------|
-| `sarah.wilson@brightsteps.academy` | Teacher |
-| `amelia.johnson@email.com` | Parent |
-| `alex.rivera@student.brightsteps.academy` | Student |
+| Login | Role |
+|-------|------|
+| `superadmin@platform.com` | Super Admin |
+| `admin@brightfuture.academy` | School Admin |
 | `grace.okonkwo@brightsteps.academy` | Headmaster |
-| `daniel.reeves@brightsteps.academy` | Admin *(staff — not shown as a public portal)* |
-| `nora.patel@brightsteps.academy` | Super Admin *(staff — not shown as a public portal)* |
+| `teacher_demo` | Teacher |
+| `parent_demo` | Parent / Guardian |
+| `student_demo` | Student |
 
-Password for demos: `demo1234`
+Login URL: **http://localhost:5182/Login**
 
-Public UI never advertises Admin / Super Admin portals — only a general **Login**.
+## What's included
 
-## Architecture (ready for a real backend later)
+### Platform
+- Multi-tenant isolation (school-scoped data)
+- ASP.NET Identity with role-based access
+- Super Admin portal (schools, subscriptions, platform settings)
+- School Admin portal (staff, students, infrastructure, CMS, permissions)
+- Audit logging
+
+### Academic portals
+- **Teacher:** classes, attendance, grade book, report cards, assignments
+- **Parent:** children, diary, attendance, marks, announcements, materials
+- **Student:** dashboard, timetable, assignments, marks, diary, notifications
+
+### Operations
+- Buildings, floors, rooms, furniture
+- Fee management
+- Timetable
+- Website content management (public homepage driven from DB)
+
+### Account notifications
+- Email templates for account lifecycle events
+- SMTP or file outbox (`EmailOutbox/` when `Email:Enabled` is false)
+- Admin resend credentials on student/staff edit pages
+
+## Solution structure
 
 ```
-Data/ISchoolData.cs      → contract used by controllers
-Data/MockSchoolData.cs   → in-memory demo data (swap later)
-Data/Images.cs           → centralized image URLs
-Data/NavCatalog.cs       → role-specific sidebar navigation
+BrightStepsAcademy.sln
+├── Controllers/          # Public site + role portals + Manage/*
+├── Data/                 # EF Core DbContext, migrations, seeding
+├── Domain/               # Entities
+├── Services/             # Business logic, email, tenant context
+├── Views/                # Razor views
+├── EmailTemplates/       # HTML email templates
+├── wwwroot/              # CSS, JS, static assets
+├── Dockerfile            # Render deployment
+└── render.yaml           # Render service config
 ```
 
-Register a future `EfSchoolData` in `Program.cs` instead of `MockSchoolData` — controllers and views stay the same.
+## Deploy (Render)
 
-## Design
-
-- Fonts: Fredoka + Nunito  
-- CSS: `wwwroot/css/site.css` + `wwwroot/css/bridge.css`  
-- JS: `wwwroot/js/site.js` (toasts, modals, gallery, counters, sidebar, charts)  
-- Soft cream backgrounds with sunshine / sky / coral / mint accents — **no neon**
+1. Push to GitHub: `https://github.com/bushralrb2626-debug/BrightStepsAcademy`
+2. Connect repo on Render as a Docker web service
+3. Set env vars from `render.yaml` (`USE_SQLITE`, connection string, etc.)
 
 ## Stack
 
-ASP.NET Core MVC · Razor · Chart.js (CDN) · Bootstrap (light utilities only) · custom BSA UI
+ASP.NET Core MVC · EF Core · Identity · SQL Server / SQLite · Razor · Chart.js · Bootstrap
