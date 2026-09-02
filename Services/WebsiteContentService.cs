@@ -16,14 +16,8 @@ public class WebsiteContentService : IWebsiteContentService
         string? schoolCode = null,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            await DatabaseStartup.WaitForSchemaAsync(cancellationToken);
-        }
-        catch
-        {
+        if (!DatabaseStartup.IsReady)
             return null;
-        }
 
         try
         {

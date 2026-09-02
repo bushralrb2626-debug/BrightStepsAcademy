@@ -2,11 +2,11 @@
 @{
     var store = (ISchoolData)ViewBag.Store;
     var site = ViewBag.Site as PublicWebsiteViewModel;
-    var displayName = site?.ShortName ?? site?.Name ?? store.Schools.First().Name;
-    var teachers = store.Teachers.Take(8).ToList();
-    var programs = store.Programs.ToList();
-    var activities = store.Activities.ToList();
-    var events = store.Events.Take(4).ToList();
+    var displayName = site?.ShortName ?? site?.Name ?? store?.Schools?.FirstOrDefault()?.Name ?? "BrightSteps Academy";
+    var teachers = store?.Teachers?.Take(8).ToList() ?? [];
+    var programs = store?.Programs?.ToList() ?? [];
+    var activities = store?.Activities?.ToList() ?? [];
+    var events = store?.Events?.Take(4).ToList() ?? [];
     var facilities = site?.Facilities?.ToList() ?? new List<PublicFacilityDto>();
     var gallery = site?.Gallery?.ToList() ?? new List<PublicGalleryDto>();
     var highlights = site?.Highlights?.ToList() ?? new List<PublicHighlightDto>();

@@ -19,9 +19,21 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        var site = await _website.GetPublicWebsiteAsync(cancellationToken: ct);
+        PublicWebsiteViewModel? site = null;
+        if (DatabaseStartup.IsReady)
+        {
+            try
+            {
+                site = await _website.GetPublicWebsiteAsync(cancellationToken: ct);
+            }
+            catch
+            {
+                site = null;
+            }
+        }
+
         ViewData["Title"] = "Home";
-        ViewData["SchoolName"] = site?.ShortName ?? site?.Name ?? "Scuola Materna";
+        ViewData["SchoolName"] = site?.ShortName ?? site?.Name ?? _store.Schools.FirstOrDefault()?.Name ?? "BrightSteps Academy";
         ViewData["Tagline"] = site?.Tagline ?? "Learn. Explore. Grow.";
         ViewData["LogoPath"] = string.IsNullOrWhiteSpace(site?.LogoPath) ? null : site.LogoPath;
         ViewBag.Store = _store;

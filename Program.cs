@@ -25,7 +25,12 @@ var useSqlite =
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (useSqlite)
-        options.UseSqlite(connectionString);
+    {
+        var sqliteConnection = connectionString.Contains("Default Timeout=", StringComparison.OrdinalIgnoreCase)
+            ? connectionString
+            : $"{connectionString};Default Timeout=30";
+        options.UseSqlite(sqliteConnection);
+    }
     else
         options.UseSqlServer(connectionString);
 });
@@ -90,6 +95,8 @@ builder.Services.AddSingleton<ISchoolData, MockSchoolData>();
 var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok("ok"));
+app.MapGet("/health/ready", () =>
+    DatabaseStartup.IsReady ? Results.Ok("ready") : Results.StatusCode(503));
 
 DatabaseStartup.Begin(app, useSqlite, connectionString);
 
@@ -101,15 +108,23 @@ app.Use(async (context, next) =>
         return;
     }
 
-    try
+    if (!DatabaseStartup.IsReady)
     {
-        await DatabaseStartup.WaitForSchemaAsync(context.RequestAborted);
-    }
-    catch (Exception)
-    {
-        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-        await context.Response.WriteAsync("The application is starting up. Please refresh in a moment.");
-        return;
+        try
+        {
+            await DatabaseStartup.WaitForReadyAsync(context.RequestAborted);
+        }
+        catch (OperationCanceledException)
+        {
+            context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
+            return;
+        }
+        catch (Exception)
+        {
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            await context.Response.WriteAsync("The application is starting up. Please refresh in a moment.");
+            return;
+        }
     }
 
     await next();
