@@ -1,0 +1,16 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+.git/
+.gitignore
+EmailOutbox/
+*.db
+*.db-*
+uploads/
+wwwroot/uploads/
+tmp-*.csx
+*.log
+README.md

@@ -88,11 +88,34 @@ builder.Services.AddSingleton<ISchoolData, MockSchoolData>();
 
 var app = builder.Build();
 
+static void EnsureSqliteStorage(string connectionString)
+{
+    if (!connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase))
+        return;
+
+    var dbPath = connectionString
+        .Split(';', StringSplitOptions.RemoveEmptyEntries)
+        .Select(p => p.Trim())
+        .FirstOrDefault(p => p.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        ?.Substring("Data Source=".Length)
+        .Trim();
+
+    if (string.IsNullOrWhiteSpace(dbPath))
+        return;
+
+    var directory = Path.GetDirectoryName(dbPath);
+    if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+        Directory.CreateDirectory(directory);
+}
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     if (useSqlite)
+    {
+        EnsureSqliteStorage(connectionString);
         await db.Database.EnsureCreatedAsync();
+    }
     else
         await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(app.Services);

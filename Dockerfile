@@ -10,6 +10,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV USE_SQLITE=1
-ENV ConnectionStrings__DefaultConnection=Data Source=/tmp/brightsteps.db
+ENV ConnectionStrings__DefaultConnection=Data Source=/app/data/brightsteps.db
+RUN mkdir -p /app/data /app/data/EmailOutbox
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "BrightStepsAcademy.dll"]

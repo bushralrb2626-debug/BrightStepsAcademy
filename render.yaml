@@ -1,14 +1,23 @@
+# Deploy: Render Dashboard → New → Blueprint → connect this repo
 services:
   - type: web
     name: brightsteps-academy
     runtime: docker
     plan: free
+    region: singapore
     dockerfilePath: ./Dockerfile
     healthCheckPath: /
+    autoDeploy: true
     envVars:
       - key: USE_SQLITE
         value: "1"
       - key: ConnectionStrings__DefaultConnection
-        value: Data Source=/tmp/brightsteps.db
+        value: Data Source=/app/data/brightsteps.db
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Email__Enabled
+        value: "false"
+      - key: Email__BaseUrl
+        value: https://brightsteps-academy.onrender.com
+      - key: Email__OutboxPath
+        value: /app/data/EmailOutbox
