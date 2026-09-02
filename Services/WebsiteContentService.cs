@@ -16,7 +16,18 @@ public class WebsiteContentService : IWebsiteContentService
         string? schoolCode = null,
         CancellationToken cancellationToken = default)
     {
-        var query = _db.Schools.AsNoTracking().Where(s => s.Status == SchoolStatus.Active);
+        try
+        {
+            await DatabaseStartup.WaitForSchemaAsync(cancellationToken);
+        }
+        catch
+        {
+            return null;
+        }
+
+        try
+        {
+            var query = _db.Schools.AsNoTracking().Where(s => s.Status == SchoolStatus.Active);
 
         School? school;
         if (!string.IsNullOrWhiteSpace(schoolCode))
@@ -112,5 +123,10 @@ public class WebsiteContentService : IWebsiteContentService
                 MapEmbed = contact?.MapEmbed
             }
         };
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

@@ -91,53 +91,28 @@ var app = builder.Build();
 
 app.MapGet("/health", () => Results.Ok("ok"));
 
-static void EnsureSqliteStorage(string connectionString)
+DatabaseStartup.Begin(app, useSqlite, connectionString);
+
+app.Use(async (context, next) =>
 {
-    if (!connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase))
-        return;
-
-    var dbPath = connectionString
-        .Split(';', StringSplitOptions.RemoveEmptyEntries)
-        .Select(p => p.Trim())
-        .FirstOrDefault(p => p.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
-        ?.Substring("Data Source=".Length)
-        .Trim();
-
-    if (string.IsNullOrWhiteSpace(dbPath))
-        return;
-
-    var directory = Path.GetDirectoryName(dbPath);
-    if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
-        Directory.CreateDirectory(directory);
-}
-
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    _ = Task.Run(async () =>
+    if (context.Request.Path.StartsWithSegments("/health"))
     {
-        var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseInit");
-        try
-        {
-            logger.LogInformation("Database initialization started.");
-            using var scope = app.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            if (useSqlite)
-            {
-                EnsureSqliteStorage(connectionString);
-                await db.Database.EnsureCreatedAsync();
-            }
-            else
-                await db.Database.MigrateAsync();
-            await DbSeeder.SeedAsync(app.Services);
-            await StudentPortalBootstrap.EnsurePortalLoginsAsync(app.Services);
-            await DemoPortalAccountsBootstrap.EnsureDemoAccountsAsync(app.Services);
-            logger.LogInformation("Database initialization completed.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Database initialization failed.");
-        }
-    });
+        await next();
+        return;
+    }
+
+    try
+    {
+        await DatabaseStartup.WaitForSchemaAsync(context.RequestAborted);
+    }
+    catch (Exception)
+    {
+        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+        await context.Response.WriteAsync("The application is starting up. Please refresh in a moment.");
+        return;
+    }
+
+    await next();
 });
 
 if (!app.Environment.IsDevelopment())
