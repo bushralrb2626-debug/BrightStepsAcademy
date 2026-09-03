@@ -348,7 +348,7 @@
   }
 
   var FAQS = [
-    { keys: ["hello","hi","hey","ciao","buongiorno","salve","سلام","السلام","آداب","کی حال","کیا حال","assalam","salam","kya haal","ki haal","السلام علیکم","سلام علیکم","اداب","sat sri","sasriakal","hello ji"], en: "Hi! I’m the campus desk. Ask about hours, programs, fees, uniform, buses — or say you want to book an appointment.", it: "Ciao! Sono lo sportello del campus. Chiedi orari, programmi, rette, divisa, pullman — o di’ che vuoi prenotare un appuntamento.", ur: "السلام علیکم! میں کیمپس ڈیسک ہوں۔ اوقات، پروگرامز، فیس، یونیفارم، بس — یا ملاقات بک کرنے کو کہیں۔", pa: "ست سری اکال! میں کیمپس ڈیسک واں۔ اواریں، پروگرام، فیس، یونیفارم، بس — یا ملاقات بک کرن لئی کہو۔" },
+    { keys: ["hello","hi","hey","ciao","buongiorno","salve","سلام","السلام","آداب","کی حال","کیا حال","assalam","salam","kya haal","ki haal","السلام علیکم","سلام علیکم","اداب","sat sri","sasriakal","hello ji","ہیلو","هيلو","ہائے","ہائ","هاي","aoa","asalam","aslamo","hy","helo"], en: "Hi! I’m the campus desk. Ask about hours, programs, fees, uniform, buses — or say you want to book an appointment.", it: "Ciao! Sono lo sportello del campus. Chiedi orari, programmi, rette, divisa, pullman — o di’ che vuoi prenotare un appuntamento.", ur: "السلام علیکم! میں کیمپس ڈیسک ہوں۔ اوقات، پروگرامز، فیس، یونیفارم، بس — یا ملاقات بک کرنے کو کہیں۔", pa: "ست سری اکال! میں کیمپس ڈیسک واں۔ اواریں، پروگرام، فیس، یونیفارم، بس — یا ملاقات بک کرن لئی کہو۔" },
     { keys: ["thank","grazie","شکریہ","مہربانی","shukriya","mehrbani","shukria","dhanyavad","بہت شکریہ","thank you","thanks ji"], en: "You’re welcome. Anything else about the school?", it: "Prego. Altro sulla scuola?", ur: "خوشی ہوئی۔ اسکول کے بارے میں اور کچھ؟", pa: "کوئی گل نہیں۔ سکول بارے ہور کی؟" },
     { keys: ["who are you","your name","chi sei","آپ کون","تسی کون","تون کون","aap kaun","tusi kaun","تم کون ہو","آپ کون ہو","یہ بوٹ"], en: "I’m the Scuola Materna campus assistant. I answer school questions and can book a visit.", it: "Sono l’assistente della Scuola Materna. Rispondo alle domande e posso prenotare una visita.", ur: "میں Scuola Materna کا اسسٹنٹ ہوں۔ اسکول کے سوالات کے جواب دیتا ہوں اور وزٹ بک کروا سکتا ہوں۔", pa: "میں Scuola Materna دا اسسٹنٹ واں۔ سکول دے سوالاں دے جواب دیندا واں تے وزٹ بک کروا سکدا واں۔" },
     { keys: ["help","aiuto","what can you","مدد","کیا کر سکتے","کی کر سکدے","madad","help urdu","کیا مدد","madad chahiye","help chahiye"], en: "Ask me about hours, programs, admissions, fees, uniform, lunch, buses, teachers, class size, holidays, the parent portal, or booking a visit.", it: "Chiedimi orari, programmi, iscrizioni, rette, divisa, mensa, pullman, insegnanti, numero in classe, vacanze, portale genitori o una visita.", ur: "اوقات، پروگرامز، داخلہ، فیس، یونیفارم، لنچ، بس، اساتذہ، کلاس سائز، چھٹیاں، والدین پورٹل، یا وزٹ بکنگ پوچھیں۔", pa: "اواریں، پروگرام، داخلہ، فیس، یونیفارم، لنچ، بس، استاد، کلاس سائز، چھٹیاں، والدین پورٹل، یا وزٹ بکنگ پُچھو۔" },
@@ -485,6 +485,13 @@
     var folded = foldText(text);
     if (wantsBook(folded)) return null;
     var code = activeLang();
+
+    // Short hellos like "ہیلو" / "hello" must hit greeting, not the fallback.
+    var greetKeys = ["hello", "hi", "hey", "ہیلو", "هيلو", "ہائے", "سلام", "السلام علیکم", "ciao", "salam", "hy", "helo"];
+    if (folded.length <= 18 && hasAny(folded, greetKeys)) {
+      return FAQS[0][code] || FAQS[0].en;
+    }
+
     var bestFaq = null;
     var bestScore = 0;
     var i;
@@ -502,10 +509,20 @@
   var booking = { step: "", name: "", email: "", when: "", age: "" };
   var rec = null;
   var voiceTurn = false;
-
   var voicesReady = false;
+  var speechUnlocked = false;
+  var speakTimer = null;
+
+  function setStatus(msg) {
+    var st = document.getElementById("campusBotStatus");
+    if (st) st.textContent = msg || "";
+  }
 
   function hushVoice() {
+    if (speakTimer) {
+      window.clearTimeout(speakTimer);
+      speakTimer = null;
+    }
     if (window.speechSynthesis) {
       try {
         window.speechSynthesis.cancel();
@@ -516,22 +533,32 @@
   function warmVoices() {
     if (!window.speechSynthesis) return;
     try {
-      var list = window.speechSynthesis.getVoices();
-      if (list && list.length) voicesReady = true;
+      if ((window.speechSynthesis.getVoices() || []).length) voicesReady = true;
       window.speechSynthesis.onvoiceschanged = function () {
         voicesReady = true;
       };
-      // Kick Chrome/Edge into loading the voice list.
       window.speechSynthesis.getVoices();
+    } catch (e) {}
+  }
+
+  function unlockSpeech() {
+    if (speechUnlocked || !window.speechSynthesis) return;
+    try {
+      warmVoices();
+      var warm = new SpeechSynthesisUtterance(".");
+      warm.volume = 0;
+      warm.rate = 2;
+      window.speechSynthesis.speak(warm);
+      window.speechSynthesis.cancel();
+      speechUnlocked = true;
     } catch (e) {}
   }
 
   function speechLocalePrefs() {
     var c = activeLang();
-    if (c === "ur") return ["ur-PK", "ur-IN", "ur", "hi-IN", "hi"];
-    // Shahmukhi Punjabi reads best with Urdu voices; Gurmukhi engines use pa-IN.
-    if (c === "pa") return ["pa-IN", "pa-Guru-IN", "pa", "ur-PK", "ur-IN", "ur", "hi-IN", "hi"];
-    if (c === "it") return ["it-IT", "it"];
+    if (c === "ur") return ["ur-PK", "ur-IN", "ur", "hi-IN", "hi", "en-US", "en"];
+    if (c === "pa") return ["pa-IN", "pa-Guru-IN", "pa", "ur-PK", "ur", "hi-IN", "hi", "en-US", "en"];
+    if (c === "it") return ["it-IT", "it", "en-US", "en"];
     return ["en-US", "en-GB", "en"];
   }
 
@@ -544,62 +571,117 @@
     var voices = window.speechSynthesis.getVoices() || [];
     if (!voices.length) return null;
     var prefs = speechLocalePrefs();
+    var best = null;
+    var bestScore = -1;
     var i;
-    var v;
+    var j;
     for (i = 0; i < prefs.length; i++) {
       var want = prefs[i].toLowerCase();
-      for (var j = 0; j < voices.length; j++) {
-        v = voices[j];
-        if ((v.lang || "").toLowerCase() === want) return v;
-      }
       var prefix = want.split("-")[0];
-      for (var k = 0; k < voices.length; k++) {
-        v = voices[k];
-        if ((v.lang || "").toLowerCase().indexOf(prefix) === 0) return v;
+      for (j = 0; j < voices.length; j++) {
+        var v = voices[j];
+        var lang = (v.lang || "").toLowerCase();
+        var score = 0;
+        if (lang === want) score = 100 - i;
+        else if (lang.indexOf(prefix) === 0) score = 70 - i;
+        else continue;
+        if (v.localService) score += 5;
+        if (score > bestScore) {
+          bestScore = score;
+          best = v;
+        }
       }
+      if (best && bestScore >= 70) return best;
     }
     for (i = 0; i < voices.length; i++) {
-      v = voices[i];
-      if (/urdu|punjabi|panjabi|hindi|pakistan|india/i.test(v.name || "")) return v;
+      if (/urdu|punjabi|panjabi|hindi/i.test(voices[i].name || "")) return voices[i];
     }
-    return null;
+    for (i = 0; i < voices.length; i++) {
+      if (voices[i].default) return voices[i];
+    }
+    return voices[0];
   }
 
   function shouldSpeak() {
-    // Speak only when the user used the mic. Typing stays text-only.
     return !!voiceTurn;
   }
 
-  function speak(text) {
-    if (!shouldSpeak() || !window.speechSynthesis || !text) return;
-    var run = function () {
-      try {
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(String(text));
-        var locale = speechLocale();
-        var voice = pickVoice();
-        u.lang = voice && voice.lang ? voice.lang : locale;
-        if (voice) u.voice = voice;
-        u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.92 : 1;
-        u.pitch = 1;
-        window.speechSynthesis.speak(u);
-      } catch (e) {}
-    };
+  function speak(text, force) {
+    if ((!force && !shouldSpeak()) || !window.speechSynthesis || !text) return;
+    unlockSpeech();
     warmVoices();
-    if (voicesReady || (window.speechSynthesis.getVoices() || []).length) {
-      run();
+
+    var queue = function () {
+      if (!force && !shouldSpeak()) return;
+      try {
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
+      if (speakTimer) window.clearTimeout(speakTimer);
+      // Delay after mic stop / cancel — Chrome drops instant speak().
+      speakTimer = window.setTimeout(function () {
+        speakTimer = null;
+        if (!force && !shouldSpeak()) return;
+        try {
+          if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+          var u = new SpeechSynthesisUtterance(String(text));
+          var voice = pickVoice();
+          u.lang = voice && voice.lang ? voice.lang : speechLocale();
+          if (voice) u.voice = voice;
+          u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
+          u.pitch = 1;
+          u.volume = 1;
+          u.onstart = function () {
+            setStatus(
+              { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[
+                activeLang()
+              ] || "Speaking…"
+            );
+          };
+          u.onend = function () {
+            setStatus("");
+          };
+          u.onerror = function () {
+            setStatus(
+              {
+                en: "No sound — check volume, or tap 🔊 on the reply.",
+                it: "Niente audio — controlla il volume o tocca 🔊.",
+                ur: "آواز نہیں آئی — والیوم چیک کریں، یا 🔊 دبائیں۔",
+                pa: "آواز نہیں آئی — والیوم چیک کرو، یا 🔊 دباؤ۔",
+              }[activeLang()] || "No sound"
+            );
+          };
+          window.speechSynthesis.speak(u);
+          window.setTimeout(function () {
+            try {
+              if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            } catch (e2) {}
+          }, 50);
+          window.setTimeout(function () {
+            try {
+              if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            } catch (e3) {}
+          }, 350);
+        } catch (err) {
+          setStatus("Voice error");
+        }
+      }, 220);
+    };
+
+    if ((window.speechSynthesis.getVoices() || []).length) {
+      queue();
       return;
     }
-    // Voices often load async — speak as soon as they appear.
     var tries = 0;
     var timer = window.setInterval(function () {
       tries += 1;
-      if ((window.speechSynthesis.getVoices() || []).length || tries > 15) {
+      if ((window.speechSynthesis.getVoices() || []).length || tries > 20) {
         window.clearInterval(timer);
         voicesReady = true;
-        run();
+        queue();
       }
-    }, 120);
+    }, 100);
   }
 
   function el(html) {
@@ -631,7 +713,11 @@
     );
     document.body.appendChild(root);
     paintChrome();
-    document.getElementById("campusBotFab").addEventListener("click", openPanel);
+    warmVoices();
+    document.getElementById("campusBotFab").addEventListener("click", function () {
+      unlockSpeech();
+      openPanel();
+    });
     document.getElementById("campusBotClose").addEventListener("click", closePanel);
     document.getElementById("campusBotForm").addEventListener("submit", function (e) {
       e.preventDefault();
@@ -707,10 +793,26 @@
 
   function addBubble(who, text) {
     var log = document.getElementById("campusBotLog");
+    var row = document.createElement("div");
+    row.className = "campus-bot__row campus-bot__row--" + who;
     var b = document.createElement("div");
     b.className = "campus-bot__bubble campus-bot__bubble--" + who;
     b.textContent = text;
-    log.appendChild(b);
+    row.appendChild(b);
+    if (who === "bot") {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "campus-bot__speak";
+      btn.setAttribute("aria-label", "Speak reply");
+      btn.title = "Speak";
+      btn.textContent = "🔊";
+      btn.addEventListener("click", function () {
+        unlockSpeech();
+        speak(text, true);
+      });
+      row.appendChild(btn);
+    }
+    log.appendChild(row);
     log.scrollTop = log.scrollHeight;
   }
 
@@ -873,6 +975,7 @@
       return;
     }
     warmVoices();
+    unlockSpeech();
     rec = new Ctor();
     rec.lang = speechRecognitionLocale();
     rec.interimResults = false;

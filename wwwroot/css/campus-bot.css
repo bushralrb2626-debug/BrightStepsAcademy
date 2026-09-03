@@ -247,6 +247,39 @@
   background: #fff;
 }
 
+.campus-bot__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  max-width: 100%;
+}
+
+.campus-bot__row--user {
+  flex-direction: row-reverse;
+}
+
+.campus-bot__row .campus-bot__bubble {
+  max-width: calc(88% - 2.2rem);
+}
+
+.campus-bot__speak {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--cb-line);
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(27, 31, 51, 0.08);
+}
+
+.campus-bot__speak:hover {
+  background: #fff8e6;
+}
+
 /* Mobile: icon-only FAB, full-width panel, clear of home indicator */
 @media (max-width: 640px) {
   .campus-bot {
