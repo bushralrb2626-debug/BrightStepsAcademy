@@ -132,8 +132,8 @@
   add("sec.chooseAdventure", "Choose your adventure", "Scegli la tua avventura");
   add(
     "sec.chooseDoor",
-    "Choose your door — Teacher, Parent, Student, Headmaster, School Admin or Super Admin.",
-    "Scegli la tua porta — Insegnante, Genitore, Studente, Preside, Amministratore scolastico o Super Admin."
+    "Choose your door — Teacher, Parent or Student.",
+    "Scegli la tua porta — Insegnante, Genitore o Studente."
   );
   add(
     "footer.joy",
@@ -434,7 +434,7 @@
   add("portal.welcomePortal", "Welcome to Your School Portal", "Benvenuto nel portale della scuola");
   add("portal.demoCreds", "Demo credentials", "Credenziali demo");
   add("portal.worksHere", "(works on this site — no external login)", "(funziona su questo sito — nessun accesso esterno)");
-  add("portal.howConnect", "Choose how you connect — teachers, parents, students and school leaders. Sign in opens a working demo dashboard on this site.", "Scegli come collegarti — insegnanti, genitori, studenti e dirigenti. L'accesso apre una dashboard demo su questo sito.");
+  add("portal.howConnect", "Choose how you connect — teachers, parents and students. Sign in opens a working demo dashboard on this site.", "Scegli come collegarti — insegnanti, genitori e studenti. L'accesso apre una dashboard demo su questo sito.");
   add("portal.enterTeacher", "Enter Teacher Portal →", "Entra nel portale insegnanti →");
   add("portal.enterParent", "Enter Parent Portal →", "Entra nel portale genitori →");
   add("portal.enterStudent", "Enter Student Portal →", "Entra nel portale studenti →");
@@ -595,6 +595,7 @@
       var parent = node.parentElement;
       if (!parent) return;
       if (parent.closest("[data-no-translate]")) return;
+      if (parent.closest("[data-i18n]")) return;
       var tag = parent.tagName;
       if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") return;
       var text = node.nodeValue;
@@ -674,6 +675,10 @@
   } else {
     boot();
   }
+
+  window.addEventListener("pageshow", function () {
+    setLang(currentLang());
+  });
 
   window.ScuolaLang = { set: setLang, get: currentLang, strings: STRINGS };
 })();

@@ -11,7 +11,7 @@
   --cb-line: #e2d8c8;
   font-family: Nunito, "Segoe UI", sans-serif;
   position: fixed;
-  z-index: 80;
+  z-index: 2500;
   right: 1.1rem;
   bottom: 1.1rem;
   color: var(--cb-ink);

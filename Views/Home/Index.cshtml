@@ -1,4 +1,5 @@
 ﻿@using BrightStepsAcademy.Models
+@using BrightStepsAcademy.Services
 @{
     var store = (ISchoolData)ViewBag.Store;
     var site = ViewBag.Site as PublicWebsiteViewModel;
@@ -437,44 +438,26 @@
         <div class="section-head fancy reveal" style="text-align:center;margin-inline:auto">
             <p class="eyebrow" style="color:#F5C518!important">School Portal</p>
             <h2>WHO'S READY TO LEARN?</h2>
-            <p style="color:rgba(255,255,255,.92)">Choose your door — Teacher, Parent, Student, Headmaster, School Administrator or Super Admin.</p>
+            <p style="color:rgba(255,255,255,.92)">Choose your door — Teacher, Parent or Student.</p>
         </div>
         <div class="portal-doors stagger">
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="sarah.wilson@brightsteps.academy">
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="@DemoPortalAccountsBootstrap.DemoTeacherLoginId">
                 <span class="emoji" aria-hidden="true">👩‍🏫</span>
                 <h3>Teacher</h3>
                 <p>Manage classes, students and learning activities.</p>
                 <span class="go">Enter teacher portal →</span>
             </a>
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="amelia.johnson@email.com">
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="@DemoPortalAccountsBootstrap.DemoParentLoginId">
                 <span class="emoji" aria-hidden="true">👨‍👩‍👧</span>
                 <h3>Parent</h3>
                 <p>Stay connected with your child's learning.</p>
                 <span class="go">Enter parent portal →</span>
             </a>
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="alex.rivera@student.brightsteps.academy">
+            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="@DemoPortalAccountsBootstrap.DemoStudentLoginId">
                 <span class="emoji" aria-hidden="true">🧒</span>
                 <h3>Student</h3>
                 <p>Learn, explore and grow.</p>
                 <span class="go">Enter student portal →</span>
-            </a>
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="grace.okonkwo@brightsteps.academy">
-                <span class="emoji" aria-hidden="true">🎓</span>
-                <h3>Headmaster</h3>
-                <p>Monitor and manage the school.</p>
-                <span class="go">Enter headmaster portal →</span>
-            </a>
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="admin@brightfuture.academy">
-                <span class="emoji" aria-hidden="true">🏫</span>
-                <h3>School Administrator</h3>
-                <p>Manage buildings, staff, students and website.</p>
-                <span class="go">Enter as administrator →</span>
-            </a>
-            <a class="portal-door reveal" asp-controller="Portal" asp-action="Login" asp-route-email="superadmin@platform.com">
-                <span class="emoji" aria-hidden="true">🛡️</span>
-                <h3>Super Admin</h3>
-                <p>Platform owner — activate schools and administrators.</p>
-                <span class="go">Enter as Super Admin →</span>
             </a>
         </div>
         <p class="portal-staff reveal">Already have an account? <a asp-controller="Portal" asp-action="Login">Sign in</a></p>

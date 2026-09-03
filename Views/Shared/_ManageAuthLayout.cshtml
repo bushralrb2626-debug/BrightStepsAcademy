@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(ViewData["Title"] ?? "Sign in") · BrightSteps Manage</title>
     <link rel="stylesheet" href="~/css/manage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/campus-bot.css" asp-append-version="true" />
 </head>
 <body>
     <div class="m-content" style="max-width:420px;margin:4rem auto;">
@@ -22,5 +23,6 @@
         </div>
     </div>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/campus-bot.js" asp-append-version="true"></script>
 </body>
 </html>

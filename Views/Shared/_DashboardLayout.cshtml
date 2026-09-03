@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="~/css/student-portal.css" asp-append-version="true" />
     }
     @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="~/css/campus-bot.css" asp-append-version="true" />
 </head>
 <body class="dash-body" data-role="@roleKey">
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
@@ -38,6 +39,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/campus-bot.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

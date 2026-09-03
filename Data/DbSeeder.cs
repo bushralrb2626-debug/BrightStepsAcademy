@@ -188,64 +188,7 @@ public static class DbSeeder
         AppDbContext db,
         Guid schoolId)
     {
-        const string password = "Demo@12345";
-
-        var superAdmin = await userManager.FindByEmailAsync("superadmin@platform.com");
-        if (superAdmin is null)
-        {
-            superAdmin = new ApplicationUser
-            {
-                UserName = "superadmin@platform.com",
-                Email = "superadmin@platform.com",
-                EmailConfirmed = true,
-                FullName = "Platform Owner",
-                SchoolId = null,
-                IsActive = true,
-                LoginId = "PLATFORM-SA"
-            };
-            var result = await userManager.CreateAsync(superAdmin, password);
-            if (!result.Succeeded)
-                throw new InvalidOperationException(
-                    "Failed to create Super Admin: " + string.Join("; ", result.Errors.Select(e => e.Description)));
-
-            await userManager.AddToRoleAsync(superAdmin, AppRoleNames.SuperAdmin);
-        }
-
-        var schoolAdmin = await userManager.FindByEmailAsync("admin@brightfuture.academy");
-        if (schoolAdmin is null)
-        {
-            schoolAdmin = new ApplicationUser
-            {
-                UserName = "admin@brightfuture.academy",
-                Email = "admin@brightfuture.academy",
-                EmailConfirmed = true,
-                FullName = "School Administrator",
-                SchoolId = schoolId,
-                IsActive = true,
-                LoginId = "BFA-ADMIN"
-            };
-            var result = await userManager.CreateAsync(schoolAdmin, password);
-            if (!result.Succeeded)
-                throw new InvalidOperationException(
-                    "Failed to create School Admin: " + string.Join("; ", result.Errors.Select(e => e.Description)));
-
-            await userManager.AddToRoleAsync(schoolAdmin, AppRoleNames.SchoolAdmin);
-        }
-
-        var hasProfile = await db.SchoolAdminProfiles
-            .AnyAsync(p => p.UserId == schoolAdmin.Id && p.SchoolId == schoolId);
-        if (!hasProfile)
-        {
-            db.SchoolAdminProfiles.Add(new SchoolAdminProfile
-            {
-                UserId = schoolAdmin.Id,
-                SchoolId = schoolId,
-                AdminType = "School Admin",
-                IsPrimary = true,
-                IsActive = true
-            });
-            await db.SaveChangesAsync();
-        }
+        await DemoPortalAccountsBootstrap.EnsurePlatformAdminsAsync(userManager, db, schoolId);
     }
 
     private static async Task EnsureBuildingsAsync(AppDbContext db, Guid schoolId)
