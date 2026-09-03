@@ -608,6 +608,27 @@ public static class DbSeeder
             item.Category = match.Category;
         }
 
+        // Repair Unsplash IDs that now 404 (Sports Day / science lab / reading / bus / portal).
+        static string FixBrokenImage(string? path) => path switch
+        {
+            null or "" => path ?? "",
+            _ when path.Contains("photo-1461896836934-ffe607ba6851", StringComparison.Ordinal) => Images.Sports,
+            _ when path.Contains("photo-14565130808-af32baae6e9d", StringComparison.Ordinal) => Images.Reading,
+            _ when path.Contains("photo-1567427013422-6b76b26f2254", StringComparison.Ordinal) => Images.Science,
+            _ when path.Contains("photo-1544620341-11cb2cd96ace", StringComparison.Ordinal) => Images.Bus,
+            _ when path.Contains("photo-1427504494785-3a9ca7044f4a", StringComparison.Ordinal) => Images.Portal,
+            _ => path
+        };
+
+        foreach (var item in facilities)
+            item.ImagePath = FixBrokenImage(item.ImagePath);
+        foreach (var item in gallery)
+            item.ImagePath = FixBrokenImage(item.ImagePath);
+        if (hero is not null)
+            hero.ImagePath = FixBrokenImage(hero.ImagePath);
+        if (about is not null)
+            about.ImagePath = FixBrokenImage(about.ImagePath);
+
         var school = await db.Schools.FirstOrDefaultAsync(s => s.Id == schoolId);
         if (school is not null)
         {

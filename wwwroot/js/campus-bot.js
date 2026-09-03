@@ -300,6 +300,7 @@
     if (!fab) return;
     fab.innerHTML = '<span class="campus-bot__fab-ico" aria-hidden="true">💬</span><span></span>';
     fab.lastChild.textContent = copy.fab;
+    fab.setAttribute("aria-label", copy.fab);
     document.getElementById("campusBotTitle").textContent = copy.title;
     document.getElementById("campusBotSub").textContent = copy.sub;
     document.getElementById("campusBotClose").setAttribute("aria-label", copy.close);
