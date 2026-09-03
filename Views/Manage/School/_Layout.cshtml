@@ -50,6 +50,7 @@
         <nav class="mg-nav">
             <div class="mg-nav-group">
                 <a href="/Manage/School" class="@(isDashboard ? "active" : null)">Dashboard</a>
+                <a href="/Manage/School/Visits" class="@(IsActive("/Visits") ? "active" : null)">Meetings</a>
             </div>
 
             <div class="mg-nav-group">
@@ -216,6 +217,7 @@
 })();
 </script>
 @await RenderSectionAsync("Scripts", required: false)
+<partial name="Partials/_CampusUser" />
 <script src="~/js/campus-bot.js" asp-append-version="true"></script>
 </body>
 </html>

@@ -23,6 +23,7 @@
         </div>
     </div>
     @await RenderSectionAsync("Scripts", required: false)
+    <partial name="Partials/_CampusUser" />
     <script src="~/js/campus-bot.js" asp-append-version="true"></script>
 </body>
 </html>

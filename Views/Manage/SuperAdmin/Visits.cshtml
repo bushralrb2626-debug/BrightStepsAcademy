@@ -1,0 +1,48 @@
+@model List<CampusVisit>
+@{
+    ViewData["Title"] = "Campus visits";
+}
+
+<div class="mg-toolbar">
+    <div>
+        <h1 class="mg-page-title">Campus visits</h1>
+        <p class="mg-page-sub">Visit meetings booked through the campus chatbot across all schools.</p>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mg-card"><div class="mg-empty"><h3>No visits yet</h3><p>Signed-in families book visits in the public chat. Those meetings show up here.</p></div></div>
+}
+else
+{
+    <div class="mg-card">
+        <table class="mg-table">
+            <thead>
+                <tr>
+                    <th>Requested</th>
+                    <th>School</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Visit time</th>
+                    <th>Child / year</th>
+                    <th>Language</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var v in Model)
+            {
+                <tr>
+                    <td>@v.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@(v.School?.Name ?? "—")</td>
+                    <td>@v.Name</td>
+                    <td>@v.Email</td>
+                    <td>@v.WhenText</td>
+                    <td>@v.ChildAge</td>
+                    <td>@v.Language</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

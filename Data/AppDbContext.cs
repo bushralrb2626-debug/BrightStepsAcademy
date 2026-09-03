@@ -57,6 +57,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SubscriptionChangeLog> SubscriptionChangeLogs => Set<SubscriptionChangeLog>();
     public DbSet<PlatformSettings> PlatformSettings => Set<PlatformSettings>();
     public DbSet<AccountEmailLog> AccountEmailLogs => Set<AccountEmailLog>();
+    public DbSet<CampusVisit> CampusVisits => Set<CampusVisit>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -72,6 +73,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         ConfigureAccountEmailLogs(builder);
         ConfigureApplicationUser(builder);
         ConfigureSubscriptionsAndPlatform(builder);
+        ConfigureCampusVisits(builder);
     }
 
     private static void ConfigureSubscriptionsAndPlatform(ModelBuilder builder)
@@ -778,6 +780,22 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             e.Property(x => x.ProfileImagePath).HasMaxLength(512);
             e.HasIndex(x => x.LoginId);
             e.HasIndex(x => x.SchoolId);
+        });
+    }
+
+    private static void ConfigureCampusVisits(ModelBuilder builder)
+    {
+        builder.Entity<CampusVisit>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(120).IsRequired();
+            e.Property(x => x.Email).HasMaxLength(200).IsRequired();
+            e.Property(x => x.WhenText).HasMaxLength(200).IsRequired();
+            e.Property(x => x.ChildAge).HasMaxLength(120).IsRequired();
+            e.Property(x => x.Language).HasMaxLength(8).IsRequired();
+            e.HasIndex(x => x.SchoolId);
+            e.HasIndex(x => x.CreatedAt);
+            e.HasOne(x => x.School).WithMany().HasForeignKey(x => x.SchoolId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

@@ -42,9 +42,10 @@ public class SuperAdminController : SuperAdminControllerBase
         var expiredSubs = await subs.CountAsync(s => s.Status == SubscriptionStatus.Expired, ct);
         var expiringSoon = await subs.CountAsync(s => s.Status == SubscriptionStatus.ExpiringSoon, ct);
 
-        var recentSchools = await ProjectSchoolList(
-                schools.OrderByDescending(s => s.CreatedAt).Take(5))
-            .ToListAsync(ct);
+        var recentSchools = (await ProjectSchoolList(Db.Schools.AsNoTracking()).ToListAsync(ct))
+            .OrderByDescending(s => s.CreatedAt)
+            .Take(5)
+            .ToList();
 
         var expiringSchools = await (
             from s in Db.Schools.AsNoTracking()
@@ -68,16 +69,12 @@ public class SuperAdminController : SuperAdminControllerBase
             }).Take(8).ToListAsync(ct);
 
         var recentLogs = await Db.AuditLogs.AsNoTracking()
-            .OrderByDescending(a => a.Timestamp)
-            .Take(8)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(a => a.Timestamp, take: 8, ct);
 
         var userId = UserManager.GetUserId(User) ?? string.Empty;
         var recentNotifications = await Db.AppNotifications.AsNoTracking()
             .Where(n => n.UserId == userId)
-            .OrderByDescending(n => n.CreatedAt)
-            .Take(6)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(n => n.CreatedAt, take: 6, ct);
 
         var growth = await BuildGrowthPointsAsync(ct);
 
@@ -100,6 +97,17 @@ public class SuperAdminController : SuperAdminControllerBase
         };
 
         return ManageView("Index", vm);
+    }
+
+    [HttpGet("Visits")]
+    public async Task<IActionResult> Visits(CancellationToken ct)
+    {
+        var visits = await Db.CampusVisits.AsNoTracking()
+            .Include(v => v.School)
+            .OrderByDescending(v => v.CreatedAt)
+            .Take(300)
+            .ToListAsync(ct);
+        return ManageView("Visits", visits);
     }
 
     [HttpGet("Analytics")]
@@ -164,10 +172,7 @@ public class SuperAdminController : SuperAdminControllerBase
 
         var total = await query.CountAsync(ct);
         var logs = await query
-            .OrderByDescending(a => a.Timestamp)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(a => a.Timestamp, skip: (page - 1) * pageSize, take: pageSize, ct);
 
         return ManageView("Activity/Index", new AuditLogListVm
         {
@@ -192,10 +197,7 @@ public class SuperAdminController : SuperAdminControllerBase
 
         var total = await query.CountAsync(ct);
         var items = await query
-            .OrderByDescending(n => n.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(n => n.CreatedAt, skip: (page - 1) * pageSize, take: pageSize, ct);
 
         // Mark visible as read
         var unreadIds = items.Where(i => !i.IsRead).Select(i => i.Id).ToList();
@@ -377,7 +379,7 @@ public class SuperAdminController : SuperAdminControllerBase
 
     private async Task<PlatformSettings> EnsurePlatformSettingsAsync(CancellationToken ct)
     {
-        var settings = await Db.PlatformSettings.OrderBy(s => s.UpdatedAt).FirstOrDefaultAsync(ct);
+        var settings = await Db.PlatformSettings.FirstOrDefaultOrderedByAsync(s => s.UpdatedAt, ct);
         if (settings is not null)
             return settings;
 

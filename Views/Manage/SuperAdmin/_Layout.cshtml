@@ -35,6 +35,7 @@
             <div class="mg-nav-group">
                 <div class="mg-nav-label">Overview</div>
                 <a href="/Manage/SuperAdmin" class="@(IsDashboard ? "active" : null)">Dashboard</a>
+                <a href="/Manage/SuperAdmin/Visits" class="@(NavActive("/Manage/SuperAdmin/Visits") ? "active" : null)">Meetings</a>
                 <a href="/Manage/SuperAdmin/Analytics" class="@(NavActive("/Manage/SuperAdmin/Analytics") ? "active" : null)">Analytics</a>
                 <a href="/Manage/SuperAdmin/Notifications" class="@(NavActive("/Manage/SuperAdmin/Notifications") ? "active" : null)">Notifications</a>
             </div>
@@ -94,6 +95,7 @@
     })();
 </script>
 @await RenderSectionAsync("Scripts", required: false)
+<partial name="Partials/_CampusUser" />
 <script src="~/js/campus-bot.js" asp-append-version="true"></script>
 </body>
 </html>

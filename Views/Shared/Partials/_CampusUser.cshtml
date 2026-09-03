@@ -1,0 +1,20 @@
+@using Microsoft.AspNetCore.Identity
+@using BrightStepsAcademy.Data
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ApplicationUser? me = null;
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        me = await UserManager.GetUserAsync(User);
+    }
+}
+@if (me != null)
+{
+    <script>
+        window.BrightStepsUser = {
+            name: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(me.FullName)),
+            login: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(me.Email ?? me.LoginId ?? "")),
+            email: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(me.Email ?? me.LoginId ?? ""))
+        };
+    </script>
+}

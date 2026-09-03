@@ -78,9 +78,7 @@ public class SchoolDashboardController : SchoolManageControllerBase
 
         var recent = await Db.AuditLogs.AsNoTracking()
             .Where(a => a.SchoolId == SchoolId)
-            .OrderByDescending(a => a.Timestamp)
-            .Take(8)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(a => a.Timestamp, take: 8, ct);
 
         var vm = new SchoolDashboardVm
         {
@@ -104,6 +102,18 @@ public class SchoolDashboardController : SchoolManageControllerBase
         };
 
         return SchoolView("Dashboard/Index", vm);
+    }
+
+    [HttpGet("Visits")]
+    public async Task<IActionResult> Visits(CancellationToken ct)
+    {
+        var visits = await Db.CampusVisits.AsNoTracking()
+            .Where(v => v.SchoolId == SchoolId)
+            .OrderByDescending(v => v.CreatedAt)
+            .Take(200)
+            .ToListAsync(ct);
+        ViewData["Title"] = "Campus visits";
+        return SchoolView("Dashboard/Visits", visits);
     }
 
     [HttpGet("Explorer")]
@@ -185,9 +195,7 @@ public class SchoolDashboardController : SchoolManageControllerBase
     {
         var items = await Db.AppNotifications.AsNoTracking()
             .Where(n => n.UserId == CurrentUserId && (n.SchoolId == null || n.SchoolId == SchoolId))
-            .OrderByDescending(n => n.CreatedAt)
-            .Take(100)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(n => n.CreatedAt, take: 100, ct);
         return SchoolView("Notifications/Index", items);
     }
 
@@ -196,9 +204,7 @@ public class SchoolDashboardController : SchoolManageControllerBase
     {
         var logs = await Db.AuditLogs.AsNoTracking()
             .Where(a => a.SchoolId == SchoolId)
-            .OrderByDescending(a => a.Timestamp)
-            .Take(200)
-            .ToListAsync(ct);
+            .ToListOrderedByDescendingAsync(a => a.Timestamp, take: 200, ct);
         return SchoolView("Activity/Index", logs);
     }
 

@@ -21,6 +21,8 @@
       chipPrograms: "Programs",
       chipVisit: "Book a visit",
       chipPortal: "Portal",
+      chipLogin: "Login",
+      chipRegister: "Register",
       hours:
         "The office is open Monday–Friday, 8:00 AM – 4:00 PM. Classes run on the same campus at 42 Maple Grove, Riverside. Phone +1 (555) 214-8800.",
       programs:
@@ -44,9 +46,13 @@
       confirm:
         "Here’s what I have:\n• Name: {name}\n• Email: {email}\n• When: {when}\n• Child: {age}\n\nShall I send this to the school office? Reply yes to confirm.",
       booked:
-        "Done — the office has your visit request. You’ll also see it in the site Messages inbox. We look forward to meeting your family!",
+        "Done — your visit is booked. School admin and super admin can see it on their Meetings page. We look forward to meeting your family!",
       bookFail:
-        "I couldn’t reach the office inbox from this page. Please use the contact form, or open the school site from Ali’s Work card so the booking can be saved.",
+        "I couldn’t save the visit. Please sign in again and try once more, or use the contact form.",
+      needLogin:
+        "I can only book a visit after you sign in. Please login or register first — then come back and tap Book a visit.",
+      askWhenLoggedIn:
+        "You’re signed in as {name}. What day and time work for a campus visit? (for example: Friday 10:00)",
       badEmail: "That doesn’t look like an email yet. Try again? (name@email.com)",
       cancel: "No problem — booking cancelled. Ask me anything else, or say “book a visit” to start again.",
       yesNeed: "Reply yes to send the request, or no to cancel.",
@@ -66,6 +72,8 @@
       chipPrograms: "Programmi",
       chipVisit: "Prenota visita",
       chipPortal: "Portale",
+      chipLogin: "Accedi",
+      chipRegister: "Registrati",
       hours:
         "La segreteria è aperta lunedì–venerdì, 8:00–16:00. Siamo in 42 Maple Grove, Riverside. Tel. +1 (555) 214-8800.",
       programs:
@@ -89,9 +97,13 @@
       confirm:
         "Ecco i dati:\n• Nome: {name}\n• Email: {email}\n• Quando: {when}\n• Bambino: {age}\n\nInvio la richiesta in segreteria? Rispondi sì per confermare.",
       booked:
-        "Fatto — la segreteria ha la richiesta di visita. Compare anche in Messaggi nel pannello admin. Non vediamo l’ora di incontrare la vostra famiglia!",
+        "Fatto — la visita è prenotata. Admin e super admin la vedono in Incontri. Non vediamo l’ora di incontrare la vostra famiglia!",
       bookFail:
-        "Da questa pagina non riesco a salvare la richiesta. Usa il modulo Contatti, oppure apri il sito scuola dalla card Work del portfolio.",
+        "Non riesco a salvare la visita. Accedi di nuovo e riprova, oppure usa il modulo Contatti.",
+      needLogin:
+        "Posso prenotare solo se hai fatto l’accesso. Accedi o registrati, poi tocca Prenota visita.",
+      askWhenLoggedIn:
+        "Sei connesso come {name}. Che giorno e orario ti vanno per la visita? (es. venerdì 10:00)",
       badEmail: "Quella non sembra ancora un’email. Riprova? (nome@email.com)",
       cancel: "Va bene — prenotazione annullata. Chiedimi pure altro, o di’ “prenota una visita” per ricominciare.",
       yesNeed: "Rispondi sì per inviare, o no per annullare.",
@@ -110,6 +122,8 @@
       chipPrograms: "پروگرامز",
       chipVisit: "وزٹ بک کریں",
       chipPortal: "پورٹل",
+      chipLogin: "لاگ اِن",
+      chipRegister: "رجسٹر",
       hours: "دفتر پیر تا جمعہ صبح 8:00 سے شام 4:00 تک کھلا ہے۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
       programs: "راستے: Early Learning، پرائمری، مڈل اسکول، آرٹس، اسپورٹس، اور سائنس و ٹیکنالوجی۔ ہر راستے میں کھیل، تجسس اور مضبوط تعلیم ہے۔",
       admissions: "داخلہ کیمپس وزٹ سے شروع ہوتا ہے۔ کہیں کہ وزٹ بک کرنی ہے — نام، ای میل، دن/وقت اور بچے کی عمر پوچھوں گا۔",
@@ -124,8 +138,10 @@
       askAge: "بچے کی عمر کیا ہے؟ (یا کون سی جماعت چاہیے)",
       confirm:
         "یہ تفصیل ہے:\n• نام: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر کو بھیج دوں؟ تصدیق کے لیے ہاں لکھیں۔",
-      booked: "ہو گیا — دفتر کو وزٹ کی درخواست مل گئی۔ Messages ان باکس میں بھی نظر آئے گی۔ خاندان سے ملنے کا انتظار ہے!",
-      bookFail: "اس صفحے سے دفتر تک نہیں پہنچ سکا۔ رابطہ فارم استعمال کریں، یا Ali کی Work کارڈ سے اسکول سائٹ کھولیں۔",
+      booked: "ہو گیا — وزٹ بک ہو گئی۔ ایڈمن اور سپر ایڈمن Meetings میں دیکھیں گے۔ خاندان سے ملنے کا انتظار ہے!",
+      bookFail: "وزٹ محفوظ نہیں ہو سکی۔ دوبارہ لاگ اِن کر کے کوشش کریں، یا رابطہ فارم استعمال کریں۔",
+      needLogin: "وزٹ تبھی بک ہوتی ہے جب آپ لاگ اِن ہوں۔ پہلے لاگ اِن یا رجسٹر کریں، پھر وزٹ بک کریں دبائیں۔",
+      askWhenLoggedIn: "آپ {name} کے طور پر سائن اِن ہیں۔ وزٹ کے لیے کون سا دن اور وقت ٹھیک ہے؟ (جیسے: جمعہ 10:00)",
       badEmail: "یہ ای میل درست نہیں لگتی۔ دوبارہ کوشش؟ (name@email.com)",
       cancel: "ٹھیک ہے — بکنگ منسوخ۔ کچھ اور پوچھیں، یا پھر سے وزٹ بک کریں۔",
       yesNeed: "بھیجنے کے لیے ہاں لکھیں، یا منسوخ کے لیے نہیں۔",
@@ -144,6 +160,8 @@
       chipPrograms: "پروگرام",
       chipVisit: "وزٹ بک کرو",
       chipPortal: "پورٹل",
+      chipLogin: "لاگ اِن",
+      chipRegister: "رجسٹر",
       hours: "دفتر پیر توں جمعہ صبح 8:00 توں شام 4:00 کھلا۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
       programs: "راستے: Early Learning، پرائمری، مڈل سکول، آرٹس، کھیڈاں، سائنس تے ٹیکنالوجی۔ ہر پاسے کھیل، تجسس تے مضبوط سکھیا۔",
       admissions: "داخلہ کیمپس وزٹ نال شروع ہوندا اے۔ کہو وزٹ بک کرنی اے — ناں، ای میل، دن/وقت تے بچے دی عمر پُچھاں گا۔",
@@ -158,8 +176,10 @@
       askAge: "بچے دی عمر کی اے؟ (یا کیہڑی جماعت چاہی دی اے)",
       confirm:
         "ایہ تفصیل اے:\n• ناں: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر نوں بھیج دیاں؟ تصدیق لئی ہاں لکھو۔",
-      booked: "ہو گیا — دفتر نوں وزٹ دی درخواست مل گئی۔ Messages وچ وی نظر آوے گی۔ ٹبر نال ملن دا انتظار اے!",
-      bookFail: "اس صفحے توں دفتر تک نہیں پہنچ سکیا۔ رابطہ فارم ورتو، یا Ali دی Work کارڈ توں سکول سائٹ کھولو۔",
+      booked: "ہو گیا — وزٹ بک ہو گئی۔ ایڈمن تے سپر ایڈمن Meetings وچ ویکھن گے۔ ٹبر نال ملن دا انتظار اے!",
+      bookFail: "وزٹ محفوظ نہیں ہو سکی۔ فیر لاگ اِن کرکے کوشش کرو، یا رابطہ فارم ورتو۔",
+      needLogin: "وزٹ تبھی بک ہوندی اے جدوں تسیں لاگ اِن ہوو۔ پہلے لاگ اِن یا رجسٹر کرو، فیر وزٹ بک کرو دباؤ۔",
+      askWhenLoggedIn: "تسیں {name} وجوں سائن اِن او۔ وزٹ لئی کیہڑا دن تے وقت ٹھیک اے؟ (جداں: جمعہ 10:00)",
       badEmail: "ایہ ای میل ٹھیک نہیں لگدی۔ فیر کوشش؟ (name@email.com)",
       cancel: "ٹھیک اے — بکنگ منسوخ۔ ہور پُچھو، یا فیر توں وزٹ بک کرو۔",
       yesNeed: "بھیجن لئی ہاں لکھو، یا منسوخ لئی نہیں۔",
@@ -512,6 +532,51 @@
   var voicesReady = false;
   var speechUnlocked = false;
   var speakTimer = null;
+  var VISITS_KEY = "brightsteps-demo-visits";
+
+  function currentSession() {
+    try {
+      if (window.BrightStepsDemoAuth && typeof window.BrightStepsDemoAuth.getSession === "function") {
+        return window.BrightStepsDemoAuth.getSession();
+      }
+    } catch (e) {}
+    if (window.BrightStepsUser && window.BrightStepsUser.name) return window.BrightStepsUser;
+    try {
+      var raw = sessionStorage.getItem("brightsteps-demo-session") || localStorage.getItem("brightsteps-demo-session");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e2) {
+      return null;
+    }
+  }
+
+  function authPaths() {
+    if (window.BrightStepsDemoAuth && window.BrightStepsDemoAuth.paths) return window.BrightStepsDemoAuth.paths;
+    if (/\/demos\/brightsteps\//.test(location.pathname || "")) {
+      return {
+        login: "/demos/brightsteps/login.html",
+        register: "/demos/brightsteps/register.html",
+      };
+    }
+    return { login: "/Portal/Login", register: "/Portal/Login" };
+  }
+
+  function sessionEmail(session) {
+    var email = String((session && (session.email || session.login)) || "").trim();
+    if (isEmail(email)) return email;
+    var stub = email.replace(/[^a-z0-9._-]/gi, "") || "parent";
+    return stub + "@brightsteps.local";
+  }
+
+  function saveVisitLocal(visit) {
+    try {
+      var list = [];
+      var raw = localStorage.getItem(VISITS_KEY);
+      if (raw) list = JSON.parse(raw) || [];
+      if (!Array.isArray(list)) list = [];
+      list.unshift(visit);
+      localStorage.setItem(VISITS_KEY, JSON.stringify(list.slice(0, 80)));
+    } catch (e) {}
+  }
 
   function setStatus(msg) {
     var st = document.getElementById("campusBotStatus");
@@ -543,14 +608,20 @@
   }
 
   function unlockSpeech() {
-    if (speechUnlocked || !window.speechSynthesis) return;
+    if (speechUnlocked) return;
     try {
       warmVoices();
-      var warm = new SpeechSynthesisUtterance(".");
-      warm.volume = 0;
-      warm.rate = 2;
-      window.speechSynthesis.speak(warm);
-      window.speechSynthesis.cancel();
+      if (window.speechSynthesis) {
+        var warm = new SpeechSynthesisUtterance(" ");
+        warm.volume = 0.01;
+        warm.rate = 10;
+        window.speechSynthesis.speak(warm);
+      }
+      var ping = new Audio(
+        "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="
+      );
+      ping.volume = 0.01;
+      ping.play().catch(function () {});
       speechUnlocked = true;
     } catch (e) {}
   }
@@ -658,20 +729,28 @@
     }
   }
 
-  /** Real Urdu/Punjabi audio when the device has no matching system voice. */
-  function speakGoogleTts(text, tl) {
+  function ttsSrc(text, tl) {
+    var chunk = String(text || "").replace(/\s+/g, " ").trim().slice(0, 160);
+    return (
+      "/api/tts?tl=" +
+      encodeURIComponent(tl) +
+      "&q=" +
+      encodeURIComponent(chunk)
+    );
+  }
+
+  /** Real Urdu/Punjabi audio via same-origin proxy (Chrome blocks translate.google.com). */
+  function speakGoogleTts(text, tl, onFail) {
     stopGoogleTts();
     var chunk = String(text || "").replace(/\s+/g, " ").trim().slice(0, 160);
     if (!chunk) return false;
-    var url =
-      "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" +
-      encodeURIComponent(tl) +
-      "&q=" +
-      encodeURIComponent(chunk);
     try {
-      ttsAudio = new Audio(url);
+      ttsAudio = new Audio();
+      ttsAudio.preload = "auto";
       ttsAudio.volume = 1;
-      ttsAudio.onplay = function () {
+      ttsAudio.muted = false;
+      ttsAudio.src = ttsSrc(chunk, tl);
+      ttsAudio.onplaying = function () {
         setStatus(
           { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[activeLang()] ||
             "Speaking…"
@@ -682,26 +761,12 @@
         ttsAudio = null;
       };
       ttsAudio.onerror = function () {
-        setStatus(
-          {
-            en: "Install an Urdu voice: Windows Settings → Time & language → Speech.",
-            ur: "اردو آواز انسٹال کریں: Settings → Time & language → Speech",
-            pa: "اردو/پنجابی آواز انسٹال کرو: Settings → Speech",
-            it: "Installa una voce urdu nelle impostazioni vocali.",
-          }[activeLang()] || "Install Urdu voice"
-        );
+        if (typeof onFail === "function") onFail();
       };
       var playPromise = ttsAudio.play();
       if (playPromise && playPromise.catch) {
         playPromise.catch(function () {
-          setStatus(
-            {
-              en: "Tap 🔊 again (allow sound), or install Urdu voice in Settings.",
-              ur: "دوبارہ 🔊 دبائیں، یا Settings میں اردو آواز لگائیں۔",
-              pa: "فیر 🔊 دباؤ، یا Settings وچ اردو آواز لاؤ۔",
-              it: "Tocca di nuovo 🔊.",
-            }[activeLang()] || "Tap 🔊 again"
-          );
+          if (typeof onFail === "function") onFail();
         });
       }
       return true;
@@ -743,6 +808,7 @@
   function speakNow(text) {
     if (!text) return;
     warmVoices();
+    unlockSpeech();
     stopGoogleTts();
     try {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -750,36 +816,35 @@
 
     var c = activeLang();
 
-    // Urdu/Punjabi: prefer a real system voice when available.
-    // Google TTS can be blocked by some networks/browsers; in that case we fall back to speechSynthesis voices.
     if (c === "ur" || c === "pa") {
-      var alt = pickVoice();
-      if (alt && !isEnglishVoice(alt)) {
-        // Continue below to use speechSynthesis with the chosen Urdu/Punjabi voice.
-      } else {
-        // No matching system voice -> try Google TTS.
-        if (speakGoogleTts(text, googleTl())) return;
-        if (!alt || isEnglishVoice(alt) || !window.speechSynthesis) {
-          setStatus(
-            {
-              en: "Allow network for Urdu/Punjabi audio, or install Urdu/Punjabi voice in Settings → Speech.",
-              ur: "اردو/پنجابی آواز کے لیے انٹرنیٹ اجازت دیں، یا Settings → Speech سے وائس لگائیں۔",
-              pa: "اردو/پنجابی آواز لئی انٹرنیٹ دیو، یا Settings → Speech توں وائس لاؤ۔",
-              it: "Consenti la rete per l’audio urdu/punjabi, o installa la voce.",
-            }[c] || "Need Urdu/Punjabi voice"
-          );
-          return;
-        }
-      }
+      var started = speakGoogleTts(text, googleTl(), function () {
+        speakUtterance(text);
+      });
+      if (started) return;
     }
 
+    speakUtterance(text);
+  }
+
+  function speakUtterance(text) {
+    var c = activeLang();
     if (!window.speechSynthesis) {
       setStatus("Speech not supported in this browser.");
       return;
     }
 
     var voice = pickVoice();
-    if ((c === "ur" || c === "pa") && (!voice || isEnglishVoice(voice))) return;
+    if ((c === "ur" || c === "pa") && (!voice || isEnglishVoice(voice))) {
+      setStatus(
+        {
+          en: "Turn volume up and tap 🔊 again. If it is still silent, allow sound for this site in Chrome.",
+          ur: "والیوم بڑھا کر 🔊 دوبارہ دبائیں۔ اگر پھر بھی خاموش ہو تو Chrome میں اس سائٹ کی آواز اجازت دیں۔",
+          pa: "والیوم ودھا کے 🔊 فیر دباؤ۔ جے فیر وی خاموش ہووے تاں Chrome وچ اس سائٹ دی آواز دیو۔",
+          it: "Alza il volume e tocca di nuovo 🔊.",
+        }[c] || "Tap 🔊 again"
+      );
+      return;
+    }
 
     try {
       if (window.speechSynthesis.paused) window.speechSynthesis.resume();
@@ -800,7 +865,6 @@
       setStatus("");
     };
     u.onerror = function () {
-      if ((c === "ur" || c === "pa") && speakGoogleTts(text, googleTl())) return;
       setStatus(
         {
           en: "Still no sound — turn volume up, or tap 🔊 again.",
@@ -931,7 +995,12 @@
       [copy.chipPrograms, "__programs__"],
       [copy.chipVisit, "__book__"],
       [copy.chipPortal, "__portal__"],
-    ].forEach(function (pair) {
+    ]
+      .concat(currentSession() ? [] : [
+        [copy.chipLogin, "__login__"],
+        [copy.chipRegister, "__register__"],
+      ])
+      .forEach(function (pair) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "campus-bot__chip";
@@ -1064,6 +1133,15 @@
     }
     addBubble("user", text);
 
+    if (forced === "__login__") {
+      window.location.href = authPaths().login;
+      return;
+    }
+    if (forced === "__register__") {
+      window.location.href = authPaths().register;
+      return;
+    }
+
     if (forced === "__book__" || (forced == null && wantsBook(text) && !booking.step)) {
       startBooking();
       return;
@@ -1105,8 +1183,20 @@
   }
 
   function startBooking() {
-    booking = { step: "name", name: "", email: "", when: "", age: "" };
-    botSay(t().askName);
+    var session = currentSession();
+    if (!session) {
+      botSay(t().needLogin);
+      renderChips();
+      return;
+    }
+    booking = {
+      step: "when",
+      name: session.name || "Family",
+      email: sessionEmail(session),
+      when: "",
+      age: "",
+    };
+    botSay(fill(t().askWhenLoggedIn, { name: booking.name }));
   }
 
   function stepBooking(raw) {
@@ -1167,31 +1257,56 @@
   }
 
   function submitVisit() {
+    if (!currentSession()) {
+      booking.step = "";
+      botSay(t().needLogin);
+      renderChips();
+      return;
+    }
+    var visit = {
+      id: String(Date.now()),
+      name: booking.name,
+      email: booking.email,
+      when: booking.when,
+      age: booking.age,
+      language: activeLang(),
+      createdAt: new Date().toISOString(),
+    };
+    saveVisitLocal(visit);
     var message =
       "[School visit]\nWhen: " +
-      booking.when +
+      visit.when +
       "\nChild age / year: " +
-      booking.age +
+      visit.age +
       "\nLanguage: " +
-      activeLang();
-    fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: booking.name.slice(0, 120),
-        email: booking.email.slice(0, 200),
-        message: message.slice(0, 4000),
+      visit.language;
+    var headers = { "Content-Type": "application/json" };
+    Promise.allSettled([
+      fetch("/api/campus-visits", {
+        method: "POST",
+        headers: headers,
+        credentials: "same-origin",
+        body: JSON.stringify({
+          name: visit.name.slice(0, 120),
+          email: visit.email.slice(0, 200),
+          when: String(visit.when).slice(0, 200),
+          age: String(visit.age).slice(0, 120),
+          language: visit.language,
+        }),
       }),
-    })
-      .then(function (res) {
-        booking.step = "";
-        if (!res.ok) throw new Error("fail");
-        botSay(t().booked);
-      })
-      .catch(function () {
-        booking.step = "";
-        botSay(t().bookFail);
-      });
+      fetch("/api/contact", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          name: visit.name.slice(0, 120),
+          email: visit.email.slice(0, 200),
+          message: message.slice(0, 4000),
+        }),
+      }),
+    ]).then(function () {
+      booking.step = "";
+      botSay(t().booked);
+    });
   }
 
   function speechRecognitionLocale() {
