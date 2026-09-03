@@ -523,6 +523,7 @@
       window.clearTimeout(speakTimer);
       speakTimer = null;
     }
+    stopGoogleTts();
     if (window.speechSynthesis) {
       try {
         window.speechSynthesis.cancel();
@@ -556,9 +557,10 @@
 
   function speechLocalePrefs() {
     var c = activeLang();
-    if (c === "ur") return ["ur-PK", "ur-IN", "ur", "hi-IN", "hi", "en-US", "en"];
-    if (c === "pa") return ["pa-IN", "pa-Guru-IN", "pa", "ur-PK", "ur", "hi-IN", "hi", "en-US", "en"];
-    if (c === "it") return ["it-IT", "it", "en-US", "en"];
+    // Never list English for Urdu/Punjabi — English voices only read Latin words.
+    if (c === "ur") return ["ur-PK", "ur-IN", "ur", "hi-IN", "hi", "ar-SA", "ar-AE", "ar-EG", "ar"];
+    if (c === "pa") return ["pa-IN", "pa-Guru-IN", "pa-PK", "pa", "ur-PK", "ur", "hi-IN", "hi"];
+    if (c === "it") return ["it-IT", "it"];
     return ["en-US", "en-GB", "en"];
   }
 
@@ -566,43 +568,154 @@
     return speechLocalePrefs()[0];
   }
 
+  function isEnglishVoice(v) {
+    if (!v) return true;
+    var lang = (v.lang || "").toLowerCase();
+    var name = (v.name || "").toLowerCase();
+    if (lang.indexOf("en") === 0) return true;
+    if (/english|david|zira|mark|susan|hazel|george|aria|guy|jenny/i.test(name) && !/urdu|hindi|punjabi|arabic|india/i.test(name))
+      return true;
+    return false;
+  }
+
   function pickVoice() {
     if (!window.speechSynthesis) return null;
     var voices = window.speechSynthesis.getVoices() || [];
     if (!voices.length) return null;
+    var c = activeLang();
     var prefs = speechLocalePrefs();
     var best = null;
     var bestScore = -1;
     var i;
     var j;
-    // Prefer real local voices — cloud/empty lang packs often produce silence.
+
+    // Name-based match first (Windows often labels "Microsoft Urdu" with odd lang codes).
+    if (c === "ur" || c === "pa") {
+      for (i = 0; i < voices.length; i++) {
+        var nm = (voices[i].name || "").toLowerCase();
+        var lg = (voices[i].lang || "").toLowerCase();
+        if (c === "ur" && (/urdu|اردو/.test(nm) || lg.indexOf("ur") === 0)) {
+          return voices[i];
+        }
+        if (c === "pa" && (/punjabi|panjabi|پنجابی|gurmukhi/.test(nm) || lg.indexOf("pa") === 0)) {
+          return voices[i];
+        }
+      }
+      for (i = 0; i < voices.length; i++) {
+        var nm2 = (voices[i].name || "").toLowerCase();
+        var lg2 = (voices[i].lang || "").toLowerCase();
+        if (/hindi|हिन्दी|हिंदी/.test(nm2) || lg2.indexOf("hi") === 0) return voices[i];
+      }
+      if (c === "ur") {
+        for (i = 0; i < voices.length; i++) {
+          var lg3 = (voices[i].lang || "").toLowerCase();
+          if (lg3.indexOf("ar") === 0) return voices[i];
+        }
+      }
+    }
+
     for (i = 0; i < prefs.length; i++) {
       var want = prefs[i].toLowerCase();
       var prefix = want.split("-")[0];
       for (j = 0; j < voices.length; j++) {
         var v = voices[j];
+        if ((c === "ur" || c === "pa") && isEnglishVoice(v)) continue;
         var lang = (v.lang || "").toLowerCase();
         var score = 0;
         if (lang === want) score = 100 - i;
         else if (lang.indexOf(prefix) === 0) score = 70 - i;
         else continue;
-        if (v.localService) score += 25;
-        if (/microsoft|google|samsung|apple|android/i.test(v.name || "")) score += 5;
+        if (v.localService) score += 15;
         if (score > bestScore) {
           bestScore = score;
           best = v;
         }
       }
-      if (best && bestScore >= 90) return best;
+      if (best && bestScore >= 70) break;
     }
+
+    if ((c === "ur" || c === "pa") && (!best || isEnglishVoice(best))) return null;
     if (best) return best;
-    for (i = 0; i < voices.length; i++) {
-      if (voices[i].localService) return voices[i];
+
+    if (c === "en" || c === "it") {
+      for (i = 0; i < voices.length; i++) {
+        if (voices[i].localService) return voices[i];
+      }
+      return voices[0] || null;
     }
-    for (i = 0; i < voices.length; i++) {
-      if (voices[i].default) return voices[i];
+    return null;
+  }
+
+  var ttsAudio = null;
+
+  function stopGoogleTts() {
+    if (ttsAudio) {
+      try {
+        ttsAudio.pause();
+        ttsAudio.src = "";
+      } catch (e) {}
+      ttsAudio = null;
     }
-    return voices[0];
+  }
+
+  /** Real Urdu/Punjabi audio when the device has no matching system voice. */
+  function speakGoogleTts(text, tl) {
+    stopGoogleTts();
+    var chunk = String(text || "").replace(/\s+/g, " ").trim().slice(0, 160);
+    if (!chunk) return false;
+    var url =
+      "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" +
+      encodeURIComponent(tl) +
+      "&q=" +
+      encodeURIComponent(chunk);
+    try {
+      ttsAudio = new Audio(url);
+      ttsAudio.volume = 1;
+      ttsAudio.onplay = function () {
+        setStatus(
+          { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[activeLang()] ||
+            "Speaking…"
+        );
+      };
+      ttsAudio.onended = function () {
+        setStatus("");
+        ttsAudio = null;
+      };
+      ttsAudio.onerror = function () {
+        setStatus(
+          {
+            en: "Install an Urdu voice: Windows Settings → Time & language → Speech.",
+            ur: "اردو آواز انسٹال کریں: Settings → Time & language → Speech",
+            pa: "اردو/پنجابی آواز انسٹال کرو: Settings → Speech",
+            it: "Installa una voce urdu nelle impostazioni vocali.",
+          }[activeLang()] || "Install Urdu voice"
+        );
+      };
+      var playPromise = ttsAudio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(function () {
+          setStatus(
+            {
+              en: "Tap 🔊 again (allow sound), or install Urdu voice in Settings.",
+              ur: "دوبارہ 🔊 دبائیں، یا Settings میں اردو آواز لگائیں۔",
+              pa: "فیر 🔊 دباؤ، یا Settings وچ اردو آواز لاؤ۔",
+              it: "Tocca di nuovo 🔊.",
+            }[activeLang()] || "Tap 🔊 again"
+          );
+        });
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function googleTl() {
+    var c = activeLang();
+    if (c === "pa") return "pa";
+    if (c === "ur") return "ur";
+    if (c === "it") return "it";
+    return "en";
   }
 
   function shouldSpeak() {
@@ -628,42 +741,67 @@
 
   /** Must run inside a click/tap handler on phones — delayed speak is muted. */
   function speakNow(text) {
-    if (!window.speechSynthesis || !text) {
+    if (!text) return;
+    warmVoices();
+    stopGoogleTts();
+    try {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    } catch (e) {}
+
+    var c = activeLang();
+
+    // Urdu/Punjabi: use Google TTS so you hear real Urdu, not an English voice.
+    if (c === "ur" || c === "pa") {
+      if (speakGoogleTts(text, googleTl())) return;
+      var alt = pickVoice();
+      if (!alt || isEnglishVoice(alt) || !window.speechSynthesis) {
+        setStatus(
+          {
+            en: "Allow network for Urdu audio, or install Urdu voice in Settings → Speech.",
+            ur: "اردو آواز کے لیے انٹرنیٹ اجازت دیں، یا Settings → Speech سے اردو وائس لگائیں۔",
+            pa: "اردو آواز لئی انٹرنیٹ دیو، یا Settings → Speech توں وائس لاؤ۔",
+            it: "Consenti la rete per l’audio urdu.",
+          }[c] || "Need Urdu voice"
+        );
+        return;
+      }
+    }
+
+    if (!window.speechSynthesis) {
       setStatus("Speech not supported in this browser.");
       return;
     }
-    warmVoices();
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {}
+
+    var voice = pickVoice();
+    if ((c === "ur" || c === "pa") && (!voice || isEnglishVoice(voice))) return;
+
     try {
       if (window.speechSynthesis.paused) window.speechSynthesis.resume();
     } catch (e2) {}
 
     var u = new SpeechSynthesisUtterance(String(text));
-    var voice = pickVoice();
     u.lang = voice && voice.lang ? voice.lang : speechLocale();
     if (voice) u.voice = voice;
-    u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
+    u.rate = c === "ur" || c === "pa" ? 0.9 : 1;
     u.pitch = 1;
     u.volume = 1;
     u.onstart = function () {
       setStatus(
-        { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[activeLang()] ||
-          "Speaking…"
+        { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[c] || "Speaking…"
       );
     };
     u.onend = function () {
       setStatus("");
     };
     u.onerror = function () {
+      if ((c === "ur" || c === "pa") && speakGoogleTts(text, googleTl())) return;
       setStatus(
         {
-          en: "Still no sound — turn volume up, disable silent mode, try Edge/Chrome.",
+          en: "Still no sound — turn volume up, or tap 🔊 again.",
           it: "Ancora niente audio — alza il volume.",
-          ur: "ابھی آواز نہیں — والیوم تیز کریں، سائلنٹ موڈ بند کریں۔",
-          pa: "ہالے آواز نہیں — والیوم ودھاؤ، سائلنٹ موڈ بند کرو۔",
-        }[activeLang()] || "No sound"
+          ur: "آواز نہیں — والیوم چیک کریں یا 🔊 دوبارہ دبائیں۔",
+          pa: "آواز نہیں — والیوم چیک کرو یا 🔊 فیر دباؤ۔",
+        }[c] || "No sound"
       );
     };
     window.speechSynthesis.speak(u);
@@ -671,65 +809,42 @@
   }
 
   function speak(text, force) {
-    if (!text || !window.speechSynthesis) return;
+    if (!text) return;
     if (force) {
       speakNow(text);
       return;
     }
     if (!shouldSpeak()) return;
-    // After mic: phones often block autoplay — try once, then ask to tap 🔊.
     if (speakTimer) window.clearTimeout(speakTimer);
     speakTimer = window.setTimeout(function () {
       speakTimer = null;
       if (!shouldSpeak()) return;
-      var started = false;
-      try {
-        warmVoices();
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(String(text));
-        var voice = pickVoice();
-        u.lang = voice && voice.lang ? voice.lang : speechLocale();
-        if (voice) u.voice = voice;
-        u.volume = 1;
-        u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
-        u.onstart = function () {
-          started = true;
-          setStatus(
-            { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[
-              activeLang()
-            ] || "Speaking…"
-          );
-        };
-        u.onend = function () {
-          setStatus("");
-        };
-        u.onerror = function () {
+      var c = activeLang();
+      var voice = pickVoice();
+      if ((c === "ur" || c === "pa") && (!voice || isEnglishVoice(voice))) {
+        setStatus(
+          {
+            en: "Tap the yellow 🔊 to hear in Urdu/Punjabi.",
+            ur: "اردو سننے کے لیے پیلا 🔊 دبائیں۔",
+            pa: "سنن لئی پیلا 🔊 دباؤ۔",
+            it: "Tocca 🔊 per ascoltare.",
+          }[c] || "Tap 🔊"
+        );
+        return;
+      }
+      speakNow(text);
+      window.setTimeout(function () {
+        if (shouldSpeak()) {
           setStatus(
             {
-              en: "Tap 🔊 on the reply to hear it.",
-              it: "Tocca 🔊 per ascoltare.",
-              ur: "سننے کے لیے جواب پر 🔊 دبائیں۔",
-              pa: "سنن لئی جواب تے 🔊 دباؤ۔",
-            }[activeLang()] || "Tap 🔊"
+              en: "If you hear English only, tap 🔊 for Urdu audio.",
+              ur: "اگر انگریزی آواز آئے تو اردو کے لیے 🔊 دبائیں۔",
+              pa: "جے انگریزی آواز آوے تاں 🔊 دباؤ۔",
+              it: "Tocca 🔊 se serve.",
+            }[c] || "Tap 🔊"
           );
-        };
-        window.speechSynthesis.speak(u);
-        keepSpeakingAlive();
-        window.setTimeout(function () {
-          if (!started) {
-            setStatus(
-              {
-                en: "Tap 🔊 on the reply to hear it.",
-                it: "Tocca 🔊 per ascoltare.",
-                ur: "سننے کے لیے جواب پر 🔊 دبائیں۔",
-                pa: "سنن لئی جواب تے 🔊 دباؤ۔",
-              }[activeLang()] || "Tap 🔊"
-            );
-          }
-        }, 800);
-      } catch (e) {
-        setStatus("Tap 🔊 on the reply to hear it.");
-      }
+        }
+      }, 900);
     }, 300);
   }
 
