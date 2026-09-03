@@ -99,7 +99,7 @@
     ur: {
       fab: "اسکول سے پوچھیں",
       title: "کیمپس ڈیسک",
-      sub: "بات کریں، بولیں، یا وزٹ بک کریں",
+      sub: "بات کریں، بولیں — جواب اردو میں سنائی دے گا",
       close: "چیٹ بند کریں",
       placeholder: "اوقات، پروگرامز، یا وزٹ کے بارے میں پوچھیں…",
       send: "بھیجیں",
@@ -133,7 +133,7 @@
     pa: {
       fab: "سکول توں پُچھو",
       title: "کیمپس ڈیسک",
-      sub: "لکھو، بولو، یا وزٹ بک کرو",
+      sub: "لکھو، بولو — جواب پنجابی وچ سُنائی دیوے گا",
       close: "چیٹ بند کرو",
       placeholder: "اواریں، پروگرام، یا وزٹ بارے پُچھو…",
       send: "بھیجو",
@@ -485,6 +485,8 @@
   var rec = null;
   var voiceTurn = false;
 
+  var voicesReady = false;
+
   function hushVoice() {
     if (window.speechSynthesis) {
       try {
@@ -493,15 +495,94 @@
     }
   }
 
-  function speak(text) {
-    if (!voiceTurn || !window.speechSynthesis) return;
+  function warmVoices() {
+    if (!window.speechSynthesis) return;
     try {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = speechLocale();
-      u.rate = 1;
-      window.speechSynthesis.speak(u);
+      var list = window.speechSynthesis.getVoices();
+      if (list && list.length) voicesReady = true;
+      window.speechSynthesis.onvoiceschanged = function () {
+        voicesReady = true;
+      };
+      // Kick Chrome/Edge into loading the voice list.
+      window.speechSynthesis.getVoices();
     } catch (e) {}
+  }
+
+  function speechLocalePrefs() {
+    var c = activeLang();
+    if (c === "ur") return ["ur-PK", "ur-IN", "ur", "hi-IN", "hi"];
+    // Shahmukhi Punjabi reads best with Urdu voices; Gurmukhi engines use pa-IN.
+    if (c === "pa") return ["pa-IN", "pa-Guru-IN", "pa", "ur-PK", "ur-IN", "ur", "hi-IN", "hi"];
+    if (c === "it") return ["it-IT", "it"];
+    return ["en-US", "en-GB", "en"];
+  }
+
+  function speechLocale() {
+    return speechLocalePrefs()[0];
+  }
+
+  function pickVoice() {
+    if (!window.speechSynthesis) return null;
+    var voices = window.speechSynthesis.getVoices() || [];
+    if (!voices.length) return null;
+    var prefs = speechLocalePrefs();
+    var i;
+    var v;
+    for (i = 0; i < prefs.length; i++) {
+      var want = prefs[i].toLowerCase();
+      for (var j = 0; j < voices.length; j++) {
+        v = voices[j];
+        if ((v.lang || "").toLowerCase() === want) return v;
+      }
+      var prefix = want.split("-")[0];
+      for (var k = 0; k < voices.length; k++) {
+        v = voices[k];
+        if ((v.lang || "").toLowerCase().indexOf(prefix) === 0) return v;
+      }
+    }
+    for (i = 0; i < voices.length; i++) {
+      v = voices[i];
+      if (/urdu|punjabi|panjabi|hindi|pakistan|india/i.test(v.name || "")) return v;
+    }
+    return null;
+  }
+
+  function shouldSpeak() {
+    var c = activeLang();
+    // Mic turns always speak. Urdu/Punjabi also speak typed replies.
+    return voiceTurn || c === "ur" || c === "pa";
+  }
+
+  function speak(text) {
+    if (!shouldSpeak() || !window.speechSynthesis || !text) return;
+    var run = function () {
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(String(text));
+        var locale = speechLocale();
+        var voice = pickVoice();
+        u.lang = voice && voice.lang ? voice.lang : locale;
+        if (voice) u.voice = voice;
+        u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.92 : 1;
+        u.pitch = 1;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    };
+    warmVoices();
+    if (voicesReady || (window.speechSynthesis.getVoices() || []).length) {
+      run();
+      return;
+    }
+    // Voices often load async — speak as soon as they appear.
+    var tries = 0;
+    var timer = window.setInterval(function () {
+      tries += 1;
+      if ((window.speechSynthesis.getVoices() || []).length || tries > 15) {
+        window.clearInterval(timer);
+        voicesReady = true;
+        run();
+      }
+    }, 120);
   }
 
   function el(html) {
@@ -618,7 +699,7 @@
 
   function botSay(text) {
     addBubble("bot", text);
-    if (voiceTurn) speak(text);
+    speak(text);
   }
 
   function beginTurn(fromVoice) {
@@ -743,10 +824,10 @@
       });
   }
 
-  function speechLocale() {
+  function speechRecognitionLocale() {
     var c = activeLang();
-    if (c === "ur") return "ur-PK";
-    if (c === "pa") return "pa-IN";
+    // Pakistani Punjabi (Shahmukhi) is recognized more reliably with Urdu STT.
+    if (c === "ur" || c === "pa") return "ur-PK";
     if (c === "it") return "it-IT";
     return "en-US";
   }
@@ -764,18 +845,20 @@
     var mic = document.getElementById("campusBotMic");
     if (!Ctor) {
       var voiceHint = {
-        en: "Voice works in Chrome or Edge. Urdu/Punjabi mic: speak after opening chat in that language.",
+        en: "Voice works in Chrome or Edge. For Urdu/Punjabi, type one word first or use Edge with language packs.",
         it: "La voce funziona in Chrome o Edge.",
-        ur: "آواز Chrome یا Edge میں کام کرتی ہے۔ اردو بولیں — چیٹ کھول کر مائیک دبائیں۔",
-        pa: "آواز Chrome یا Edge وچ کم کردی اے۔ پنجابی بولو — چیٹ کھول کے مائیک دباؤ۔",
+        ur: "آواز Chrome یا Edge میں کام کرتی ہے۔ اردو/پنجابی بولنے سے پہلے ایک لفظ لکھیں، پھر مائیک دبائیں۔",
+        pa: "آواز Chrome یا Edge وچ کم کردی اے۔ اردو/پنجابی بولن توں پہلے اک لفظ لکھو، فیر مائیک دباؤ۔",
       };
       document.getElementById("campusBotStatus").textContent =
         voiceHint[activeLang()] || voiceHint.en;
       return;
     }
+    warmVoices();
     rec = new Ctor();
-    rec.lang = speechLocale();
+    rec.lang = speechRecognitionLocale();
     rec.interimResults = false;
+    rec.maxAlternatives = 3;
     rec.onresult = function (ev) {
       var said = ev.results[0][0].transcript;
       stopMic();
@@ -787,10 +870,22 @@
     rec.onend = function () {
       if (rec) stopMic();
     };
-    rec.start();
+    try {
+      rec.start();
+    } catch (e) {
+      stopMic();
+      return;
+    }
     mic.classList.add("is-on");
     mic.setAttribute("aria-label", t().micOn);
-    document.getElementById("campusBotStatus").textContent = t().micOn;
+    var listenHint = {
+      en: t().micOn,
+      it: t().micOn,
+      ur: "سن رہا ہوں… اردو یا پنجابی میں بولیں",
+      pa: "سُن رہا واں… اردو یا پنجابی وچ بولو",
+    };
+    document.getElementById("campusBotStatus").textContent =
+      listenHint[activeLang()] || t().micOn;
   }
 
   function stopMic() {
@@ -810,6 +905,7 @@
   }
 
   function boot() {
+    warmVoices();
     mount();
   }
 
