@@ -96,9 +96,79 @@
       cancel: "Va bene — prenotazione annullata. Chiedimi pure altro, o di’ “prenota una visita” per ricominciare.",
       yesNeed: "Rispondi sì per inviare, o no per annullare.",
     },
+    ur: {
+      fab: "اسکول سے پوچھیں",
+      title: "کیمپس ڈیسک",
+      sub: "بات کریں، بولیں، یا وزٹ بک کریں",
+      close: "چیٹ بند کریں",
+      placeholder: "اوقات، پروگرامز، یا وزٹ کے بارے میں پوچھیں…",
+      send: "بھیجیں",
+      mic: "بولیں",
+      micOn: "سن رہا ہوں…",
+      greet: "السلام علیکم! میں Scuola Materna کا کیمپس ڈیسک ہوں۔ اوقات، پروگرامز، داخلہ اور والدین پورٹل بتا سکتا ہوں — یا وزٹ بک کروا سکتا ہوں۔",
+      chipHours: "اوقات",
+      chipPrograms: "پروگرامز",
+      chipVisit: "وزٹ بک کریں",
+      chipPortal: "پورٹل",
+      hours: "دفتر پیر تا جمعہ صبح 8:00 سے شام 4:00 تک کھلا ہے۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
+      programs: "راستے: Early Learning، پرائمری، مڈل اسکول، آرٹس، اسپورٹس، اور سائنس و ٹیکنالوجی۔ ہر راستے میں کھیل، تجسس اور مضبوط تعلیم ہے۔",
+      admissions: "داخلہ کیمپس وزٹ سے شروع ہوتا ہے۔ کہیں کہ وزٹ بک کرنی ہے — نام، ای میل، دن/وقت اور بچے کی عمر پوچھوں گا۔",
+      portal: "والدین، اساتذہ اور طلبہ Student Portal / Accedi سے لاگ اِن کریں۔ ڈیمو: student_demo، parent_demo، teacher_demo — پاس ورڈ Demo@12345۔",
+      address: "پتہ: 42 Maple Grove, Riverside۔ ای میل hello@brightsteps.academy یا فون +1 (555) 214-8800۔",
+      teachers: "محبت کرنے والے، اہل اساتذہ جو ہر بچے کا نام جانتے ہیں — ریاضی، سائنس، انگریزی، آرٹ، موسیقی، کھیلیں اور کمپیوٹر۔",
+      facilities: "لائبریری، سائنس و کمپیوٹر لیبز، کھیلوں کا میدان، آرٹ و موسیقی کے کمرے، سمارٹ کلاسز، کیفے اور محفوظ کھیل کا علاقہ۔",
+      fallback: "میں اوقات، پروگرامز، داخلہ، اساتذہ، سہولیات، پورٹل — یا وزٹ بکنگ میں مدد کر سکتا ہوں۔ کیا پوچھنا ہے؟",
+      askName: "زبردست — وزٹ بک کرتے ہیں۔ آپ کا نام کیا ہے؟",
+      askEmail: "شکریہ، {name}۔ دفتر کے لیے بہترین ای میل کیا ہے؟",
+      askWhen: "وزٹ کے لیے کون سا دن اور وقت ٹھیک ہے؟ (جیسے: جمعہ 10:00)",
+      askAge: "بچے کی عمر کیا ہے؟ (یا کون سی جماعت چاہیے)",
+      confirm:
+        "یہ تفصیل ہے:\n• نام: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر کو بھیج دوں؟ تصدیق کے لیے ہاں لکھیں۔",
+      booked: "ہو گیا — دفتر کو وزٹ کی درخواست مل گئی۔ Messages ان باکس میں بھی نظر آئے گی۔ خاندان سے ملنے کا انتظار ہے!",
+      bookFail: "اس صفحے سے دفتر تک نہیں پہنچ سکا۔ رابطہ فارم استعمال کریں، یا Ali کی Work کارڈ سے اسکول سائٹ کھولیں۔",
+      badEmail: "یہ ای میل درست نہیں لگتی۔ دوبارہ کوشش؟ (name@email.com)",
+      cancel: "ٹھیک ہے — بکنگ منسوخ۔ کچھ اور پوچھیں، یا پھر سے وزٹ بک کریں۔",
+      yesNeed: "بھیجنے کے لیے ہاں لکھیں، یا منسوخ کے لیے نہیں۔",
+    },
+    pa: {
+      fab: "سکول توں پُچھو",
+      title: "کیمپس ڈیسک",
+      sub: "لکھو، بولو، یا وزٹ بک کرو",
+      close: "چیٹ بند کرو",
+      placeholder: "اواریں، پروگرام، یا وزٹ بارے پُچھو…",
+      send: "بھیجو",
+      mic: "بولو",
+      micOn: "سُن رہا واں…",
+      greet: "ست سری اکال / السلام علیکم! میں Scuola Materna دا کیمپس ڈیسک واں۔ اواریں، پروگرام، داخلہ تے پورٹل دس سکدا واں — یا وزٹ بک کروا سکدا واں۔",
+      chipHours: "اواریں",
+      chipPrograms: "پروگرام",
+      chipVisit: "وزٹ بک کرو",
+      chipPortal: "پورٹل",
+      hours: "دفتر پیر توں جمعہ صبح 8:00 توں شام 4:00 کھلا۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
+      programs: "راستے: Early Learning، پرائمری، مڈل سکول، آرٹس، کھیڈاں، سائنس تے ٹیکنالوجی۔ ہر پاسے کھیل، تجسس تے مضبوط سکھیا۔",
+      admissions: "داخلہ کیمپس وزٹ نال شروع ہوندا اے۔ کہو وزٹ بک کرنی اے — ناں، ای میل، دن/وقت تے بچے دی عمر پُچھاں گا۔",
+      portal: "ماپے، استاد تے طالب علم Accedi / Student Portal توں لاگ اِن کرن۔ ڈیمو: student_demo، parent_demo، teacher_demo — پاس ورڈ Demo@12345۔",
+      address: "پتہ: 42 Maple Grove, Riverside۔ ای میل hello@brightsteps.academy یا فون +1 (555) 214-8800۔",
+      teachers: "پیار والے استاد جو ہر بچے دا ناں جاندے نے — ریاضی، سائنس، انگریزی، آرٹ، موسیقی، کھیڈاں تے کمپیوٹر۔",
+      facilities: "لائبریری، سائنس تے کمپیوٹر لیبز، کھیڈاں دا میدان، آرٹ تے موسیقی دے کمرے، سمارٹ کلاس، کیفے تے محفوظ کھیڈ دا تھاں۔",
+      fallback: "میں اواریں، پروگرام، داخلہ، استاد، سہولیات، پورٹل — یا وزٹ بکنگ وچ مدد کر سکدا واں۔ کی پُچھنا اے؟",
+      askName: "چنگا — وزٹ بک کردے آں۔ تہاڈا ناں کی اے؟",
+      askEmail: "شکریہ، {name}۔ دفتر لئی سب توں ودھیا ای میل کیہڑی اے؟",
+      askWhen: "وزٹ لئی کیہڑا دن تے وقت ٹھیک اے؟ (جداں: جمعہ 10:00)",
+      askAge: "بچے دی عمر کی اے؟ (یا کیہڑی جماعت چاہی دی اے)",
+      confirm:
+        "ایہ تفصیل اے:\n• ناں: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر نوں بھیج دیاں؟ تصدیق لئی ہاں لکھو۔",
+      booked: "ہو گیا — دفتر نوں وزٹ دی درخواست مل گئی۔ Messages وچ وی نظر آوے گی۔ ٹبر نال ملن دا انتظار اے!",
+      bookFail: "اس صفحے توں دفتر تک نہیں پہنچ سکیا۔ رابطہ فارم ورتو، یا Ali دی Work کارڈ توں سکول سائٹ کھولو۔",
+      badEmail: "ایہ ای میل ٹھیک نہیں لگدی۔ فیر کوشش؟ (name@email.com)",
+      cancel: "ٹھیک اے — بکنگ منسوخ۔ ہور پُچھو، یا فیر توں وزٹ بک کرو۔",
+      yesNeed: "بھیجن لئی ہاں لکھو، یا منسوخ لئی نہیں۔",
+    },
   };
 
-  function lang() {
+  var chatLang = null;
+
+  function siteLang() {
     if (window.ScuolaLang && typeof window.ScuolaLang.get === "function") {
       var l = window.ScuolaLang.get();
       if (l === "en" || l === "it") return l;
@@ -106,8 +176,79 @@
     return document.documentElement.lang === "en" ? "en" : "it";
   }
 
+  function activeLang() {
+    return chatLang || siteLang();
+  }
+
+  function lang() {
+    return activeLang();
+  }
+
   function t() {
-    return T[lang()] || T.it;
+    return T[activeLang()] || T.en;
+  }
+
+  function detectMsgLang(raw) {
+    var s = String(raw || "");
+    if (/[\u0A00-\u0A7F]/.test(s)) return "pa";
+    if (/[\u0600-\u06FF]/.test(s)) {
+      if (/تسی|اسیں|کیہ حال|کی حال اے|تھاں|ویں|دسو|کیہڑا/.test(s)) return "pa";
+      return "ur";
+    }
+    var n = norm(s);
+    if (
+      hasAny(n, [
+        "tusi",
+        "tussi",
+        "assi",
+        "ki haal",
+        "kihal",
+        "punjabi",
+        "panjabi",
+        "menu daso",
+        "ki daso",
+        "oho",
+        "fer ki",
+        "ki ae",
+        "ki a",
+      ])
+    )
+      return "pa";
+    if (
+      hasAny(n, [
+        "assalam",
+        "salaam",
+        "salam",
+        "shukriya",
+        "shukria",
+        "mehrbani",
+        "kya haal",
+        "kitni fee",
+        "fees kitni",
+        "admission kaise",
+        "dakhil",
+        "dakhla",
+        "mulakat",
+        "mulaqat",
+        "urdu",
+        "haan",
+        "nahi",
+        "nahin",
+        "batao",
+        "bataye",
+        "meherbani",
+        "jazak",
+      ])
+    )
+      return "ur";
+    if (hasAny(n, ["ciao", "grazie", "prenot", "orari", "scuola", "bambino", "visita"])) return "it";
+    if (hasAny(n, ["hello", "hi ", "thanks", "please", "book a", "hours", "programs"])) return "en";
+    return null;
+  }
+
+  function noteUserLang(raw) {
+    var d = detectMsgLang(raw);
+    if (d) chatLang = d;
   }
 
   function fill(s, map) {
@@ -132,11 +273,29 @@
   }
 
   function isYes(s) {
-    return /^(y|yes|ok|okay|sure|please|si|sì|sì\.|certo|va bene|oké)\b/.test(s) || s === "sì" || s === "si";
+    return (
+      /^(y|yes|ok|okay|sure|please|si|sì|sì\.|certo|va bene|oké|haan|ji|han|aaho|aho)\b/.test(s) ||
+      s === "sì" ||
+      s === "si" ||
+      s === "ہاں" ||
+      s === "جي" ||
+      s === "جی" ||
+      s === "جی ہاں" ||
+      s === "ہن" ||
+      s.indexOf("ہاں") === 0 ||
+      s.indexOf("جی") === 0
+    );
   }
 
   function isNo(s) {
-    return /^(n|no|nope|cancel|stop|annulla|basta)\b/.test(s);
+    return (
+      /^(n|no|nope|cancel|stop|annulla|basta|nahi|nahin|na)\b/.test(s) ||
+      s === "نہیں" ||
+      s === "نहीं" ||
+      s === "نئیں" ||
+      s.indexOf("نہیں") === 0 ||
+      s.indexOf("نئیں") === 0
+    );
   }
 
   function isEmail(s) {
@@ -144,57 +303,57 @@
   }
 
   var FAQS = [
-    { keys: ["hello", "hi", "hey", "ciao", "buongiorno", "salve"], en: "Hi! I’m the campus desk. Ask about hours, programs, fees, uniform, buses — or say you want to book an appointment.", it: "Ciao! Sono lo sportello del campus. Chiedi orari, programmi, rette, divisa, pullman — o di’ che vuoi prenotare un appuntamento." },
-    { keys: ["thank", "grazie"], en: "You’re welcome. Anything else about the school?", it: "Prego. Altro sulla scuola?" },
-    { keys: ["who are you", "your name", "chi sei"], en: "I’m the Scuola Materna campus assistant. I answer school questions and can book a visit.", it: "Sono l’assistente della Scuola Materna. Rispondo alle domande e posso prenotare una visita." },
-    { keys: ["help", "aiuto", "what can you"], en: "Ask me about hours, programs, admissions, fees, uniform, lunch, buses, teachers, class size, holidays, the parent portal, or booking a visit.", it: "Chiedimi orari, programmi, iscrizioni, rette, divisa, mensa, pullman, insegnanti, numero in classe, vacanze, portale genitori o una visita." },
-    { keys: ["weekend", "saturday", "sunday", "sabato", "domenica"], en: "The office is closed Saturday and Sunday. We open again Monday at 8:00 AM.", it: "La segreteria è chiusa sabato e domenica. Riapriamo lunedì alle 8:00." },
-    { keys: ["hour", "open", "orari", "apert", "closing"], en: "Office hours: Monday–Friday, 8:00 AM – 4:00 PM at 42 Maple Grove, Riverside. Phone +1 (555) 214-8800.", it: "Orari: lunedì–venerdì 8:00–16:00, 42 Maple Grove, Riverside. Tel. +1 (555) 214-8800." },
-    { keys: ["early learning", "nursery", "infanzia", "preschool", "kindergarten"], en: "Early Learning is play-based discovery for our youngest children — curiosity, stories and gentle routines.", it: "Prima infanzia è un percorso per i più piccoli: gioco, storie e routine delicate." },
-    { keys: ["primary", "elementar", "primaria"], en: "Primary School builds strong reading, maths and kindness — the foundations for lifelong learning.", it: "La scuola primaria costruisce lettura, matematica e gentilezza — basi per tutta la vita." },
-    { keys: ["middle school", "scuola media"], en: "Middle School grows independence, confidence and deeper subject knowledge.", it: "La scuola media sviluppa indipendenza, fiducia e materie più approfondite." },
-    { keys: ["program", "curric", "pathway", "percors", "materie"], en: "Pathways: Early Learning, Primary, Middle School, Creative Arts, Sports, and Science & Technology.", it: "Percorsi: Prima infanzia, Scuola primaria, Scuola media, Arti creative, Sport, Scienza e tecnologia." },
-    { keys: ["art", "arte", "music", "musica"], en: "Art and music studios run all week. Children paint, sing, and perform at the annual show.", it: "Sale arte e musica tutta la settimana. I bambini dipingono, cantano e si esibiscono al saggio." },
-    { keys: ["sport", "pe", "educazione fisica", "football", "soccer"], en: "Sports include PE, house races and Sports Day on the field. We mix teamwork with lots of orange slices.", it: "Sport: educazione fisica, gare delle case e Giornata dello sport. Tanto gioco di squadra." },
-    { keys: ["stem", "science", "scienz", "computer", "coding", "lab"], en: "Science and computer labs are hands-on: experiments, coding as a creative language, and curious questions.", it: "Laboratori di scienze e informatica: esperimenti, coding creativo e tante domande." },
-    { keys: ["admiss", "enroll", "iscriz", "apply", "application"], en: "Admissions start with a campus visit. Say “book an appointment” and I’ll take your name, email, day/time and your child’s age.", it: "Le iscrizioni iniziano con una visita. Di’ “prenota un appuntamento” e chiederò nome, email, giorno/orario ed età." },
-    { keys: ["fee", "tuition", "cost", "price", "retta", "quanto costa"], en: "Tuition is explained in person on a visit so we can match the right pathway. Book an appointment and the office will walk you through fees.", it: "Le rette si spiegano in visita, in base al percorso. Prenota un appuntamento e la segreteria ti guida." },
-    { keys: ["how old", "age", "eta", "età", "years old"], en: "We welcome children from early years through middle school. Tell me your child’s age when you book a visit.", it: "Accogliamo dalla prima infanzia alla scuola media. Dimmi l’età del bambino quando prenoti." },
-    { keys: ["uniform", "divisa"], en: "Yes — a simple school uniform. The office shares the list at your visit.", it: "Sì, c’è una divisa semplice. La lista si riceve in visita." },
-    { keys: ["lunch", "canteen", "mensa", "food", "cafeteria"], en: "The cafeteria is a comfortable dining space. Packed lunches are welcome too.", it: "La mensa è un spazio comodo. Si può portare anche il pranzo da casa." },
-    { keys: ["bus", "transport", "pullman", "scuolabus"], en: "Safe school transport is available. Ask the office during your visit for routes.", it: "C’è un trasporto scolastico sicuro. I percorsi si vedono in segreteria." },
-    { keys: ["address", "where", "map", "indirizzo", "location", "dove siete"], en: "42 Maple Grove, Riverside. Email hello@brightsteps.academy or call +1 (555) 214-8800.", it: "42 Maple Grove, Riverside. Email hello@brightsteps.academy — tel. +1 (555) 214-8800." },
-    { keys: ["phone", "call", "telefon", "number"], en: "Call the office on +1 (555) 214-8800, Monday–Friday 8:00 AM – 4:00 PM.", it: "Tel. +1 (555) 214-8800, lunedì–venerdì 8:00–16:00." },
-    { keys: ["email", "write", "scriv"], en: "Email hello@brightsteps.academy — or use the contact form on this site.", it: "Email hello@brightsteps.academy — oppure il modulo Contatti sul sito." },
-    { keys: ["teacher", "insegn", "staff", "faculty"], en: "Warm, qualified teachers who know every child by name — maths, science, English, art, music, PE and computing.", it: "Insegnanti preparati che conoscono ogni bambino per nome — matematica, scienze, inglese, arte, musica, motoria e informatica." },
-    { keys: ["class size", "how many children", "quanti bambini", "ratio"], en: "Classes stay small enough that teachers know every child. Ask on your visit for the current year-group sizes.", it: "Classi contenute: gli insegnanti conoscono ogni bambino. I numeri precisi si vedono in visita." },
-    { keys: ["language", "english", "italian", "italiano", "inglese", "bilingual"], en: "The public site switches English and Italian with EN | IT. Teaching mixes both so families feel at home.", it: "Il sito passa da inglese a italiano con EN | IT. La didattica accoglie entrambe le lingue." },
-    { keys: ["portal", "login", "acced", "password", "demo"], en: "Parents, teachers and students sign in from Accedi. Demo: student_demo, parent_demo, teacher_demo — password Demo@12345. You can also register.", it: "Si accede da Accedi. Demo: student_demo, parent_demo, teacher_demo — password Demo@12345. Puoi anche registrarti." },
-    { keys: ["parent portal", "portale genitori"], en: "The parent portal shows diary, attendance and announcements for your child.", it: "Il portale genitori mostra diario, presenze e avvisi." },
-    { keys: ["student portal", "portale student"], en: "The student portal has timetable, assignments and marks.", it: "Il portale studenti ha orario, compiti e voti." },
-    { keys: ["homework", "compiti", "assignment"], en: "Homework is short and meaningful. Parents see it in the diary on the portal.", it: "I compiti sono brevi e utili. I genitori li vedono nel diario del portale." },
-    { keys: ["holiday", "vacation", "vacanz", "break", "closed"], en: "Term dates and holidays are posted on the events page and in the parent portal.", it: "Calendario e vacanze sono in Eventi e nel portale genitori." },
-    { keys: ["sick", "ill", "malat", "fever", "assent"], en: "If a child is unwell, keep them home and message the office. We log attendance on the portal.", it: "Se il bambino sta male, resti a casa e avvisa la segreteria. Le assenze sono nel portale." },
-    { keys: ["safe", "security", "sicur", "bully"], en: "The campus is secure, with caring staff and clear routines. Kindness is part of the code.", it: "Campus sicuro, personale attento e routine chiare. La gentilezza fa parte delle regole." },
-    { keys: ["playground", "play area", "cortile", "giochi"], en: "A safe play area sits beside the fields — space to run, climb and make friends.", it: "Area giochi sicura accanto ai campi — si corre, si gioca, si fanno amici." },
-    { keys: ["library", "bibliotec", "books"], en: "The modern library has books, quiet corners and reading week every year.", it: "Biblioteca moderna: libri, angoli silenziosi e la settimana della lettura." },
-    { keys: ["after school", "aftercare", "doposcuola", "club"], en: "Clubs and after-school fun run beyond the bell — art, sport, reading and science.", it: "Doposcuola e club oltre l’orario: arte, sport, lettura e scienze." },
-    { keys: ["event", "calendar", "calendario"], en: "Sports days, exhibitions, parent meetings and the annual show are on the Events page.", it: "Giornate sportive, mostre, colloqui e saggio annuale sono in Eventi." },
-    { keys: ["sports day", "giornata dello sport"], en: "Sports Day is on the field — races, relays and house cheers. Next one is marked on the events posters.", it: "La Giornata dello sport è in campo: gare, staffette e tifo. La data è sui manifesti Eventi." },
-    { keys: ["park", "parking"], en: "Short-stay parking is on Maple Grove in front of the gate. Please keep the bus lane clear.", it: "Parcheggio breve in Maple Grove davanti al cancello. Lascia libera la corsia del pullman." },
-    { keys: ["special need", "sen", "inclus", "disability", "bes"], en: "We plan support with families. Mention any needs when you book a visit so the right teacher can join.", it: "Progettiamo il supporto con le famiglie. Segnala le esigenze in visita così c’è l’insegnante giusto." },
-    { keys: ["vaccine", "vaccin", "health", "nurse", "infermer"], en: "A nurse / first-aid room supports student health. Immunisation records are requested at admission.", it: "C’è un’infermeria. In iscrizione chiediamo i certificati vaccinali." },
-    { keys: ["start", "term", "when does school", "inizio"], en: "The school year follows the published calendar. A visit is the easiest way to lock a start date.", it: "L’anno segue il calendario pubblicato. Una visita è il modo più semplice per fissare l’inizio." },
-    { keys: ["supply", "stationery", "material", "quadern"], en: "A simple supplies list is given at enrolment. The school provides a lot of shared classroom material.", it: "Una lista semplice si riceve all’iscrizione. Molto materiale è condiviso in classe." },
-    { keys: ["photo", "gallery", "galleria"], en: "The gallery page is a scrapbook of campus life — click a photo to open it.", it: "La galleria è uno scrapbook del campus — clicca una foto per aprirla." },
-    { keys: ["contact form", "message", "modulo"], en: "The contact form on this page reaches the office. For a timed visit, say you want to book an appointment here in chat.", it: "Il modulo Contatti arriva in segreteria. Per una visita ad orario, prenota qui in chat." },
-    { keys: ["headmaster", "principal", "preside", "head teacher"], en: "Our headmaster, Grace Okonkwo, oversees campus life. You can meet leadership on a booked visit.", it: "La preside Grace Okonkwo guida il campus. Si può incontrare la dirigenza in visita." },
-    { keys: ["birthday", "compleanno"], en: "Class birthdays are low-key and kind. Tell the teacher a week ahead if you’d like to share a treat.", it: "I compleanni in classe sono semplici. Avvisa l’insegnante una settimana prima se porti qualcosa." },
-    { keys: ["weather", "snow", "close", "chiusura"], en: "Weather closures are posted on the parent portal and by email/SMS from the office.", it: "Le chiusure per maltempo arrivano sul portale e via email/SMS dalla segreteria." },
-    { keys: ["pta", "parent teacher", "colloqui"], en: "Parent-teacher meetings are on the calendar. You can also request a conversation any week through the office.", it: "I colloqui sono in calendario. Si può anche chiedere un incontro in qualsiasi settimana." },
-    { keys: ["religion", "faith", "relig"], en: "We welcome every family. Celebrations are cultural and kind, never exclusive.", it: "Ogni famiglia è la benvenuta. Le feste sono culturali e inclusive." },
-    { keys: ["waitlist", "waiting list", "lista d'attesa"], en: "If a year group is full we keep a waitlist. Book a visit anyway so we know your child’s age.", it: "Se la classe è piena teniamo una lista d’attesa. Prenota comunque una visita e indica l’età." },
-    { keys: ["tour", "open day"], en: "Campus tours are by appointment. Say “I want to book an appointment” and I’ll collect your details.", it: "Le visite sono su appuntamento. Di’ “voglio prenotare” e raccolgo i dati." },
+    { keys: ["hello", "hi", "hey", "ciao", "buongiorno", "salve", "سلام", "السلام", "آداب", "کی حال", "کیا حال", "assalam", "salam", "kya haal", "ki haal"], en: "Hi! I’m the campus desk. Ask about hours, programs, fees, uniform, buses — or say you want to book an appointment.", it: "Ciao! Sono lo sportello del campus. Chiedi orari, programmi, rette, divisa, pullman — o di’ che vuoi prenotare un appuntamento.", ur: "السلام علیکم! میں کیمپس ڈیسک ہوں۔ اوقات، پروگرامز، فیس، یونیفارم، بس — یا ملاقات بک کرنے کو کہیں۔", pa: "ست سری اکال! میں کیمپس ڈیسک واں۔ اواریں، پروگرام، فیس، یونیفارم، بس — یا ملاقات بک کرن لئی کہو۔" },
+    { keys: ["thank", "grazie", "شکریہ", "مہربانی", "shukriya", "mehrbani", "shukria", "dhanyavad"], en: "You’re welcome. Anything else about the school?", it: "Prego. Altro sulla scuola?", ur: "خوشی ہوئی۔ اسکول کے بارے میں اور کچھ؟", pa: "کوئی گل نہیں۔ سکول بارے ہور کی؟" },
+    { keys: ["who are you", "your name", "chi sei", "آپ کون", "تسی کون", "تون کون", "aap kaun", "tusi kaun"], en: "I’m the Scuola Materna campus assistant. I answer school questions and can book a visit.", it: "Sono l’assistente della Scuola Materna. Rispondo alle domande e posso prenotare una visita.", ur: "میں Scuola Materna کا اسسٹنٹ ہوں۔ اسکول کے سوالات کے جواب دیتا ہوں اور وزٹ بک کروا سکتا ہوں۔", pa: "میں Scuola Materna دا اسسٹنٹ واں۔ سکول دے سوالاں دے جواب دیندا واں تے وزٹ بک کروا سکدا واں۔" },
+    { keys: ["help", "aiuto", "what can you", "مدد", "کیا کر سکتے", "کی کر سکدے", "madad", "help urdu"], en: "Ask me about hours, programs, admissions, fees, uniform, lunch, buses, teachers, class size, holidays, the parent portal, or booking a visit.", it: "Chiedimi orari, programmi, iscrizioni, rette, divisa, mensa, pullman, insegnanti, numero in classe, vacanze, portale genitori o una visita.", ur: "اوقات، پروگرامز، داخلہ، فیس، یونیفارم، لنچ، بس، اساتذہ، کلاس سائز، چھٹیاں، والدین پورٹل، یا وزٹ بکنگ پوچھیں۔", pa: "اواریں، پروگرام، داخلہ، فیس، یونیفارم، لنچ، بس، استاد، کلاس سائز، چھٹیاں، والدین پورٹل، یا وزٹ بکنگ پُچھو۔" },
+    { keys: ["weekend", "saturday", "sunday", "sabato", "domenica", "ہفتہ", "اتوار", "weekend urdu", "hafta", "itwar"], en: "The office is closed Saturday and Sunday. We open again Monday at 8:00 AM.", it: "La segreteria è chiusa sabato e domenica. Riapriamo lunedì alle 8:00.", ur: "دفتر ہفتہ اور اتوار بند رہتا ہے۔ پیر صبح 8:00 بجے کھلتا ہے۔", pa: "دفتر ہفتہ تے اتوار بند رہندا اے۔ پیر صبح 8:00 کھلدا اے۔" },
+    { keys: ["hour", "open", "orari", "apert", "closing", "اوقات", "کھلا", "کب کھلتا", "اواریں", "kitne baje", "timing", "timings", "kab khulta"], en: "Office hours: Monday–Friday, 8:00 AM – 4:00 PM at 42 Maple Grove, Riverside. Phone +1 (555) 214-8800.", it: "Orari: lunedì–venerdì 8:00–16:00, 42 Maple Grove, Riverside. Tel. +1 (555) 214-8800.", ur: "دفتر کے اوقات: پیر تا جمعہ، 8:00 صبح – 4:00 شام، 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔", pa: "دفتر دیاں اواریں: پیر توں جمعہ، 8:00 صبح – 4:00 شام، 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔" },
+    { keys: ["early learning", "nursery", "infanzia", "preschool", "kindergarten", "نرسری", "پری اسکول", "ابتدائی", "preschool urdu"], en: "Early Learning is play-based discovery for our youngest children — curiosity, stories and gentle routines.", it: "Prima infanzia è un percorso per i più piccoli: gioco, storie e routine delicate.", ur: "Early Learning چھوٹے بچوں کے لیے کھیل پر مبنی سیکھنا ہے — کہانیاں اور نرم روٹین۔", pa: "Early Learning ننھے بچیاں لئی کھیڈ نال سکھنا اے — کہانیاں تے نرم روٹین۔" },
+    { keys: ["primary", "elementar", "primaria", "پرائمری", "پرائمری اسکول", "primary urdu"], en: "Primary School builds strong reading, maths and kindness — the foundations for lifelong learning.", it: "La scuola primaria costruisce lettura, matematica e gentilezza — basi per tutta la vita.", ur: "پرائمری میں مضبوط پڑھائی، ریاضی اور مہربانی سکھائی جاتی ہے — زندگی بھر کی بنیاد۔", pa: "پرائمری وچ مضبوط پڑھائی، ریاضی تے مہربانی سکھائی جاندی اے — زندگی بھر دی بنیاد۔" },
+    { keys: ["middle school", "scuola media", "مڈل", "مڈل اسکول", "middle urdu"], en: "Middle School grows independence, confidence and deeper subject knowledge.", it: "La scuola media sviluppa indipendenza, fiducia e materie più approfondite.", ur: "مڈل اسکول میں آزادی، اعتماد اور گہری مضامین کی سمجھ بڑھتی ہے۔", pa: "مڈل سکول وچ آزادی، اعتماد تے مضامین دی گہری سمجھ ودھدی اے۔" },
+    { keys: ["program", "curric", "pathway", "percors", "materie", "پروگرام", "نصاب", "راستہ", "program urdu", "nisab"], en: "Pathways: Early Learning, Primary, Middle School, Creative Arts, Sports, and Science & Technology.", it: "Percorsi: Prima infanzia, Scuola primaria, Scuola media, Arti creative, Sport, Scienza e tecnologia.", ur: "راستے: Early Learning، پرائمری، مڈل اسکول، آرٹس، اسپورٹس، سائنس و ٹیکنالوجی۔", pa: "راستے: Early Learning، پرائمری، مڈل سکول، آرٹس، کھیڈاں، سائنس تے ٹیکنالوجی۔" },
+    { keys: ["art", "arte", "music", "musica", "آرٹ", "موسیقی", "فنون"], en: "Art and music studios run all week. Children paint, sing, and perform at the annual show.", it: "Sale arte e musica tutta la settimana. I bambini dipingono, cantano e si esibiscono al saggio.", ur: "آرٹ اور موسیقی پورے ہفتے چلتے ہیں۔ بچے پینٹ کرتے، گاتے اور سالانہ شو میں پرفارم کرتے ہیں۔", pa: "آرٹ تے موسیقی سارے ہفتے چلدے نے۔ بچے پینٹ کردے، گاندے تے سالانہ شو وچ پرفارم کردے نے۔" },
+    { keys: ["sport", "pe", "educazione fisica", "football", "soccer", "کھیل", "کھیڈ", "اسپورٹ", "football urdu"], en: "Sports include PE, house races and Sports Day on the field. We mix teamwork with lots of orange slices.", it: "Sport: educazione fisica, gare delle case e Giornata dello sport. Tanto gioco di squadra.", ur: "کھیل: پی ای، ہاؤس ریسز اور اسپورٹس ڈے میدان پر۔ ٹیم ورک اور مزہ۔", pa: "کھیڈاں: پی ای، ہاؤس ریس تے اسپورٹس ڈے میدان تے۔ ٹیم ورک تے مزہ۔" },
+    { keys: ["stem", "science", "scienz", "computer", "coding", "lab", "سائنس", "کمپیوٹر", "کوڈنگ", "لیب"], en: "Science and computer labs are hands-on: experiments, coding as a creative language, and curious questions.", it: "Laboratori di scienze e informatica: esperimenti, coding creativo e tante domande.", ur: "سائنس اور کمپیوٹر لیبز عملی ہیں: تجربے، کوڈنگ اور تجسس۔", pa: "سائنس تے کمپیوٹر لیبز عملی نے: تجربے، کوڈنگ تے تجسس۔" },
+    { keys: ["admiss", "enroll", "iscriz", "apply", "application", "داخلہ", "داخلے", "داخلہ کیسے", "admission", "dakhil", "dakhla", "enroll urdu"], en: "Admissions start with a campus visit. Say “book an appointment” and I’ll take your name, email, day/time and your child’s age.", it: "Le iscrizioni iniziano con una visita. Di’ “prenota un appuntamento” e chiederò nome, email, giorno/orario ed età.", ur: "داخلہ کیمپس وزٹ سے شروع ہوتا ہے۔ کہیں “ملاقات بک کریں” — نام، ای میل، دن/وقت اور عمر لوں گا۔", pa: "داخلہ کیمپس وزٹ نال شروع ہوندا اے۔ کہو “ملاقات بک کرو” — ناں، ای میل، دن/وقت تے عمر لاں گا۔" },
+    { keys: ["fee", "tuition", "cost", "price", "retta", "quanto costa", "فیس", "کھرچہ", "کتنی فیس", "kitni fee", "fees kitni", "tuition urdu"], en: "Tuition is explained in person on a visit so we can match the right pathway. Book an appointment and the office will walk you through fees.", it: "Le rette si spiegano in visita, in base al percorso. Prenota un appuntamento e la segreteria ti guida.", ur: "فیس وزٹ پر ذاتی طور پر بتائی جاتی ہے تاکہ درست راستہ ملے۔ ملاقات بک کریں، دفتر فیس سمجھا دے گا۔", pa: "فیس وزٹ تے ذاتی طور تے دسدی اے تاکہ درست راستہ ملے۔ ملاقات بک کرو، دفتر فیس سمجھا دیوے گا۔" },
+    { keys: ["how old", "age", "eta", "età", "years old", "عمر", "سال کا", "کتنے سال", "umr", "kitne saal"], en: "We welcome children from early years through middle school. Tell me your child’s age when you book a visit.", it: "Accogliamo dalla prima infanzia alla scuola media. Dimmi l’età del bambino quando prenoti.", ur: "ہم ابتدائی سالوں سے مڈل اسکول تک بچوں کا استقبال کرتے ہیں۔ وزٹ بک کرتے وقت عمر بتائیں۔", pa: "اسیں ابتدائی سالاں توں مڈل سکول تک بچیاں دا استقبال کردے آں۔ وزٹ بک کردیاں عمر دسو۔" },
+    { keys: ["uniform", "divisa", "یونیفارم", "ڈریس", "یونفورم", "uniform urdu"], en: "Yes — a simple school uniform. The office shares the list at your visit.", it: "Sì, c’è una divisa semplice. La lista si riceve in visita.", ur: "جی ہاں — سادہ اسکول یونیفارم۔ فہرست وزٹ پر ملتی ہے۔", pa: "ہاں — سادہ سکول یونیفارم۔ لسٹ وزٹ تے ملدی اے۔" },
+    { keys: ["lunch", "canteen", "mensa", "food", "cafeteria", "لنچ", "کھانا", "کیفے", "khana"], en: "The cafeteria is a comfortable dining space. Packed lunches are welcome too.", it: "La mensa è un spazio comodo. Si può portare anche il pranzo da casa.", ur: "کیفے آرام دہ ہے۔ گھر سے لنچ بھی لا سکتے ہیں۔", pa: "کیفے آرام دہ اے۔ گھر توں لنچ وی لیا جا سکدا اے۔" },
+    { keys: ["bus", "transport", "pullman", "scuolabus", "بس", "ٹرانسپورٹ", "سکول بس", "bus urdu"], en: "Safe school transport is available. Ask the office during your visit for routes.", it: "C’è un trasporto scolastico sicuro. I percorsi si vedono in segreteria.", ur: "محفوظ اسکول ٹرانسپورٹ دستیاب ہے۔ راستے وزٹ پر دفتر سے پوچھیں۔", pa: "محفوظ سکول ٹرانسپورٹ دستیاب اے۔ رستے وزٹ تے دفتر توں پُچھو۔" },
+    { keys: ["address", "where", "map", "indirizzo", "location", "dove siete", "پتہ", "کہاں", "لوکیشن", "address urdu", "kahan", "kidhar"], en: "42 Maple Grove, Riverside. Email hello@brightsteps.academy or call +1 (555) 214-8800.", it: "42 Maple Grove, Riverside. Email hello@brightsteps.academy — tel. +1 (555) 214-8800.", ur: "42 Maple Grove, Riverside۔ ای میل hello@brightsteps.academy یا فون +1 (555) 214-8800۔", pa: "42 Maple Grove, Riverside۔ ای میل hello@brightsteps.academy یا فون +1 (555) 214-8800۔" },
+    { keys: ["phone", "call", "telefon", "number", "فون", "نمبر", "کال", "phone urdu"], en: "Call the office on +1 (555) 214-8800, Monday–Friday 8:00 AM – 4:00 PM.", it: "Tel. +1 (555) 214-8800, lunedì–venerdì 8:00–16:00.", ur: "دفتر کو کال کریں: +1 (555) 214-8800، پیر تا جمعہ 8:00–4:00۔", pa: "دفتر نوں کال کرو: +1 (555) 214-8800، پیر توں جمعہ 8:00–4:00۔" },
+    { keys: ["email", "write", "scriv", "ای میل", "لکھیں", "email urdu"], en: "Email hello@brightsteps.academy — or use the contact form on this site.", it: "Email hello@brightsteps.academy — oppure il modulo Contatti sul sito.", ur: "ای میل hello@brightsteps.academy — یا اس سائٹ کا رابطہ فارم۔", pa: "ای میل hello@brightsteps.academy — یا اس سائٹ دا رابطہ فارم۔" },
+    { keys: ["teacher", "insegn", "staff", "faculty", "استاد", "استانی", "ٹیچر", "ustad", "teacher urdu"], en: "Warm, qualified teachers who know every child by name — maths, science, English, art, music, PE and computing.", it: "Insegnanti preparati che conoscono ogni bambino per nome — matematica, scienze, inglese, arte, musica, motoria e informatica.", ur: "محبت کرنے والے، اہل اساتذہ جو ہر بچے کا نام جانتے ہیں — ریاضی، سائنس، انگریزی، آرٹ، موسیقی، کھیلیں، کمپیوٹر۔", pa: "پیار والے استاد جو ہر بچے دا ناں جاندے نے — ریاضی، سائنس، انگریزی، آرٹ، موسیقی، کھیڈاں، کمپیوٹر۔" },
+    { keys: ["class size", "how many children", "quanti bambini", "ratio", "کلاس سائز", "کتنے بچے", "kitne bachay"], en: "Classes stay small enough that teachers know every child. Ask on your visit for the current year-group sizes.", it: "Classi contenute: gli insegnanti conoscono ogni bambino. I numeri precisi si vedono in visita.", ur: "کلاسز اتنی چھوٹی رہتی ہیں کہ استاد ہر بچے کو جانتے ہیں۔ موجودہ سائز وزٹ پر پوچھیں۔", pa: "کلاسز اتنی چھوٹیاں رہندیاں نے کہ استاد ہر بچے نوں جاندے نے۔ موجودہ سائز وزٹ تے پُچھو۔" },
+    { keys: ["language", "english", "italian", "italiano", "inglese", "bilingual", "اردو", "پنجابی", "urdu", "punjabi", "panjabi", "اردو", "پنجابی", "زبان", "urdu", "punjabi", "panjabi", "zaban"], en: "The site switches English and Italian with EN | IT. In this chat I also understand and reply in Urdu and Punjabi — just write or speak.", it: "Il sito passa da inglese a italiano con EN | IT. In chat capisco e rispondo anche in urdu e punjabi — scrivi o parla pure.", ur: "سائٹ EN | IT سے انگریزی/اطالوی بدل سکتی ہے۔ چیٹ میں اردو اور پنجابی بھی سمجھتا اور جواب دیتا ہوں۔", pa: "سائٹ EN | IT نال انگریزی/اطالوی بدل سکدی اے۔ چیٹ وچ اردو تے پنجابی وی سمجھدا تے جواب دیندا واں۔" },
+    { keys: ["portal", "login", "acced", "password", "demo", "پورٹل", "لاگ ان", "پاس ورڈ", "login urdu"], en: "Parents, teachers and students sign in from Accedi. Demo: student_demo, parent_demo, teacher_demo — password Demo@12345. You can also register.", it: "Si accede da Accedi. Demo: student_demo, parent_demo, teacher_demo — password Demo@12345. Puoi anche registrarti.", ur: "Accedi سے لاگ اِن۔ ڈیمو: student_demo، parent_demo، teacher_demo — پاس ورڈ Demo@12345۔ رجسٹر بھی کر سکتے ہیں۔", pa: "Accedi توں لاگ اِن۔ ڈیمو: student_demo، parent_demo، teacher_demo — پاس ورڈ Demo@12345۔ رجسٹر وی کر سکدے او۔" },
+    { keys: ["parent portal", "portale genitori", "والدین پورٹل", "پیرنٹ پورٹل"], en: "The parent portal shows diary, attendance and announcements for your child.", it: "Il portale genitori mostra diario, presenze e avvisi.", ur: "والدین پورٹل میں ڈائری، حاضری اور اعلانات ملتے ہیں۔", pa: "والدین پورٹل وچ ڈائری، حاضری تے اعلانات ملدے نے۔" },
+    { keys: ["student portal", "portale student", "طالب علم پورٹل", "سٹوڈنٹ پورٹل"], en: "The student portal has timetable, assignments and marks.", it: "Il portale studenti ha orario, compiti e voti.", ur: "طالب علم پورٹل میں ٹائم ٹیبل، ہوم ورک اور نمبر ہیں۔", pa: "طالب علم پورٹل وچ ٹائم ٹیبل، ہوم ورک تے نمبر نے۔" },
+    { keys: ["homework", "compiti", "assignment", "ہوم ورک", "کام", "اسائنمنٹ", "homework urdu"], en: "Homework is short and meaningful. Parents see it in the diary on the portal.", it: "I compiti sono brevi e utili. I genitori li vedono nel diario del portale.", ur: "ہوم ورک مختصر اور مفید ہے۔ والدین اسے پورٹل ڈائری میں دیکھتے ہیں۔", pa: "ہوم ورک مختصر تے فائدے مند اے۔ ماپے اسنوں پورٹل ڈائری وچ ویکھدے نے۔" },
+    { keys: ["holiday", "vacation", "vacanz", "break", "closed", "چھٹی", "تعطیل", "چھٹیاں", "chhutti", "holiday urdu"], en: "Term dates and holidays are posted on the events page and in the parent portal.", it: "Calendario e vacanze sono in Eventi e nel portale genitori.", ur: "ٹرم اور چھٹیاں ایونٹس صفحے اور والدین پورٹل پر ہیں۔", pa: "ٹرم تے چھٹیاں ایونٹس صفحے تے والدین پورٹل تے۔" },
+    { keys: ["sick", "ill", "malat", "fever", "assent", "بیمار", "بخار", "غیر حاضر", "bimar", "bukhar"], en: "If a child is unwell, keep them home and message the office. We log attendance on the portal.", it: "Se il bambino sta male, resti a casa e avvisa la segreteria. Le assenze sono nel portale.", ur: "اگر بچہ بیمار ہو تو گھر رکھیں اور دفتر کو پیغام دیں۔ حاضری پورٹل پر لکھی جاتی ہے۔", pa: "جے بچہ بیمار ہووے تاں گھر رکھو تے دفتر نوں پیغام دیو۔ حاضری پورٹل تے لکھی جاندی اے۔" },
+    { keys: ["safe", "security", "sicur", "bully", "محفوظ", "سیکیورٹی", "محفوظی", "safe urdu"], en: "The campus is secure, with caring staff and clear routines. Kindness is part of the code.", it: "Campus sicuro, personale attento e routine chiare. La gentilezza fa parte delle regole.", ur: "کیمپس محفوظ ہے، عملہ خیال رکھتا ہے اور روٹین واضح ہیں۔ مہربانی ہمارا اصول ہے۔", pa: "کیمپس محفوظ اے، عملہ خیال رکھدا اے تے روٹین واضح اے۔ مہربانی ساڈا اصول اے۔" },
+    { keys: ["playground", "play area", "cortile", "giochi", "پلے گراؤنڈ", "کھیل کا میدان", "کھیڈ دا تھاں"], en: "A safe play area sits beside the fields — space to run, climb and make friends.", it: "Area giochi sicura accanto ai campi — si corre, si gioca, si fanno amici.", ur: "محفوظ کھیل کا علاقہ میدان کے پاس ہے — دوڑ، کھیل اور دوستی۔", pa: "محفوظ کھیڈ دا تھاں میدان کول اے — دوڑ، کھیڈ تے دوستی۔" },
+    { keys: ["library", "bibliotec", "books", "لائبریری", "کتابیں", "کتاباں"], en: "The modern library has books, quiet corners and reading week every year.", it: "Biblioteca moderna: libri, angoli silenziosi e la settimana della lettura.", ur: "جدید لائبریری: کتابیں، خاموش کونے اور ہر سال ریڈنگ ویک۔", pa: "جدید لائبریری: کتاباں، خاموش کونے تے ہر سال ریڈنگ ویک۔" },
+    { keys: ["after school", "aftercare", "doposcuola", "club", "افٹر سکول", "کلب", "ڈوپو"], en: "Clubs and after-school fun run beyond the bell — art, sport, reading and science.", it: "Doposcuola e club oltre l’orario: arte, sport, lettura e scienze.", ur: "اسکول کے بعد کلب: آرٹ، کھیل، پڑھائی اور سائنس۔", pa: "سکول بعد کلب: آرٹ، کھیڈ، پڑھائی تے سائنس۔" },
+    { keys: ["event", "calendar", "calendario", "ایونٹ", "کیلنڈر", "تقریب"], en: "Sports days, exhibitions, parent meetings and the annual show are on the Events page.", it: "Giornate sportive, mostre, colloqui e saggio annuale sono in Eventi.", ur: "اسپورٹس ڈے، نمائشیں، والدین ملاقاتیں اور سالانہ شو ایونٹس صفحے پر ہیں۔", pa: "اسپورٹس ڈے، نمائشاں، والدین ملاقاتاں تے سالانہ شو ایونٹس صفحے تے۔" },
+    { keys: ["sports day", "giornata dello sport", "اسپورٹس ڈے", "کھیلوں کا دن", "کھیڈاں دا دن"], en: "Sports Day is on the field — races, relays and house cheers. Next one is marked on the events posters.", it: "La Giornata dello sport è in campo: gare, staffette e tifo. La data è sui manifesti Eventi.", ur: "اسپورٹس ڈے میدان پر — دوڑیں، ریلے اور ہاؤس کا جوش۔ تاریخ ایونٹس پوسٹرز پر ہے۔", pa: "اسپورٹس ڈے میدان تے — دوڑاں، ریلے تے ہاؤس دا جوش۔ تاریخ ایونٹس پوسٹرز تے۔" },
+    { keys: ["park", "parking", "پارکنگ", "گاڑی"], en: "Short-stay parking is on Maple Grove in front of the gate. Please keep the bus lane clear.", it: "Parcheggio breve in Maple Grove davanti al cancello. Lascia libera la corsia del pullman.", ur: "مختصر پارکنگ Maple Grove پر گیٹ کے سامنے۔ بس لین خالی رکھیں۔", pa: "مختصر پارکنگ Maple Grove تے گیٹ دے ساہمنے۔ بس لین خالی رکھو۔" },
+    { keys: ["special need", "sen", "inclus", "disability", "bes", "خصوصی ضرورت", "شمولیت", "special need urdu"], en: "We plan support with families. Mention any needs when you book a visit so the right teacher can join.", it: "Progettiamo il supporto con le famiglie. Segnala le esigenze in visita così c’è l’insegnante giusto.", ur: "ہم خاندانوں کے ساتھ سپورٹ پلان کرتے ہیں۔ وزٹ بک کرتے وقت ضروریات بتائیں تاکہ درست استاد شامل ہو۔", pa: "اسیں ٹبراں نال سپورٹ پلان کردے آں۔ وزٹ بک کردیاں لوڑاں دسو تاکہ درست استاد شامل ہووے۔" },
+    { keys: ["vaccine", "vaccin", "health", "nurse", "infermer", "ویکسین", "نرس", "صحت"], en: "A nurse / first-aid room supports student health. Immunisation records are requested at admission.", it: "C’è un’infermeria. In iscrizione chiediamo i certificati vaccinali.", ur: "نرس / فرسٹ ایڈ روم صحت کی دیکھ بھال کرتا ہے۔ داخلے پر ویکسینیشن ریکارڈ مانگا جاتا ہے۔", pa: "نرس / فرسٹ ایڈ روم صحت دی دیکھ بھال کردا اے۔ داخلے تے ویکسینیشن ریکارڈ منگیا جاندا اے۔" },
+    { keys: ["start", "term", "when does school", "inizio", "شروع", "ٹرم", "سکول کب"], en: "The school year follows the published calendar. A visit is the easiest way to lock a start date.", it: "L’anno segue il calendario pubblicato. Una visita è il modo più semplice per fissare l’inizio.", ur: "سکول سال شائع شدہ کیلنڈر پر چلتا ہے۔ آغاز کی تاریخ کے لیے وزٹ سب سے آسان ہے۔", pa: "سکول سال شائع شدہ کیلنڈر تے چلدا اے۔ شروعات دی تاریخ لئی وزٹ سب توں آسان اے۔" },
+    { keys: ["supply", "stationery", "material", "quadern", "سامان", "اسٹیشنری", "کاپی"], en: "A simple supplies list is given at enrolment. The school provides a lot of shared classroom material.", it: "Una lista semplice si riceve all’iscrizione. Molto materiale è condiviso in classe.", ur: "سادہ سامان کی فہرست داخلے پر ملتی ہے۔ بہت سا شیئرڈ کلاس میٹریل اسکول دیتا ہے۔", pa: "سادہ سامان دی لسٹ داخلے تے ملدی اے۔ بہت سارا شیئرڈ کلاس میٹریل سکول دیندا اے۔" },
+    { keys: ["photo", "gallery", "galleria", "تصویر", "گیلری", "فوٹو"], en: "The gallery page is a scrapbook of campus life — click a photo to open it.", it: "La galleria è uno scrapbook del campus — clicca una foto per aprirla.", ur: "گیلری صفحہ کیمپس کی زندگی کا البم ہے — تصویر کھولنے کے لیے کلک کریں۔", pa: "گیلری صفحہ کیمپس دی زندگی دا البم اے — تصویر کھولن لئی کلک کرو۔" },
+    { keys: ["contact form", "message", "modulo", "رابطہ فارم", "میسج", "پیغام"], en: "The contact form on this page reaches the office. For a timed visit, say you want to book an appointment here in chat.", it: "Il modulo Contatti arriva in segreteria. Per una visita ad orario, prenota qui in chat.", ur: "اس صفحے کا رابطہ فارم دفتر تک پہنچتا ہے۔ وقت والی وزٹ کے لیے یہاں چیٹ میں ملاقات بک کریں۔", pa: "اس صفحے دا رابطہ فارم دفتر تک پہنچدا اے۔ وقت والی وزٹ لئی ایتھے چیٹ وچ ملاقات بک کرو۔" },
+    { keys: ["headmaster", "principal", "preside", "head teacher", "پرنسپل", "ہیڈ مسٹر", "ہیڈ مسٹریس"], en: "Our headmaster, Grace Okonkwo, oversees campus life. You can meet leadership on a booked visit.", it: "La preside Grace Okonkwo guida il campus. Si può incontrare la dirigenza in visita.", ur: "ہماری ہیڈ مسٹریس Grace Okonkwo کیمپس چلاتی ہیں۔ قیادت سے ملاقات بک شدہ وزٹ پر ہو سکتی ہے۔", pa: "ساڈی ہیڈ مسٹریس Grace Okonkwo کیمپس چلاندی اے۔ قیادت نال ملاقات بک شدہ وزٹ تے ہو سکدی اے۔" },
+    { keys: ["birthday", "compleanno", "سالگرہ", "جنم دن", "birthday urdu"], en: "Class birthdays are low-key and kind. Tell the teacher a week ahead if you’d like to share a treat.", it: "I compleanni in classe sono semplici. Avvisa l’insegnante una settimana prima se porti qualcosa.", ur: "کلاس میں جنم دن سادہ اور پیارے ہوتے ہیں۔ اگر ٹریٹ لانا ہو تو ایک ہفتہ پہلے استاد کو بتائیں۔", pa: "کلاس وچ جنم دن سادے تے پیارے ہوندے نے۔ جے ٹریٹ لیانا ہووے تاں اک ہفتہ پہلے استاد نوں دسو۔" },
+    { keys: ["weather", "snow", "close", "chiusura", "موسم", "برف", "بند"], en: "Weather closures are posted on the parent portal and by email/SMS from the office.", it: "Le chiusure per maltempo arrivano sul portale e via email/SMS dalla segreteria.", ur: "موسم کی بندش والدین پورٹل اور دفتر کے ای میل/SMS پر آتی ہے۔", pa: "موسم دی بندش والدین پورٹل تے دفتر دے ای میل/SMS تے آوندی اے۔" },
+    { keys: ["pta", "parent teacher", "colloqui", "والدین ملاقات", "پی ٹی اے", "colloqui urdu"], en: "Parent-teacher meetings are on the calendar. You can also request a conversation any week through the office.", it: "I colloqui sono in calendario. Si può anche chiedere un incontro in qualsiasi settimana.", ur: "والدین-استاد ملاقاتیں کیلنڈر پر ہیں۔ کسی بھی ہفتے دفتر سے بات بھی مانگ سکتے ہیں۔", pa: "ماپے-استاد ملاقاتاں کیلنڈر تے۔ کسے وی ہفتے دفتر توں گل وی منگ سکدے او۔" },
+    { keys: ["religion", "faith", "relig", "مذہب", "دین", "عقیدہ"], en: "We welcome every family. Celebrations are cultural and kind, never exclusive.", it: "Ogni famiglia è la benvenuta. Le feste sono culturali e inclusive.", ur: "ہر خاندان کا خیرمقدم ہے۔ تقریبات ثقافتی اور شامل ہیں، کبھی الگ تھلگ نہیں۔", pa: "ہر ٹبر دا خیرمقدم اے۔ تقریبات ثقافتی تے شامل نے، کدی الگ تھلگ نہیں۔" },
+    { keys: ["waitlist", "waiting list", "lista d'attesa", "ویٹ لسٹ", "انتظار کی فہرست"], en: "If a year group is full we keep a waitlist. Book a visit anyway so we know your child’s age.", it: "Se la classe è piena teniamo una lista d’attesa. Prenota comunque una visita e indica l’età.", ur: "اگر جماعت بھری ہو تو ویٹ لسٹ رکھتے ہیں۔ پھر بھی وزٹ بک کریں اور عمر بتائیں۔", pa: "جے جماعت بھری ہووے تاں ویٹ لسٹ رکھدے آں۔ فیر وی وزٹ بک کرو تے عمر دسو۔" },
+    { keys: ["tour", "open day", "ٹور", "اوپن ڈے", "کیمپس دیکھیں", "campus dekho"], en: "Campus tours are by appointment. Say “I want to book an appointment” and I’ll collect your details.", it: "Le visite sono su appuntamento. Di’ “voglio prenotare” e raccolgo i dati.", ur: "کیمپس ٹور اپائنٹمنٹ پر۔ کہیں “ملاقات بک کرنی ہے” اور تفصیل لوں گا۔", pa: "کیمپس ٹور اپائنٹمنٹ تے۔ کہو “ملاقات بک کرنی اے” تے تفصیل لاں گا۔" },
   ];
 
   function wantsBook(s) {
@@ -212,16 +371,31 @@
       "prenot",
       "open day",
       "come see the school",
+      "ملاقات",
+      "وزٹ بک",
+      "اپائنٹمنٹ",
+      "ملاقات بک",
+      "وزٹ بک کرو",
+      "وزٹ بک کریں",
+      "mulakat",
+      "mulaqat",
+      "visit book",
+      "book visit",
+      "appointment book",
     ]);
   }
 
   function intentReply(text) {
+    noteUserLang(text);
     var s = norm(text);
-    if (wantsBook(s)) return null;
-    var code = lang();
+    // also match raw Arabic-script keys (norm lowercases Latin only)
+    var raw = String(text || "");
+    if (wantsBook(s) || wantsBook(raw.toLowerCase()) || wantsBook(raw)) return null;
+    var code = activeLang();
     var i;
     for (i = 0; i < FAQS.length; i++) {
-      if (hasAny(s, FAQS[i].keys)) return FAQS[i][code] || FAQS[i].en;
+      if (hasAny(s, FAQS[i].keys) || hasAny(raw, FAQS[i].keys))
+        return FAQS[i][code] || FAQS[i].en;
     }
     return t().fallback;
   }
@@ -243,7 +417,7 @@
     try {
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = lang() === "en" ? "en-US" : "it-IT";
+      u.lang = speechLocale();
       u.rate = 1;
       window.speechSynthesis.speak(u);
     } catch (e) {}
@@ -373,6 +547,7 @@
 
   function handleUser(text, fromVoice, forced) {
     beginTurn(fromVoice);
+    if (!forced) noteUserLang(text);
     addBubble("user", text);
     if (forced === "__book__" || (forced == null && wantsBook(norm(text)) && !booking.step)) {
       startBooking();
@@ -463,7 +638,7 @@
       "\nChild age / year: " +
       booking.age +
       "\nLanguage: " +
-      lang();
+      activeLang();
     fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -484,6 +659,14 @@
       });
   }
 
+  function speechLocale() {
+    var c = activeLang();
+    if (c === "ur") return "ur-PK";
+    if (c === "pa") return "pa-IN";
+    if (c === "it") return "it-IT";
+    return "en-US";
+  }
+
   function SpeechRec() {
     return window.SpeechRecognition || window.webkitSpeechRecognition || null;
   }
@@ -496,12 +679,18 @@
     var Ctor = SpeechRec();
     var mic = document.getElementById("campusBotMic");
     if (!Ctor) {
+      var voiceHint = {
+        en: "Voice works in Chrome or Edge. Urdu/Punjabi mic: speak after opening chat in that language.",
+        it: "La voce funziona in Chrome o Edge.",
+        ur: "آواز Chrome یا Edge میں کام کرتی ہے۔ اردو بولیں — چیٹ کھول کر مائیک دبائیں۔",
+        pa: "آواز Chrome یا Edge وچ کم کردی اے۔ پنجابی بولو — چیٹ کھول کے مائیک دباؤ۔",
+      };
       document.getElementById("campusBotStatus").textContent =
-        lang() === "en" ? "Voice works in Chrome or Edge." : "La voce funziona in Chrome o Edge.";
+        voiceHint[activeLang()] || voiceHint.en;
       return;
     }
     rec = new Ctor();
-    rec.lang = lang() === "en" ? "en-US" : "it-IT";
+    rec.lang = speechLocale();
     rec.interimResults = false;
     rec.onresult = function (ev) {
       var said = ev.results[0][0].transcript;
