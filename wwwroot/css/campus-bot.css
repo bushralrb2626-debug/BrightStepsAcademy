@@ -264,20 +264,22 @@
 
 .campus-bot__speak {
   flex: 0 0 auto;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--cb-line);
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 2px solid #ffd56a;
   border-radius: 50%;
-  background: #fff;
+  background: linear-gradient(180deg, #ffe08a, #f5c518);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1;
   padding: 0;
-  box-shadow: 0 2px 8px rgba(27, 31, 51, 0.08);
+  box-shadow: 0 4px 12px rgba(245, 90, 31, 0.22);
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.campus-bot__speak:hover {
-  background: #fff8e6;
+.campus-bot__speak:active {
+  transform: scale(0.94);
 }
 
 /* Mobile: icon-only FAB, full-width panel, clear of home indicator */

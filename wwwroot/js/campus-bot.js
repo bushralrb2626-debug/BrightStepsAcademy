@@ -575,6 +575,7 @@
     var bestScore = -1;
     var i;
     var j;
+    // Prefer real local voices — cloud/empty lang packs often produce silence.
     for (i = 0; i < prefs.length; i++) {
       var want = prefs[i].toLowerCase();
       var prefix = want.split("-")[0];
@@ -585,16 +586,18 @@
         if (lang === want) score = 100 - i;
         else if (lang.indexOf(prefix) === 0) score = 70 - i;
         else continue;
-        if (v.localService) score += 5;
+        if (v.localService) score += 25;
+        if (/microsoft|google|samsung|apple|android/i.test(v.name || "")) score += 5;
         if (score > bestScore) {
           bestScore = score;
           best = v;
         }
       }
-      if (best && bestScore >= 70) return best;
+      if (best && bestScore >= 90) return best;
     }
+    if (best) return best;
     for (i = 0; i < voices.length; i++) {
-      if (/urdu|punjabi|panjabi|hindi/i.test(voices[i].name || "")) return voices[i];
+      if (voices[i].localService) return voices[i];
     }
     for (i = 0; i < voices.length; i++) {
       if (voices[i].default) return voices[i];
@@ -606,82 +609,128 @@
     return !!voiceTurn;
   }
 
-  function speak(text, force) {
-    if ((!force && !shouldSpeak()) || !window.speechSynthesis || !text) return;
-    unlockSpeech();
-    warmVoices();
-
-    var queue = function () {
-      if (!force && !shouldSpeak()) return;
+  function keepSpeakingAlive() {
+    var kicks = 0;
+    var id = window.setInterval(function () {
+      kicks += 1;
       try {
-        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-          window.speechSynthesis.cancel();
+        if (window.speechSynthesis && window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
         }
-      } catch (e) {}
-      if (speakTimer) window.clearTimeout(speakTimer);
-      // Delay after mic stop / cancel — Chrome drops instant speak().
-      speakTimer = window.setTimeout(function () {
-        speakTimer = null;
-        if (!force && !shouldSpeak()) return;
-        try {
-          if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-          var u = new SpeechSynthesisUtterance(String(text));
-          var voice = pickVoice();
-          u.lang = voice && voice.lang ? voice.lang : speechLocale();
-          if (voice) u.voice = voice;
-          u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
-          u.pitch = 1;
-          u.volume = 1;
-          u.onstart = function () {
-            setStatus(
-              { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[
-                activeLang()
-              ] || "Speaking…"
-            );
-          };
-          u.onend = function () {
-            setStatus("");
-          };
-          u.onerror = function () {
-            setStatus(
-              {
-                en: "No sound — check volume, or tap 🔊 on the reply.",
-                it: "Niente audio — controlla il volume o tocca 🔊.",
-                ur: "آواز نہیں آئی — والیوم چیک کریں، یا 🔊 دبائیں۔",
-                pa: "آواز نہیں آئی — والیوم چیک کرو، یا 🔊 دباؤ۔",
-              }[activeLang()] || "No sound"
-            );
-          };
-          window.speechSynthesis.speak(u);
-          window.setTimeout(function () {
-            try {
-              if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            } catch (e2) {}
-          }, 50);
-          window.setTimeout(function () {
-            try {
-              if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-            } catch (e3) {}
-          }, 350);
-        } catch (err) {
-          setStatus("Voice error");
+        if (!window.speechSynthesis || (!window.speechSynthesis.speaking && kicks > 3) || kicks > 40) {
+          window.clearInterval(id);
         }
-      }, 220);
-    };
+      } catch (e) {
+        window.clearInterval(id);
+      }
+    }, 120);
+  }
 
-    if ((window.speechSynthesis.getVoices() || []).length) {
-      queue();
+  /** Must run inside a click/tap handler on phones — delayed speak is muted. */
+  function speakNow(text) {
+    if (!window.speechSynthesis || !text) {
+      setStatus("Speech not supported in this browser.");
       return;
     }
-    var tries = 0;
-    var timer = window.setInterval(function () {
-      tries += 1;
-      if ((window.speechSynthesis.getVoices() || []).length || tries > 20) {
-        window.clearInterval(timer);
-        voicesReady = true;
-        queue();
+    warmVoices();
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+    try {
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+    } catch (e2) {}
+
+    var u = new SpeechSynthesisUtterance(String(text));
+    var voice = pickVoice();
+    u.lang = voice && voice.lang ? voice.lang : speechLocale();
+    if (voice) u.voice = voice;
+    u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
+    u.pitch = 1;
+    u.volume = 1;
+    u.onstart = function () {
+      setStatus(
+        { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[activeLang()] ||
+          "Speaking…"
+      );
+    };
+    u.onend = function () {
+      setStatus("");
+    };
+    u.onerror = function () {
+      setStatus(
+        {
+          en: "Still no sound — turn volume up, disable silent mode, try Edge/Chrome.",
+          it: "Ancora niente audio — alza il volume.",
+          ur: "ابھی آواز نہیں — والیوم تیز کریں، سائلنٹ موڈ بند کریں۔",
+          pa: "ہالے آواز نہیں — والیوم ودھاؤ، سائلنٹ موڈ بند کرو۔",
+        }[activeLang()] || "No sound"
+      );
+    };
+    window.speechSynthesis.speak(u);
+    keepSpeakingAlive();
+  }
+
+  function speak(text, force) {
+    if (!text || !window.speechSynthesis) return;
+    if (force) {
+      speakNow(text);
+      return;
+    }
+    if (!shouldSpeak()) return;
+    // After mic: phones often block autoplay — try once, then ask to tap 🔊.
+    if (speakTimer) window.clearTimeout(speakTimer);
+    speakTimer = window.setTimeout(function () {
+      speakTimer = null;
+      if (!shouldSpeak()) return;
+      var started = false;
+      try {
+        warmVoices();
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(String(text));
+        var voice = pickVoice();
+        u.lang = voice && voice.lang ? voice.lang : speechLocale();
+        if (voice) u.voice = voice;
+        u.volume = 1;
+        u.rate = activeLang() === "ur" || activeLang() === "pa" ? 0.9 : 1;
+        u.onstart = function () {
+          started = true;
+          setStatus(
+            { en: "Speaking…", it: "Sto parlando…", ur: "بول رہا ہوں…", pa: "بول رہا واں…" }[
+              activeLang()
+            ] || "Speaking…"
+          );
+        };
+        u.onend = function () {
+          setStatus("");
+        };
+        u.onerror = function () {
+          setStatus(
+            {
+              en: "Tap 🔊 on the reply to hear it.",
+              it: "Tocca 🔊 per ascoltare.",
+              ur: "سننے کے لیے جواب پر 🔊 دبائیں۔",
+              pa: "سنن لئی جواب تے 🔊 دباؤ۔",
+            }[activeLang()] || "Tap 🔊"
+          );
+        };
+        window.speechSynthesis.speak(u);
+        keepSpeakingAlive();
+        window.setTimeout(function () {
+          if (!started) {
+            setStatus(
+              {
+                en: "Tap 🔊 on the reply to hear it.",
+                it: "Tocca 🔊 per ascoltare.",
+                ur: "سننے کے لیے جواب پر 🔊 دبائیں۔",
+                pa: "سنن لئی جواب تے 🔊 دباؤ۔",
+              }[activeLang()] || "Tap 🔊"
+            );
+          }
+        }, 800);
+      } catch (e) {
+        setStatus("Tap 🔊 on the reply to hear it.");
       }
-    }, 100);
+    }, 300);
   }
 
   function el(html) {
@@ -806,9 +855,10 @@
       btn.setAttribute("aria-label", "Speak reply");
       btn.title = "Speak";
       btn.textContent = "🔊";
-      btn.addEventListener("click", function () {
-        unlockSpeech();
-        speak(text, true);
+      btn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        speakNow(text);
       });
       row.appendChild(btn);
     }
@@ -818,7 +868,23 @@
 
   function botSay(text) {
     addBubble("bot", text);
-    speak(text);
+    if (shouldSpeak()) {
+      speak(text);
+      window.setTimeout(function () {
+        var st = document.getElementById("campusBotStatus");
+        if (st && /Speaking/.test(st.textContent || "")) return;
+        if (shouldSpeak()) {
+          setStatus(
+            {
+              en: "Tap the yellow 🔊 to hear the reply.",
+              it: "Tocca il 🔊 giallo per ascoltare.",
+              ur: "سننے کے لیے پیلا 🔊 دبائیں۔",
+              pa: "سنن لئی پیلا 🔊 دباؤ۔",
+            }[activeLang()] || "Tap 🔊"
+          );
+        }
+      }, 900);
+    }
   }
 
   function beginTurn(fromVoice) {
