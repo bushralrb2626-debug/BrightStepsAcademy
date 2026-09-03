@@ -8,23 +8,23 @@
 <header class="site-nav">
     <div class="site-nav__inner">
         <partial name="Partials/_Logo" />
-        <button class="site-nav__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="site-nav__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Open menu" data-i18n-aria="nav.openMenu">
             <span></span><span></span><span></span>
         </button>
         <nav class="collapse site-nav__menu" id="publicNav">
-            <a class="site-nav__link @Active("Index")" asp-controller="Home" asp-action="Index">Home</a>
-            <a class="site-nav__link @Active("About")" asp-controller="Home" asp-action="About">About</a>
-            <a class="site-nav__link @Active("Programs")" asp-controller="Home" asp-action="Programs">Programs</a>
-            <a class="site-nav__link @Active("Facilities")" asp-controller="Home" asp-action="Facilities">Facilities</a>
-            <a class="site-nav__link @Active("Teachers")" asp-controller="Home" asp-action="Teachers">Teachers</a>
-            <a class="site-nav__link @Active("Activities")" asp-controller="Home" asp-action="Activities">Activities</a>
-            <a class="site-nav__link @Active("Events")" asp-controller="Home" asp-action="Events">Events</a>
-            <a class="site-nav__link @Active("Gallery")" asp-controller="Home" asp-action="Gallery">Gallery</a>
-            <a class="site-nav__link @Active("Contact")" asp-controller="Home" asp-action="Contact">Contact</a>
-            <a class="btn-bsa btn-bsa-primary site-nav__cta" asp-controller="Portal" asp-action="Login">🔐 Login <span class="cta-arrow" aria-hidden="true">→</span></a>
-            <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+            <a class="site-nav__link @Active("Index")" asp-controller="Home" asp-action="Index" data-i18n="nav.home">Home</a>
+            <a class="site-nav__link @Active("About")" asp-controller="Home" asp-action="About" data-i18n="nav.about">About</a>
+            <a class="site-nav__link @Active("Programs")" asp-controller="Home" asp-action="Programs" data-i18n="nav.programs">Programs</a>
+            <a class="site-nav__link @Active("Facilities")" asp-controller="Home" asp-action="Facilities" data-i18n="nav.facilities">Facilities</a>
+            <a class="site-nav__link @Active("Teachers")" asp-controller="Home" asp-action="Teachers" data-i18n="nav.teachers">Teachers</a>
+            <a class="site-nav__link @Active("Activities")" asp-controller="Home" asp-action="Activities" data-i18n="nav.activities">Activities</a>
+            <a class="site-nav__link @Active("Events")" asp-controller="Home" asp-action="Events" data-i18n="nav.events">Events</a>
+            <a class="site-nav__link @Active("Gallery")" asp-controller="Home" asp-action="Gallery" data-i18n="nav.gallery">Gallery</a>
+            <a class="site-nav__link @Active("Contact")" asp-controller="Home" asp-action="Contact" data-i18n="nav.contact">Contact</a>
+            <a class="btn-bsa btn-bsa-primary site-nav__cta" asp-controller="Portal" asp-action="Login" data-i18n="nav.loginCta">🔐 Login <span class="cta-arrow" aria-hidden="true">→</span></a>
+            <div class="lang-switch" id="langSwitch" role="group" aria-label="Language" data-i18n-aria="lang.group">
                 <button type="button" class="lang-switch__btn" data-set-lang="en" aria-pressed="false">EN</button>
-                <button type="button" class="lang-switch__btn" data-set-lang="it" aria-pressed="false">IT</button>
+                <button type="button" class="lang-switch__btn" data-set-lang="it" aria-pressed="true">IT</button>
             </div>
         </nav>
     </div>

@@ -1,0 +1,231 @@
+/* Scuola Materna campus assistant — school colors, not portfolio dark. */
+
+.campus-bot {
+  --cb-cream: #fff9f0;
+  --cb-ink: #1b1f33;
+  --cb-muted: #4a5168;
+  --cb-royal: #1565d8;
+  --cb-sun: #f5c518;
+  --cb-orange: #ff7a1a;
+  --cb-coral: #e94b6a;
+  --cb-line: #e2d8c8;
+  font-family: Nunito, "Segoe UI", sans-serif;
+  position: fixed;
+  z-index: 80;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  color: var(--cb-ink);
+}
+
+.campus-bot__fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  cursor: pointer;
+  color: #1b1f33;
+  background: linear-gradient(180deg, #ffe08a, var(--cb-sun));
+  box-shadow: 0 12px 28px rgba(245, 90, 31, 0.28);
+  border-radius: 999px;
+  padding: 0.72rem 1.05rem 0.72rem 0.85rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-family: Fredoka, Nunito, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.campus-bot__fab:hover {
+  filter: brightness(1.04);
+}
+
+.campus-bot__fab-ico {
+  width: 1.55rem;
+  height: 1.55rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+.campus-bot[data-open="true"] .campus-bot__fab {
+  display: none;
+}
+
+.campus-bot__panel {
+  display: none;
+  width: min(22.5rem, calc(100vw - 1.6rem));
+  height: min(34rem, calc(100vh - 2.4rem));
+  background: var(--cb-cream);
+  border: 3px solid #ffd56a;
+  border-radius: 1.4rem;
+  box-shadow: 0 22px 48px rgba(27, 31, 51, 0.22);
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.campus-bot[data-open="true"] .campus-bot__panel {
+  display: flex;
+}
+
+.campus-bot__head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 0.9rem;
+  background: linear-gradient(120deg, #1565d8, #1fa8e0);
+  color: #fff;
+}
+
+.campus-bot__avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--cb-sun);
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  flex: 0 0 auto;
+}
+
+.campus-bot__head h2 {
+  margin: 0;
+  font-family: Fredoka, Nunito, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.campus-bot__head p {
+  margin: 0.1rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.92;
+}
+
+.campus-bot__x {
+  margin-left: auto;
+  border: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.campus-bot__log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(245, 197, 24, 0.18), transparent 28%),
+    radial-gradient(circle at 90% 0%, rgba(31, 168, 224, 0.12), transparent 32%),
+    var(--cb-cream);
+}
+
+.campus-bot__bubble {
+  max-width: 88%;
+  padding: 0.62rem 0.78rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.campus-bot__bubble--bot {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--cb-line);
+  border-bottom-left-radius: 0.3rem;
+}
+
+.campus-bot__bubble--user {
+  align-self: flex-end;
+  background: #1565d8;
+  color: #fff;
+  border-bottom-right-radius: 0.3rem;
+}
+
+.campus-bot__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 0.85rem 0.4rem;
+}
+
+.campus-bot__chip {
+  border: 1.5px solid #c9ddf8;
+  background: #fff;
+  color: var(--cb-royal);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.campus-bot__chip:hover {
+  background: #eaf3ff;
+}
+
+.campus-bot__form {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.7rem;
+  border-top: 1px solid var(--cb-line);
+  background: #fff;
+}
+
+.campus-bot__form input {
+  flex: 1;
+  border: 1.5px solid var(--cb-line);
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  font: inherit;
+  background: var(--cb-cream);
+  color: var(--cb-ink);
+}
+
+.campus-bot__form input:focus {
+  outline: 2px solid rgba(21, 101, 216, 0.35);
+  border-color: var(--cb-royal);
+}
+
+.campus-bot__mic,
+.campus-bot__send {
+  width: 2.45rem;
+  height: 2.45rem;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.campus-bot__mic {
+  background: #fff1dc;
+  color: var(--cb-orange);
+  font-size: 1.05rem;
+}
+
+.campus-bot__mic.is-on {
+  background: var(--cb-coral);
+  color: #fff;
+}
+
+.campus-bot__send {
+  background: var(--cb-royal);
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.campus-bot__status {
+  padding: 0 0.9rem 0.55rem;
+  font-size: 0.72rem;
+  color: var(--cb-muted);
+  background: #fff;
+}
