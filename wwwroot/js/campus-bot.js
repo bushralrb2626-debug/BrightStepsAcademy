@@ -750,20 +750,26 @@
 
     var c = activeLang();
 
-    // Urdu/Punjabi: use Google TTS so you hear real Urdu, not an English voice.
+    // Urdu/Punjabi: prefer a real system voice when available.
+    // Google TTS can be blocked by some networks/browsers; in that case we fall back to speechSynthesis voices.
     if (c === "ur" || c === "pa") {
-      if (speakGoogleTts(text, googleTl())) return;
       var alt = pickVoice();
-      if (!alt || isEnglishVoice(alt) || !window.speechSynthesis) {
-        setStatus(
-          {
-            en: "Allow network for Urdu audio, or install Urdu voice in Settings → Speech.",
-            ur: "اردو آواز کے لیے انٹرنیٹ اجازت دیں، یا Settings → Speech سے اردو وائس لگائیں۔",
-            pa: "اردو آواز لئی انٹرنیٹ دیو، یا Settings → Speech توں وائس لاؤ۔",
-            it: "Consenti la rete per l’audio urdu.",
-          }[c] || "Need Urdu voice"
-        );
-        return;
+      if (alt && !isEnglishVoice(alt)) {
+        // Continue below to use speechSynthesis with the chosen Urdu/Punjabi voice.
+      } else {
+        // No matching system voice -> try Google TTS.
+        if (speakGoogleTts(text, googleTl())) return;
+        if (!alt || isEnglishVoice(alt) || !window.speechSynthesis) {
+          setStatus(
+            {
+              en: "Allow network for Urdu/Punjabi audio, or install Urdu/Punjabi voice in Settings → Speech.",
+              ur: "اردو/پنجابی آواز کے لیے انٹرنیٹ اجازت دیں، یا Settings → Speech سے وائس لگائیں۔",
+              pa: "اردو/پنجابی آواز لئی انٹرنیٹ دیو، یا Settings → Speech توں وائس لاؤ۔",
+              it: "Consenti la rete per l’audio urdu/punjabi, o installa la voce.",
+            }[c] || "Need Urdu/Punjabi voice"
+          );
+          return;
+        }
       }
     }
 
