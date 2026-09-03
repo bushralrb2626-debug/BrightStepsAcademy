@@ -99,7 +99,7 @@
     ur: {
       fab: "اسکول سے پوچھیں",
       title: "کیمپس ڈیسک",
-      sub: "بات کریں، بولیں — جواب اردو میں سنائی دے گا",
+      sub: "لکھو یا بولو — اسی زبان میں جواب",
       close: "چیٹ بند کریں",
       placeholder: "اوقات، پروگرامز، یا وزٹ کے بارے میں پوچھیں…",
       send: "بھیجیں",
@@ -133,7 +133,7 @@
     pa: {
       fab: "سکول توں پُچھو",
       title: "کیمپس ڈیسک",
-      sub: "لکھو، بولو — جواب پنجابی وچ سُنائی دیوے گا",
+      sub: "لکھو یا بولو — اوسے زبان وچ جواب",
       close: "چیٹ بند کرو",
       placeholder: "اواریں، پروگرام، یا وزٹ بارے پُچھو…",
       send: "بھیجو",
@@ -193,10 +193,12 @@
     var s = String(raw || "");
     if (/[\u0A00-\u0A7F]/.test(s)) return "pa";
     if (/[\u0600-\u06FF]/.test(s)) {
-      if (/تسی|تسیں|اسیں|کیہ حال|کی حال اے|دسو|کیہڑا|کیہڑی/.test(s)) return "pa";
+      if (/تسی|تسیں|اسیں|کیہ حال|کی حال اے|دسو|کیہڑا|کیہڑی|ویں/.test(s)) return "pa";
       return "ur";
     }
     var n = foldText(s);
+    if (!n) return null;
+
     if (
       hasAny(n, [
         "tusi",
@@ -211,9 +213,13 @@
         "ki daso",
         "ki ae",
         "fer ki",
+        "oho ",
+        "kimme",
+        "kinne",
       ])
     )
       return "pa";
+
     if (
       hasAny(n, [
         "assalam",
@@ -224,39 +230,51 @@
         "mehrbani",
         "meherbani",
         "kya haal",
-        "kitni fee",
-        "kitni fees",
+        "kitni",
+        "kitna",
+        "kitne",
+        "kaise",
+        "kaisi",
+        "kahan",
+        "kidhar",
+        "batao",
+        "bataye",
+        "batana",
+        "btana",
         "fees kitni",
         "fee kitni",
+        "kitni fee",
+        "kitni fees",
         "admission kaise",
         "dakhil",
         "dakhla",
         "mulakat",
         "mulaqat",
         "urdu",
-        "batao",
-        "bataye",
-        "batana",
-        "btana",
-        "school kab",
-        "school ki",
-        "school ke",
-        "haan",
-        "nahi",
-        "nahin",
-        "jazak",
         "kharcha",
-        "khulty",
         "khulta",
         "khulti",
-        "bachay",
-        "bachon",
-        "bacha",
+        "khulty",
+        "chahiye",
+        "karna hai",
+        "karni hai",
+        "kya time",
+        "school kab",
+        "school ki ",
+        "school ke ",
+        "fees kya",
+        "fee kya",
+        "hai na",
+        "yaar ",
       ])
     )
       return "ur";
-    if (hasAny(n, ["ciao", "grazie", "prenot", "orari", "scuola", "bambino", "visita"])) return "it";
-    if (hasAny(n, ["hello", "thanks", "please", "book a", "hours", "programs"])) return "en";
+
+    if (hasAny(n, ["ciao", "grazie", "prenot", "orari", "scuola", "bambino", "visita", "per favore"]))
+      return "it";
+
+    // Plain Latin (English questions, names with letters) → English so lang can switch back.
+    if (/[a-z]/.test(n)) return "en";
     return null;
   }
 
@@ -548,9 +566,8 @@
   }
 
   function shouldSpeak() {
-    var c = activeLang();
-    // Mic turns always speak. Urdu/Punjabi also speak typed replies.
-    return voiceTurn || c === "ur" || c === "pa";
+    // Speak only when the user used the mic. Typing stays text-only.
+    return !!voiceTurn;
   }
 
   function speak(text) {
@@ -709,7 +726,8 @@
 
   function handleUser(text, fromVoice, forced) {
     beginTurn(fromVoice);
-    if (!forced) {
+    // Don't flip language on booking fields (name/email) — only on real questions.
+    if (!forced && !booking.step) {
       noteUserLang(text);
       paintChrome();
     }
