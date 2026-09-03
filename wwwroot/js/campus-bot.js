@@ -921,10 +921,10 @@
     var copy = t();
     box.innerHTML = "";
     [
-      [copy.chipHours, copy.hours],
-      [copy.chipPrograms, copy.programs],
+      [copy.chipHours, "__hours__"],
+      [copy.chipPrograms, "__programs__"],
       [copy.chipVisit, "__book__"],
-      [copy.chipPortal, copy.portal],
+      [copy.chipPortal, "__portal__"],
     ].forEach(function (pair) {
       var b = document.createElement("button");
       b.type = "button";
@@ -1007,26 +1007,89 @@
     if (!voiceTurn) hushVoice();
   }
 
+  function looksLikeNewQuestion(text) {
+    var folded = foldText(text);
+    if (!folded || isEmail(text)) return false;
+    if (
+      hasAny(folded, [
+        "hello",
+        "hi",
+        "hey",
+        "ہیلو",
+        "هيلو",
+        "ہائے",
+        "سلام",
+        "السلام",
+        "ciao",
+        "salam",
+        "hy",
+        "helo",
+      ])
+    )
+      return true;
+    if (
+      hasAny(folded, [
+        "hour",
+        "timing",
+        "fee",
+        "program",
+        "portal",
+        "teacher",
+        "address",
+        "اوقات",
+        "فیس",
+        "پروگرام",
+        "پورٹل",
+        "استاد",
+        "اواریں",
+      ])
+    )
+      return true;
+    return false;
+  }
+
   function handleUser(text, fromVoice, forced) {
     beginTurn(fromVoice);
-    // Don't flip language on booking fields (name/email) — only on real questions.
-    if (!forced && !booking.step) {
+    // Follow THIS message's language — but not name/email answers mid-booking.
+    var chipIntent = forced && String(forced).indexOf("__") === 0;
+    if (!booking.step || looksLikeNewQuestion(text) || chipIntent) {
       noteUserLang(text);
       paintChrome();
     }
     addBubble("user", text);
+
     if (forced === "__book__" || (forced == null && wantsBook(text) && !booking.step)) {
       startBooking();
       return;
     }
+
+    // Chips resolve in the language just selected from the chip label / chatLang.
+    if (forced === "__hours__") {
+      booking.step = "";
+      botSay(t().hours);
+      return;
+    }
+    if (forced === "__programs__") {
+      booking.step = "";
+      botSay(t().programs);
+      return;
+    }
+    if (forced === "__portal__") {
+      booking.step = "";
+      botSay(t().portal);
+      return;
+    }
+
     if (booking.step) {
-      stepBooking(text);
-      return;
+      // "hello" / new FAQ must not be treated as a booking name.
+      if (forced == null && looksLikeNewQuestion(text)) {
+        booking.step = "";
+      } else {
+        stepBooking(text);
+        return;
+      }
     }
-    if (forced && forced !== "__book__") {
-      botSay(forced);
-      return;
-    }
+
     var reply = intentReply(text);
     if (reply == null) {
       startBooking();
