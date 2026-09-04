@@ -7,7 +7,7 @@
 
   var T = {
     en: {
-      fab: "Ask the school",
+      fab: "Ask about school",
       title: "Campus desk",
       sub: "Chat, speak, or book a visit",
       close: "Close chat",
@@ -53,12 +53,14 @@
         "I can only book a visit after you sign in. Please login or register first — then come back and tap Book a visit.",
       askWhenLoggedIn:
         "You’re signed in as {name}. What day and time work for a campus visit? (for example: Friday 10:00)",
+      timeTaken:
+        "Sorry — a meeting is already booked around that time ({when}). Please choose another day or time.",
       badEmail: "That doesn’t look like an email yet. Try again? (name@email.com)",
       cancel: "No problem — booking cancelled. Ask me anything else, or say “book a visit” to start again.",
       yesNeed: "Reply yes to send the request, or no to cancel.",
     },
     it: {
-      fab: "Chiedi alla scuola",
+      fab: "Info sulla scuola",
       title: "Sportello campus",
       sub: "Scrivi, parla o prenota una visita",
       close: "Chiudi chat",
@@ -104,12 +106,14 @@
         "Posso prenotare solo se hai fatto l’accesso. Accedi o registrati, poi tocca Prenota visita.",
       askWhenLoggedIn:
         "Sei connesso come {name}. Che giorno e orario ti vanno per la visita? (es. venerdì 10:00)",
+      timeTaken:
+        "Spiacente — c’è già un incontro intorno a quell’orario ({when}). Scegli un altro giorno o orario.",
       badEmail: "Quella non sembra ancora un’email. Riprova? (nome@email.com)",
       cancel: "Va bene — prenotazione annullata. Chiedimi pure altro, o di’ “prenota una visita” per ricominciare.",
       yesNeed: "Rispondi sì per inviare, o no per annullare.",
     },
     ur: {
-      fab: "اسکول سے پوچھیں",
+      fab: "اسکول کے بارے میں پوچھیں",
       title: "کیمپس ڈیسک",
       sub: "لکھو یا بولو — اسی زبان میں جواب",
       close: "چیٹ بند کریں",
@@ -142,12 +146,13 @@
       bookFail: "وزٹ محفوظ نہیں ہو سکی۔ دوبارہ لاگ اِن کر کے کوشش کریں، یا رابطہ فارم استعمال کریں۔",
       needLogin: "وزٹ تبھی بک ہوتی ہے جب آپ لاگ اِن ہوں۔ پہلے لاگ اِن یا رجسٹر کریں، پھر وزٹ بک کریں دبائیں۔",
       askWhenLoggedIn: "آپ {name} کے طور پر سائن اِن ہیں۔ وزٹ کے لیے کون سا دن اور وقت ٹھیک ہے؟ (جیسے: جمعہ 10:00)",
+      timeTaken: "معذرت — اس وقت ({when}) پہلے سے ملاقات بک ہے۔ براہِ کرم دوسرا دن یا وقت چنیں۔",
       badEmail: "یہ ای میل درست نہیں لگتی۔ دوبارہ کوشش؟ (name@email.com)",
       cancel: "ٹھیک ہے — بکنگ منسوخ۔ کچھ اور پوچھیں، یا پھر سے وزٹ بک کریں۔",
       yesNeed: "بھیجنے کے لیے ہاں لکھیں، یا منسوخ کے لیے نہیں۔",
     },
     pa: {
-      fab: "سکول توں پُچھو",
+      fab: "سکول بارے پُچھو",
       title: "کیمپس ڈیسک",
       sub: "لکھو یا بولو — اوسے زبان وچ جواب",
       close: "چیٹ بند کرو",
@@ -180,6 +185,7 @@
       bookFail: "وزٹ محفوظ نہیں ہو سکی۔ فیر لاگ اِن کرکے کوشش کرو، یا رابطہ فارم ورتو۔",
       needLogin: "وزٹ تبھی بک ہوندی اے جدوں تسیں لاگ اِن ہوو۔ پہلے لاگ اِن یا رجسٹر کرو، فیر وزٹ بک کرو دباؤ۔",
       askWhenLoggedIn: "تسیں {name} وجوں سائن اِن او۔ وزٹ لئی کیہڑا دن تے وقت ٹھیک اے؟ (جداں: جمعہ 10:00)",
+      timeTaken: "معذرت — اس ویلے ({when}) پہلے توں ملاقات بک اے۔ براہ کرم دوجا دن یا وقت چُنو۔",
       badEmail: "ایہ ای میل ٹھیک نہیں لگدی۔ فیر کوشش؟ (name@email.com)",
       cancel: "ٹھیک اے — بکنگ منسوخ۔ ہور پُچھو، یا فیر توں وزٹ بک کرو۔",
       yesNeed: "بھیجن لئی ہاں لکھو، یا منسوخ لئی نہیں۔",
@@ -576,6 +582,57 @@
       list.unshift(visit);
       localStorage.setItem(VISITS_KEY, JSON.stringify(list.slice(0, 80)));
     } catch (e) {}
+  }
+
+  function loadVisitsLocal() {
+    try {
+      var raw = localStorage.getItem(VISITS_KEY);
+      var list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function normalizeWhen(value) {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/[^\w\u0600-\u06ff\s:]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function extractTimeToken(value) {
+    var m = String(value || "").match(/\b(\d{1,2})([:.]?\d{0,2})\s*(am|pm)?\b/i);
+    if (!m) return "";
+    var h = parseInt(m[1], 10);
+    var mins = m[2] ? m[2].replace(/\D/g, "") : "";
+    if (mins.length === 1) mins = mins + "0";
+    if (mins.length > 2) mins = mins.slice(0, 2);
+    if (!mins) mins = "00";
+    var ap = (m[3] || "").toLowerCase();
+    if (ap === "pm" && h < 12) h += 12;
+    if (ap === "am" && h === 12) h = 0;
+    return String(h).padStart(2, "0") + ":" + mins.padStart(2, "0");
+  }
+
+  function visitTimeTaken(when) {
+    var wanted = normalizeWhen(when);
+    if (!wanted) return false;
+    var wantedTime = extractTimeToken(when);
+    var visits = loadVisitsLocal();
+    for (var i = 0; i < visits.length; i++) {
+      var existing = normalizeWhen(visits[i] && visits[i].when);
+      if (!existing) continue;
+      if (existing === wanted) return true;
+      if (wantedTime && extractTimeToken(visits[i].when) === wantedTime) {
+        // Same clock time on a similar day phrase (e.g. Friday 10:00 vs friday 10)
+        var dayA = wanted.replace(wantedTime.replace(":", ""), "").replace(/\d/g, "").trim();
+        var dayB = existing.replace(wantedTime.replace(":", ""), "").replace(/\d/g, "").trim();
+        if (!dayA || !dayB || dayA.indexOf(dayB) !== -1 || dayB.indexOf(dayA) !== -1) return true;
+      }
+    }
+    return false;
   }
 
   function setStatus(msg) {
@@ -1224,6 +1281,10 @@
       return;
     }
     if (booking.step === "when") {
+      if (visitTimeTaken(s)) {
+        botSay(fill(t().timeTaken, { when: s }));
+        return;
+      }
       booking.when = s;
       booking.step = "age";
       botSay(t().askAge);
@@ -1261,6 +1322,11 @@
       booking.step = "";
       botSay(t().needLogin);
       renderChips();
+      return;
+    }
+    if (visitTimeTaken(booking.when)) {
+      booking.step = "when";
+      botSay(fill(t().timeTaken, { when: booking.when }));
       return;
     }
     var visit = {
