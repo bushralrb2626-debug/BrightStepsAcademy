@@ -21,8 +21,13 @@
       chipPrograms: "Programs",
       chipVisit: "Book a visit",
       chipPortal: "Portal",
+      chipCall: "Call office",
       chipLogin: "Login",
       chipRegister: "Register",
+      powered: "Powered by Slorsh",
+      calling: "Opening your phone dialer for +1 (555) 214-8800…",
+      callOffer: "You can call the school office now:",
+      callBtn: "Call +1 (555) 214-8800",
       hours:
         "The office is open Monday–Friday, 8:00 AM – 4:00 PM. Classes run on the same campus at 42 Maple Grove, Riverside. Phone +1 (555) 214-8800.",
       programs:
@@ -41,7 +46,14 @@
         "I can help with hours, programs, admissions, teachers, facilities, the portal — or booking a visit. What would you like?",
       askName: "Lovely — let’s book a visit. What’s your name?",
       askEmail: "Thanks, {name}. What’s the best email for the office to reach you?",
+      askClock:
+        "Before the day and time — how should we write the clock? Reply AM/PM (12-hour) or 24-hour.",
+      askClockLoggedIn:
+        "You’re signed in as {name}. First: should the visit time use AM/PM (12-hour) or 24-hour clock?",
+      askWhenAmPm: "What day and time work? Use AM/PM — for example: Friday 10:00 AM or Friday 2:30 PM.",
+      askWhen24: "What day and time work? Use 24-hour clock — for example: Friday 10:00 or Friday 14:30.",
       askWhen: "What day and time work for a campus visit? (for example: Friday 10:00)",
+      badClock: "Please reply AM/PM (or 12-hour) or 24-hour.",
       askAge: "How old is your child? (or the year group you’re interested in)",
       confirm:
         "Here’s what I have:\n• Name: {name}\n• Email: {email}\n• When: {when}\n• Child: {age}\n\nShall I send this to the school office? Reply yes to confirm.",
@@ -74,8 +86,13 @@
       chipPrograms: "Programmi",
       chipVisit: "Prenota visita",
       chipPortal: "Portale",
+      chipCall: "Chiama ufficio",
       chipLogin: "Accedi",
       chipRegister: "Registrati",
+      powered: "Powered by Slorsh",
+      calling: "Apro il dialer per +1 (555) 214-8800…",
+      callOffer: "Puoi chiamare la segreteria ora:",
+      callBtn: "Chiama +1 (555) 214-8800",
       hours:
         "La segreteria è aperta lunedì–venerdì, 8:00–16:00. Siamo in 42 Maple Grove, Riverside. Tel. +1 (555) 214-8800.",
       programs:
@@ -94,7 +111,14 @@
         "Posso aiutarti con orari, programmi, iscrizioni, insegnanti, strutture, il portale — o prenotare una visita. Cosa ti serve?",
       askName: "Perfetto — prenotiamo una visita. Come ti chiami?",
       askEmail: "Grazie, {name}. Qual è l’email migliore per la segreteria?",
+      askClock:
+        "Prima del giorno e dell’orario — come scriviamo l’ora? Rispondi AM/PM (12 ore) oppure 24 ore.",
+      askClockLoggedIn:
+        "Sei connesso come {name}. Prima: l’orario in AM/PM (12 ore) o in formato 24 ore?",
+      askWhenAmPm: "Che giorno e orario? Usa AM/PM — es. venerdì 10:00 AM oppure venerdì 2:30 PM.",
+      askWhen24: "Che giorno e orario? Usa il formato 24 ore — es. venerdì 10:00 oppure venerdì 14:30.",
       askWhen: "Che giorno e orario ti vanno per la visita? (es. venerdì 10:00)",
+      badClock: "Rispondi AM/PM (o 12 ore) oppure 24 ore.",
       askAge: "Quanti anni ha tuo figlio? (o la classe che ti interessa)",
       confirm:
         "Ecco i dati:\n• Nome: {name}\n• Email: {email}\n• Quando: {when}\n• Bambino: {age}\n\nInvio la richiesta in segreteria? Rispondi sì per confermare.",
@@ -126,8 +150,13 @@
       chipPrograms: "پروگرامز",
       chipVisit: "وزٹ بک کریں",
       chipPortal: "پورٹل",
+      chipCall: "آفس کو کال",
       chipLogin: "لاگ اِن",
       chipRegister: "رجسٹر",
+      powered: "Powered by Slorsh",
+      calling: "فون ڈائلر کھل رہا ہے: +1 (555) 214-8800…",
+      callOffer: "اب اسکول آفس کو کال کر سکتے ہیں:",
+      callBtn: "کال کریں +1 (555) 214-8800",
       hours: "دفتر پیر تا جمعہ صبح 8:00 سے شام 4:00 تک کھلا ہے۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
       programs: "راستے: Early Learning، پرائمری، مڈل اسکول، آرٹس، اسپورٹس، اور سائنس و ٹیکنالوجی۔ ہر راستے میں کھیل، تجسس اور مضبوط تعلیم ہے۔",
       admissions: "داخلہ کیمپس وزٹ سے شروع ہوتا ہے۔ کہیں کہ وزٹ بک کرنی ہے — نام، ای میل، دن/وقت اور بچے کی عمر پوچھوں گا۔",
@@ -138,7 +167,12 @@
       fallback: "میں اوقات، پروگرامز، داخلہ، اساتذہ، سہولیات، پورٹل — یا وزٹ بکنگ میں مدد کر سکتا ہوں۔ کیا پوچھنا ہے؟",
       askName: "زبردست — وزٹ بک کرتے ہیں۔ آپ کا نام کیا ہے؟",
       askEmail: "شکریہ، {name}۔ دفتر کے لیے بہترین ای میل کیا ہے؟",
+      askClock: "دن اور وقت سے پہلے — گھڑی کیسے لکھیں؟ جواب دیں AM/PM (۱۲ گھنٹے) یا ۲۴ گھنٹے۔",
+      askClockLoggedIn: "آپ {name} کے طور پر سائن اِن ہیں۔ پہلے بتائیں: وقت AM/PM میں لکھیں یا ۲۴ گھنٹے والی گھڑی؟",
+      askWhenAmPm: "کون سا دن اور وقت؟ AM/PM استعمال کریں — جیسے: جمعہ 10:00 AM یا جمعہ 2:30 PM۔",
+      askWhen24: "کون سا دن اور وقت؟ ۲۴ گھنٹے والی گھڑی استعمال کریں — جیسے: جمعہ 10:00 یا جمعہ 14:30۔",
       askWhen: "وزٹ کے لیے کون سا دن اور وقت ٹھیک ہے؟ (جیسے: جمعہ 10:00)",
+      badClock: "براہِ کرم AM/PM (یا ۱۲ گھنٹے) یا ۲۴ گھنٹے لکھیں۔",
       askAge: "بچے کی عمر کیا ہے؟ (یا کون سی جماعت چاہیے)",
       confirm:
         "یہ تفصیل ہے:\n• نام: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر کو بھیج دوں؟ تصدیق کے لیے ہاں لکھیں۔",
@@ -165,8 +199,13 @@
       chipPrograms: "پروگرام",
       chipVisit: "وزٹ بک کرو",
       chipPortal: "پورٹل",
+      chipCall: "آفس نوں کال",
       chipLogin: "لاگ اِن",
       chipRegister: "رجسٹر",
+      powered: "Powered by Slorsh",
+      calling: "فون ڈائلر کھل رہا اے: +1 (555) 214-8800…",
+      callOffer: "ہن سکول آفس نوں کال کر سکدے او:",
+      callBtn: "کال کرو +1 (555) 214-8800",
       hours: "دفتر پیر توں جمعہ صبح 8:00 توں شام 4:00 کھلا۔ پتہ: 42 Maple Grove, Riverside۔ فون +1 (555) 214-8800۔",
       programs: "راستے: Early Learning، پرائمری، مڈل سکول، آرٹس، کھیڈاں، سائنس تے ٹیکنالوجی۔ ہر پاسے کھیل، تجسس تے مضبوط سکھیا۔",
       admissions: "داخلہ کیمپس وزٹ نال شروع ہوندا اے۔ کہو وزٹ بک کرنی اے — ناں، ای میل، دن/وقت تے بچے دی عمر پُچھاں گا۔",
@@ -177,7 +216,12 @@
       fallback: "میں اواریں، پروگرام، داخلہ، استاد، سہولیات، پورٹل — یا وزٹ بکنگ وچ مدد کر سکدا واں۔ کی پُچھنا اے؟",
       askName: "چنگا — وزٹ بک کردے آں۔ تہاڈا ناں کی اے؟",
       askEmail: "شکریہ، {name}۔ دفتر لئی سب توں ودھیا ای میل کیہڑی اے؟",
+      askClock: "دن تے وقت توں پہلاں — گھڑی کویں لکھئیے؟ جواب دیو AM/PM (۱۲ گھنٹے) یا ۲۴ گھنٹے۔",
+      askClockLoggedIn: "تسیں {name} وجوں سائن اِن او۔ پہلے دسو: وقت AM/PM وچ لکھو یا ۲۴ گھنٹے والی گھڑی؟",
+      askWhenAmPm: "کیہڑا دن تے وقت؟ AM/PM ورتو — جداں: جمعہ 10:00 AM یا جمعہ 2:30 PM۔",
+      askWhen24: "کیہڑا دن تے وقت؟ ۲۴ گھنٹے والی گھڑی ورتو — جداں: جمعہ 10:00 یا جمعہ 14:30۔",
       askWhen: "وزٹ لئی کیہڑا دن تے وقت ٹھیک اے؟ (جداں: جمعہ 10:00)",
+      badClock: "براہ کرم AM/PM (یا ۱۲ گھنٹے) یا ۲۴ گھنٹے لکھو۔",
       askAge: "بچے دی عمر کی اے؟ (یا کیہڑی جماعت چاہی دی اے)",
       confirm:
         "ایہ تفصیل اے:\n• ناں: {name}\n• ای میل: {email}\n• وقت: {when}\n• بچہ: {age}\n\nدفتر نوں بھیج دیاں؟ تصدیق لئی ہاں لکھو۔",
@@ -469,6 +513,34 @@
     ]);
   }
 
+  function wantsCall(s) {
+    var n = foldText(s);
+    return hasAny(n, [
+      "call",
+      "phone",
+      "dial",
+      "ring",
+      "telefon",
+      "chiama",
+      "chiamare",
+      "numero di telefono",
+      "کال",
+      "فون",
+      "نمبر",
+      "فون نمبر",
+      "کال کرو",
+      "کال کریں",
+      "رابطہ نمبر",
+      "call office",
+      "call school",
+      "phone number",
+      "call karo",
+      "phone number batao",
+      "آفس کو کال",
+      "آفس نوں کال",
+    ]);
+  }
+
   var SOFT_INTENTS = {
     hello: true,
     thank: true,
@@ -532,7 +604,9 @@
     return t().fallback;
   }
 
-  var booking = { step: "", name: "", email: "", when: "", age: "" };
+  var OFFICE_PHONE_DISPLAY = "+1 (555) 214-8800";
+  var OFFICE_PHONE_TEL = "tel:+15552148800";
+  var booking = { step: "", name: "", email: "", when: "", age: "", clock: "" };
   var rec = null;
   var voiceTurn = false;
   var voicesReady = false;
@@ -1000,6 +1074,7 @@
         '<button type="submit" class="campus-bot__send" id="campusBotSend">➤</button>' +
         "</form>" +
         '<div class="campus-bot__status" id="campusBotStatus"></div>' +
+        '<div class="campus-bot__powered" id="campusBotPowered"></div>' +
         "</div></div>"
     );
     document.body.appendChild(root);
@@ -1039,7 +1114,48 @@
     var mic = document.getElementById("campusBotMic");
     mic.textContent = "🎙️";
     mic.setAttribute("aria-label", copy.mic);
+    var powered = document.getElementById("campusBotPowered");
+    if (powered) powered.textContent = copy.powered || "Powered by Slorsh";
     renderChips();
+  }
+
+  function startOfficeCall() {
+    try {
+      window.location.href = OFFICE_PHONE_TEL;
+    } catch (e) {
+      window.open(OFFICE_PHONE_TEL, "_self");
+    }
+  }
+
+  function linkifyPhones(text) {
+    var esc = String(text == null ? "" : text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+    return esc
+      .replace(/\n/g, "<br>")
+      .replace(/(\+?\d[\d\s().-]{7,}\d)/g, function (match) {
+        var digits = match.replace(/[^\d+]/g, "");
+        if (digits.replace(/\D/g, "").length < 8) return match;
+        var href = digits.indexOf("+") === 0 ? "tel:" + digits : "tel:+" + digits.replace(/\D/g, "");
+        return '<a class="campus-bot__tel" href="' + href + '">' + match + "</a>";
+      });
+  }
+
+  function appendCallAction(row) {
+    var wrap = document.createElement("div");
+    wrap.className = "campus-bot__call-actions";
+    var a = document.createElement("a");
+    a.className = "campus-bot__call-btn";
+    a.href = OFFICE_PHONE_TEL;
+    a.textContent = t().callBtn || ("Call " + OFFICE_PHONE_DISPLAY);
+    a.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      startOfficeCall();
+    });
+    wrap.appendChild(a);
+    row.appendChild(wrap);
   }
 
   function renderChips() {
@@ -1050,6 +1166,7 @@
     [
       [copy.chipHours, "__hours__"],
       [copy.chipPrograms, "__programs__"],
+      [copy.chipCall, "__call__"],
       [copy.chipVisit, "__book__"],
       [copy.chipPortal, "__portal__"],
     ]
@@ -1087,13 +1204,18 @@
     hushVoice();
   }
 
-  function addBubble(who, text) {
+  function addBubble(who, text, opts) {
+    opts = opts || {};
     var log = document.getElementById("campusBotLog");
     var row = document.createElement("div");
     row.className = "campus-bot__row campus-bot__row--" + who;
     var b = document.createElement("div");
     b.className = "campus-bot__bubble campus-bot__bubble--" + who;
-    b.textContent = text;
+    if (who === "bot") {
+      b.innerHTML = linkifyPhones(text);
+    } else {
+      b.textContent = text;
+    }
     row.appendChild(b);
     if (who === "bot") {
       var btn = document.createElement("button");
@@ -1108,13 +1230,14 @@
         speakNow(text);
       });
       row.appendChild(btn);
+      if (opts.offerCall) appendCallAction(row);
     }
     log.appendChild(row);
     log.scrollTop = log.scrollHeight;
   }
 
-  function botSay(text) {
-    addBubble("bot", text);
+  function botSay(text, opts) {
+    addBubble("bot", text, opts);
     if (shouldSpeak()) {
       speak(text);
       window.setTimeout(function () {
@@ -1220,6 +1343,12 @@
       botSay(t().portal);
       return;
     }
+    if (forced === "__call__" || (forced == null && wantsCall(text) && !booking.step)) {
+      booking.step = "";
+      botSay(t().callOffer + "\n" + t().calling, { offerCall: true });
+      startOfficeCall();
+      return;
+    }
 
     if (booking.step) {
       // "hello" / new FAQ must not be treated as a booking name.
@@ -1236,7 +1365,8 @@
       startBooking();
       return;
     }
-    botSay(reply);
+    var offerCall = /555|phone|tel\.|call |فون|کال|telefon/i.test(String(reply));
+    botSay(reply, offerCall ? { offerCall: true } : null);
   }
 
   function startBooking() {
@@ -1247,19 +1377,44 @@
       return;
     }
     booking = {
-      step: "when",
+      step: "clock",
       name: session.name || "Family",
       email: sessionEmail(session),
       when: "",
       age: "",
+      clock: "",
     };
-    botSay(fill(t().askWhenLoggedIn, { name: booking.name }));
+    botSay(fill(t().askClockLoggedIn, { name: booking.name }));
+  }
+
+  function parseClockFormat(raw) {
+    var n = norm(raw);
+    if (
+      /\b(am\s*\/?\s*pm|ampm|12\s*h|12\s*hour|12\s*ore|۱۲)\b/.test(n) ||
+      n === "am" ||
+      n === "pm" ||
+      n.indexOf("am/pm") !== -1 ||
+      n.indexOf("a.m") !== -1 ||
+      n.indexOf("p.m") !== -1
+    ) {
+      return "ampm";
+    }
+    if (/\b(24\s*h|24\s*hour|24\s*ore|۲۴|military)\b/.test(n) || n === "24") {
+      return "24";
+    }
+    return "";
+  }
+
+  function askWhenPrompt() {
+    if (booking.clock === "ampm") return t().askWhenAmPm;
+    if (booking.clock === "24") return t().askWhen24;
+    return t().askWhen;
   }
 
   function stepBooking(raw) {
     var s = raw.trim();
     var n = norm(s);
-    if (booking.step !== "name" && isNo(n)) {
+    if (booking.step !== "name" && booking.step !== "clock" && isNo(n)) {
       booking.step = "";
       botSay(t().cancel);
       return;
@@ -1276,8 +1431,19 @@
         return;
       }
       booking.email = s;
+      booking.step = "clock";
+      botSay(t().askClock);
+      return;
+    }
+    if (booking.step === "clock") {
+      var clock = parseClockFormat(s);
+      if (!clock) {
+        botSay(t().badClock);
+        return;
+      }
+      booking.clock = clock;
       booking.step = "when";
-      botSay(t().askWhen);
+      botSay(askWhenPrompt());
       return;
     }
     if (booking.step === "when") {

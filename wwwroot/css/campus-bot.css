@@ -247,6 +247,54 @@
   background: #fff;
 }
 
+.campus-bot__powered {
+  padding: 0.25rem 0.9rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7a6a4a;
+  text-align: center;
+  border-top: 1px solid var(--cb-line);
+  background: #fff6e4;
+}
+
+.campus-bot__tel {
+  color: #0b4db8;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.campus-bot__row--bot {
+  flex-wrap: wrap;
+}
+
+.campus-bot__call-actions {
+  width: 100%;
+  flex-basis: 100%;
+  margin-top: 0.15rem;
+  padding-left: 0.1rem;
+}
+
+.campus-bot__call-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1565d8, #1fa8e0);
+  color: #fff !important;
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-decoration: none !important;
+  box-shadow: 0 6px 16px rgba(21, 101, 216, 0.28);
+}
+
+.campus-bot__call-btn:hover {
+  filter: brightness(1.05);
+}
+
 .campus-bot__row {
   display: flex;
   align-items: flex-end;

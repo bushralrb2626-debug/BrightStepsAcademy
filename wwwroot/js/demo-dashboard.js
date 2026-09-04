@@ -14,12 +14,14 @@
       { icon: "📚", label: "Assignments", id: "assignments" },
       { icon: "📊", label: "Marks", id: "marks" },
       { icon: "📣", label: "Notices", id: "announcements" },
+      { icon: "💬", label: "Feedback", id: "feedback" },
     ],
     parent: [
       { icon: "🏠", label: "Dashboard", id: "home" },
       { icon: "📖", label: "Diary", id: "diary" },
       { icon: "✅", label: "Attendance", id: "attendance" },
       { icon: "📣", label: "Announcements", id: "announcements" },
+      { icon: "💬", label: "Feedback", id: "feedback" },
     ],
     teacher: [
       { icon: "🏠", label: "Dashboard", id: "home" },
@@ -43,7 +45,7 @@
       { icon: "💵", label: "Fees", id: "fees" },
       { icon: "🏫", label: "Classrooms", id: "classrooms" },
       { icon: "📣", label: "Announce", id: "announce" },
-      { icon: "💬", label: "Feedback", id: "feedback" },
+      { icon: "📥", label: "Inbox", id: "feedback" },
       { icon: "📊", label: "Results", id: "results" },
       { icon: "⚙️", label: "Settings", id: "settings" },
     ],
@@ -56,7 +58,7 @@
       { icon: "💵", label: "Fees", id: "fees" },
       { icon: "🏫", label: "Classrooms", id: "classrooms" },
       { icon: "📣", label: "Announce", id: "announce" },
-      { icon: "💬", label: "Feedback", id: "feedback" },
+      { icon: "📥", label: "Inbox", id: "feedback" },
       { icon: "📊", label: "Results", id: "results" },
       { icon: "🛡️", label: "Admins", id: "admins" },
     ],
@@ -89,6 +91,7 @@
   var ANNOUNCE_KEY = "brightsteps-demo-announce";
   var HOMEWORK_KEY = "brightsteps-demo-homework";
   var FEEDBACK_KEY = "brightsteps-demo-feedback";
+  var RESULTS_KEY = "brightsteps-demo-results";
 
   var DEFAULT_ROOMS = [
     "Grade 1",
@@ -785,33 +788,294 @@
     );
   }
 
+  function loadResults() {
+    var list = loadList(RESULTS_KEY);
+    if (list.length) return list;
+    return [
+      {
+        id: "res-seed-1",
+        studentName: "Alex Rivera",
+        studentId: "seed-alex",
+        subject: "Math",
+        paperType: "test",
+        title: "Fractions test",
+        mark: "88",
+        maxMark: "100",
+        classroom: "Grade 4 · Maple",
+        school: "Scuola Materna",
+        teacher: "Sarah Wilson",
+        teacherLogin: "teacher_demo",
+        createdAt: new Date().toISOString(),
+        updatedAt: "",
+        updatedBy: "",
+      },
+      {
+        id: "res-seed-2",
+        studentName: "Alex Rivera",
+        studentId: "seed-alex",
+        subject: "Science",
+        paperType: "paper",
+        title: "Plant diary paper",
+        mark: "92",
+        maxMark: "100",
+        classroom: "Grade 4 · Maple",
+        school: "Scuola Materna",
+        teacher: "David Chen",
+        teacherLogin: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: "",
+        updatedBy: "",
+      },
+      {
+        id: "res-seed-3",
+        studentName: "Mia Chen",
+        studentId: "seed-mia",
+        subject: "English",
+        paperType: "test",
+        title: "Reading comprehension",
+        mark: "91",
+        maxMark: "100",
+        classroom: "Grade 4 · Maple",
+        school: "Scuola Materna",
+        teacher: "Amina Rahman",
+        teacherLogin: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: "",
+        updatedBy: "",
+      },
+    ];
+  }
+
+  function saveResults(list) {
+    saveList(RESULTS_KEY, list);
+  }
+
+  function studentOptionsHtml(selected) {
+    return (
+      '<option value="">Select student</option>' +
+      allStudents()
+        .map(function (s) {
+          var id = s.id || s.name;
+          var label = s.name + (s.classroom ? " · " + s.classroom : "");
+          return (
+            '<option value="' +
+            escapeHtml(id) +
+            '"' +
+            (selected === id ? " selected" : "") +
+            ">" +
+            escapeHtml(label) +
+            "</option>"
+          );
+        })
+        .join("")
+    );
+  }
+
+  function paperTypeLabel(type) {
+    var map = { test: "Test", paper: "Paper", quiz: "Quiz", exam: "Exam" };
+    return map[type] || "Test";
+  }
+
+  function markDisplay(r) {
+    var mark = String(r.mark == null ? "" : r.mark).trim();
+    var max = String(r.maxMark == null ? "" : r.maxMark).trim();
+    if (!mark) return "—";
+    if (mark.indexOf("%") !== -1) return mark;
+    if (max) return mark + " / " + max;
+    return mark;
+  }
+
+  function resultsUploadForm(session, isAdmin) {
+    var classroomDefault = sessionClassroom(session) || "Grade 4 · Maple";
+    return (
+      '<form class="form-bsa" id="resultForm" style="margin-bottom:1.25rem">' +
+      "<p><strong>" +
+      (isAdmin ? "Create a result record" : "Upload a test / paper result") +
+      "</strong></p>" +
+      '<div class="form-row">' +
+      '<label>Student<select name="studentId" required>' +
+      studentOptionsHtml("") +
+      "</select></label>" +
+      '<label>Subject<input name="subject" required maxlength="40" placeholder="e.g. Mathematics" value="' +
+      escapeHtml(isAdmin ? "" : session.className && session.className.indexOf("Math") !== -1 ? "Mathematics" : "") +
+      '" /></label>' +
+      "</div>" +
+      '<div class="form-row">' +
+      '<label>Type<select name="paperType"><option value="test">Test</option><option value="paper">Paper</option><option value="quiz">Quiz</option><option value="exam">Exam</option></select></label>' +
+      '<label>Title<input name="title" required maxlength="80" placeholder="e.g. Mid-term paper" /></label>' +
+      "</div>" +
+      '<div class="form-row">' +
+      '<label>Mark<input name="mark" required maxlength="20" placeholder="e.g. 88" /></label>' +
+      '<label>Out of<input name="maxMark" maxlength="20" value="100" placeholder="100" /></label>' +
+      "</div>" +
+      '<div class="form-row">' +
+      '<label>Classroom<select name="classroom">' +
+      roomSelectOptions(classroomDefault) +
+      "</select></label>" +
+      '<label>School<input name="school" maxlength="80" value="' +
+      escapeHtml(session.className && session.role !== "teacher" ? session.className : "BrightFuture Academy") +
+      '" /></label>' +
+      "</div>" +
+      '<button type="submit" class="btn-bsa btn-bsa-primary">' +
+      (isAdmin ? "Save record" : "Upload result") +
+      "</button>" +
+      "</form>"
+    );
+  }
+
+  function resultsTable(session, items, editable) {
+    if (!items.length) {
+      return "<p class='text-muted'>No results on file yet.</p>";
+    }
+    var rows = items.map(function (r) {
+      var markCell = editable
+        ? '<div class="dash-money"><input type="text" data-result-mark="' +
+          escapeHtml(r.id) +
+          '" value="' +
+          escapeHtml(r.mark) +
+          '" /> <input type="text" data-result-max="' +
+          escapeHtml(r.id) +
+          '" value="' +
+          escapeHtml(r.maxMark || "100") +
+          '" style="width:4.5rem" /> <button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" data-save-result="' +
+          escapeHtml(r.id) +
+          '">Save</button></div>'
+        : escapeHtml(markDisplay(r));
+      var actions = editable
+        ? '<button type="button" class="btn-bsa btn-bsa-sm btn-bsa-soft" data-delete-result="' +
+          escapeHtml(r.id) +
+          '">Delete</button>'
+        : "—";
+      return [
+        escapeHtml(r.studentName),
+        escapeHtml(r.subject),
+        escapeHtml(paperTypeLabel(r.paperType)),
+        escapeHtml(r.title),
+        markCell,
+        escapeHtml(r.classroom || ""),
+        escapeHtml(r.teacher || ""),
+        escapeHtml(formatDate(r.updatedAt || r.createdAt)),
+        actions,
+      ];
+    });
+    return table(
+      ["Student", "Subject", "Type", "Title", "Mark", "Class", "Teacher", "Updated", "Actions"],
+      rows
+    );
+  }
+
+  function teacherResultsPanel(session) {
+    var mine = loadResults()
+      .filter(function (r) {
+        return (
+          r.teacherLogin === session.login ||
+          r.teacher === session.name ||
+          (!r.teacherLogin && r.classroom === sessionClassroom(session))
+        );
+      })
+      .sort(function (a, b) {
+        return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+      });
+    return (
+      resultsUploadForm(session, false) +
+      panel("My uploaded results", resultsTable(session, mine, false))
+    );
+  }
+
+  function adminResultsPanel(session) {
+    var all = loadResults().sort(function (a, b) {
+      return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    });
+    return (
+      resultsUploadForm(session, true) +
+      panel("All test & paper records (edit marks anytime)", resultsTable(session, all, true))
+    );
+  }
+
+  function studentMarksPanel(session) {
+    var name = session.name;
+    var items = loadResults()
+      .filter(function (r) {
+        return r.studentName === name || r.studentId === session.personId;
+      })
+      .sort(function (a, b) {
+        return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+      });
+    if (!items.length) {
+      return panel("Recent marks", "<p class='text-muted'>No marks uploaded for you yet.</p>");
+    }
+    return panel(
+      "Recent marks",
+      table(
+        ["Subject", "Type", "Title", "Mark", "Teacher"],
+        items.map(function (r) {
+          return [
+            escapeHtml(r.subject),
+            escapeHtml(paperTypeLabel(r.paperType)),
+            escapeHtml(r.title),
+            escapeHtml(markDisplay(r)),
+            escapeHtml(r.teacher || ""),
+          ];
+        })
+      )
+    );
+  }
+
   function feedbackPanel(session) {
     var isAdmin = session.role === "admin" || session.role === "superadmin";
-    var form =
-      '<form class="form-bsa" id="feedbackForm" style="margin-bottom:1.25rem">' +
-      "<p><strong>Send feedback to the school</strong></p>" +
-      '<label>Type<select name="kind"><option value="suggestion">Suggestion</option><option value="complaint">Complaint</option></select></label>' +
-      '<label>Message<textarea name="body" required maxlength="800" rows="3" placeholder="Your feedback"></textarea></label>' +
-      '<label><input type="checkbox" name="anonymous" /> Send anonymously</label>' +
-      '<button type="submit" class="btn-bsa btn-bsa-primary">Submit feedback</button>' +
-      "</form>";
+    var form = "";
+    if (!isAdmin) {
+      form =
+        '<form class="form-bsa" id="feedbackForm" style="margin-bottom:1.25rem">' +
+        "<p><strong>Send a suggestion or complaint</strong> — tick anonymous if you do not want your name shown.</p>" +
+        '<label>Type<select name="kind"><option value="suggestion">Suggestion</option><option value="complaint">Complaint</option></select></label>' +
+        '<label>Message<textarea name="body" required maxlength="800" rows="3" placeholder="Your feedback"></textarea></label>' +
+        '<label class="form-bsa__check"><input type="checkbox" name="anonymous" /> Send anonymously</label>' +
+        '<button type="submit" class="btn-bsa btn-bsa-primary">Submit feedback</button>' +
+        "</form>";
+    }
 
     var all = loadFeedback().sort(function (a, b) {
       return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
     });
 
-    var listTitle = isAdmin ? "All feedback" : "School feedback (transparency demo)";
-    var rows = all.map(function (f) {
+    if (isAdmin) {
+      var rows = all.map(function (f) {
+        return [
+          escapeHtml(formatDate(f.createdAt)),
+          escapeHtml(f.kind === "complaint" ? "Complaint" : "Suggestion"),
+          escapeHtml(f.author || "Anonymous"),
+          escapeHtml(f.role || ""),
+          escapeHtml(f.body),
+        ];
+      });
+      return (
+        '<div class="welcome-banner"><h2>Feedback inbox</h2><p>Suggestions and complaints from students, parents and teachers. Admin does not send feedback here — only reviews it.</p></div>' +
+        panel("Received feedback", table(["When", "Type", "From", "Role", "Message"], rows.length ? rows : [["—", "—", "—", "—", "No feedback yet."]]))
+      );
+    }
+
+    var mine = all.filter(function (f) {
+      return f.ownerLogin === session.login || f.login === session.login;
+    });
+    var mineRows = mine.map(function (f) {
       return [
         escapeHtml(formatDate(f.createdAt)),
         escapeHtml(f.kind === "complaint" ? "Complaint" : "Suggestion"),
-        escapeHtml(f.author || "Anonymous"),
-        escapeHtml(f.role || ""),
+        escapeHtml(f.anonymous ? "Anonymous" : f.author || ""),
         escapeHtml(f.body),
       ];
     });
 
-    return form + panel(listTitle, table(["When", "Type", "From", "Role", "Message"], rows));
+    return (
+      form +
+      panel(
+        "Your recent feedback",
+        mineRows.length
+          ? table(["When", "Type", "Shown as", "Message"], mineRows)
+          : "<p class='text-muted'>You have not sent feedback yet.</p>"
+      )
+    );
   }
 
   function feesPanel() {
@@ -840,14 +1104,6 @@
       panel("Fee of each student", table(["Student", "Year", "School", "Monthly fee"], rows))
     );
   }
-  var RESULTS = [
-    { student: "Alex Rivera", school: "Scuola Materna", subject: "Math", mark: "88%" },
-    { student: "Alex Rivera", school: "Scuola Materna", subject: "Science", mark: "92%" },
-    { student: "Mia Chen", school: "Scuola Materna", subject: "English", mark: "91%" },
-    { student: "Sofia Rossi", school: "BrightFuture Academy", subject: "Art", mark: "94%" },
-    { student: "Leo Mensah", school: "Maple Grove Primary", subject: "PE", mark: "87%" },
-  ];
-
   function loadVisits() {
     try {
       var raw = localStorage.getItem("brightsteps-demo-visits");
@@ -996,15 +1252,11 @@
       if (section === "announcements") {
         return studentNoticesPanel(session);
       }
+      if (section === "feedback") {
+        return feedbackPanel(session);
+      }
       if (section === "marks") {
-        return panel(
-          "Recent marks",
-          table(["Subject", "Mark", "Teacher"], [
-            ["Mathematics", "88%", "Sarah Wilson"],
-            ["Science", "92%", "David Chen"],
-            ["English", "85%", "Amina Rahman"],
-          ])
-        );
+        return studentMarksPanel(session);
       }
       var pendingHw = loadHomework().filter(function (h) {
         return h.classroom === sessionClassroom(session);
@@ -1049,6 +1301,9 @@
       }
       if (section === "announcements") {
         return parentNoticesPanel();
+      }
+      if (section === "feedback") {
+        return feedbackPanel(session);
       }
       return (
         welcome(session, "Diary, attendance and announcements for your linked children.") +
@@ -1103,14 +1358,7 @@
         );
       }
       if (section === "results") {
-        return panel(
-          "Class results",
-          table(["Student", "Math", "Science", "English"], [
-            ["Alex Rivera", "88%", "92%", "85%"],
-            ["Mia Chen", "91%", "90%", "93%"],
-            ["Noah Patel", "84%", "86%", "80%"],
-          ])
-        );
+        return teacherResultsPanel(session);
       }
       return (
         welcome(session) +
@@ -1165,14 +1413,15 @@
         );
       }
       if (section === "reports") {
+        var schoolResults = loadResults().filter(function (r) {
+          return !r.school || r.school === "Scuola Materna";
+        });
         return panel(
           "Results",
           table(
             ["Student", "Subject", "Mark"],
-            RESULTS.filter(function (r) {
-              return r.school === "Scuola Materna";
-            }).map(function (r) {
-              return [r.student, r.subject, r.mark];
+            schoolResults.map(function (r) {
+              return [escapeHtml(r.studentName), escapeHtml(r.subject), escapeHtml(markDisplay(r))];
             })
           )
         );
@@ -1199,17 +1448,7 @@
       if (section === "classrooms") return classroomsPanel();
       if (section === "announce") return announcePanel(session);
       if (section === "feedback") return feedbackPanel(session);
-      if (section === "results") {
-        return panel(
-          "Results",
-          table(
-            ["Student", "School", "Subject", "Mark"],
-            RESULTS.map(function (r) {
-              return [r.student, r.school, r.subject, r.mark];
-            })
-          )
-        );
-      }
+      if (section === "results") return adminResultsPanel(session);
       if (section === "settings") {
         return panel(
           "School settings",
@@ -1249,17 +1488,7 @@
     if (section === "classrooms") return classroomsPanel();
     if (section === "announce") return announcePanel(session);
     if (section === "feedback") return feedbackPanel(session);
-    if (section === "results") {
-      return panel(
-        "Results across schools",
-        table(
-          ["Student", "School", "Subject", "Mark"],
-          RESULTS.map(function (r) {
-            return [r.student, r.school, r.subject, r.mark];
-          })
-        )
-      );
-    }
+    if (section === "results") return adminResultsPanel(session);
     if (section === "admins") {
       return panel(
         "School admins",
@@ -1275,7 +1504,7 @@
         { label: "Schools", value: String(SCHOOLS.length), accent: "accent-royal" },
         { label: "Teachers", value: String(allTeachers().length), accent: "accent-sky" },
         { label: "Students", value: String(allStudents().length), accent: "accent-mint" },
-        { label: "Results on file", value: String(RESULTS.length), accent: "accent-coral" },
+        { label: "Results on file", value: String(loadResults().length), accent: "accent-coral" },
       ]) +
       meetingsPanel() +
       panel(
@@ -1484,6 +1713,48 @@
         return;
       }
 
+      var saveResultBtn = e.target.closest("[data-save-result]");
+      if (saveResultBtn) {
+        e.preventDefault();
+        if (!canManageRoster(session)) return;
+        var resId = saveResultBtn.getAttribute("data-save-result");
+        var resRow = saveResultBtn.closest("tr");
+        var markInput = resRow && resRow.querySelector('[data-result-mark="' + resId + '"]');
+        var maxInput = resRow && resRow.querySelector('[data-result-max="' + resId + '"]');
+        var results = loadResults().map(function (r) {
+          if (r.id !== resId) return r;
+          var copy = {};
+          Object.keys(r).forEach(function (k) {
+            copy[k] = r[k];
+          });
+          copy.mark = String(markInput ? markInput.value : r.mark).trim();
+          copy.maxMark = String(maxInput ? maxInput.value : r.maxMark || "100").trim();
+          copy.updatedAt = new Date().toISOString();
+          copy.updatedBy = session.name;
+          return copy;
+        });
+        saveResults(results);
+        if (window.showToast) window.showToast("Result mark updated.", "success");
+        render(session, section);
+        return;
+      }
+
+      var deleteResultBtn = e.target.closest("[data-delete-result]");
+      if (deleteResultBtn) {
+        e.preventDefault();
+        if (!canManageRoster(session)) return;
+        var delId = deleteResultBtn.getAttribute("data-delete-result");
+        if (!window.confirm("Delete this result record?")) return;
+        saveResults(
+          loadResults().filter(function (r) {
+            return r.id !== delId;
+          })
+        );
+        if (window.showToast) window.showToast("Result deleted.", "success");
+        render(session, section);
+        return;
+      }
+
       var saveFeeBtn = e.target.closest("[data-save-fee]");
       if (saveFeeBtn) {
         e.preventDefault();
@@ -1582,6 +1853,7 @@
       var feedbackForm = e.target.closest("#feedbackForm");
       if (feedbackForm) {
         e.preventDefault();
+        if (session.role === "admin" || session.role === "superadmin") return;
         var fKind = (feedbackForm.querySelector('[name="kind"]') || {}).value || "suggestion";
         var fBody = String((feedbackForm.querySelector('[name="body"]') || {}).value || "").trim();
         var fAnon = !!(feedbackForm.querySelector('[name="anonymous"]') || {}).checked;
@@ -1594,12 +1866,59 @@
           anonymous: fAnon,
           author: fAnon ? "Anonymous" : session.name,
           login: fAnon ? "" : session.login,
-          role: session.roleLabel || session.role,
+          ownerLogin: session.login,
+          role: fAnon ? "Anonymous" : session.roleLabel || session.role,
           createdAt: new Date().toISOString(),
         });
         saveFeedback(feedback);
-        if (window.showToast) window.showToast("Feedback submitted.", "success");
+        if (window.showToast) {
+          window.showToast(fAnon ? "Anonymous feedback submitted." : "Feedback submitted.", "success");
+        }
         render(session, "feedback");
+        return;
+      }
+
+      var resultForm = e.target.closest("#resultForm");
+      if (resultForm) {
+        e.preventDefault();
+        if (session.role !== "teacher" && !canManageRoster(session)) return;
+        var studentId = (resultForm.querySelector('[name="studentId"]') || {}).value || "";
+        var student = findPersonById(studentId) || allStudents().filter(function (s) {
+          return (s.id || s.name) === studentId;
+        })[0];
+        if (!student) {
+          if (window.showToast) window.showToast("Choose a student.", "error");
+          return;
+        }
+        var subject = String((resultForm.querySelector('[name="subject"]') || {}).value || "").trim();
+        var paperType = (resultForm.querySelector('[name="paperType"]') || {}).value || "test";
+        var title = String((resultForm.querySelector('[name="title"]') || {}).value || "").trim();
+        var mark = String((resultForm.querySelector('[name="mark"]') || {}).value || "").trim();
+        var maxMark = String((resultForm.querySelector('[name="maxMark"]') || {}).value || "100").trim();
+        var classroom = (resultForm.querySelector('[name="classroom"]') || {}).value || student.classroom || "";
+        var school = String((resultForm.querySelector('[name="school"]') || {}).value || student.school || "").trim();
+        if (!subject || !title || !mark) return;
+        var results = loadResults();
+        results.unshift({
+          id: "res-" + Date.now(),
+          studentName: student.name,
+          studentId: student.id || student.name,
+          subject: subject,
+          paperType: paperType,
+          title: title,
+          mark: mark,
+          maxMark: maxMark || "100",
+          classroom: classroom,
+          school: school,
+          teacher: session.name,
+          teacherLogin: session.login,
+          createdAt: new Date().toISOString(),
+          updatedAt: "",
+          updatedBy: "",
+        });
+        saveResults(results);
+        if (window.showToast) window.showToast("Result saved for " + student.name + ".", "success");
+        render(session, "results");
         return;
       }
 
